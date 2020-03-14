@@ -4,6 +4,9 @@
 #include "Framework/Input.h"
 #include "Framework/AudioManager.h"
 #include "Framework/GameState.h"
+#include "Player.h"
+#include "Background.h"
+#include "Boss.h"
 #include <string>
 #include <iostream>
 
@@ -27,4 +30,12 @@ private:
 	Input* input;
 	GameState* gameState;
 	AudioManager* audio;
+
+	//Player stuff
+	Player player;
+	sf::Texture playerTex;
+
+	//Backgrounds stuff
+	Background background;
+	sf::Texture backgroundImage;
 };
