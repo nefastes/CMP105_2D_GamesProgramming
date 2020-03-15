@@ -9,6 +9,7 @@ Animation::Animation()
 	isLooping = true;
 	animationSpeed = 0.0f;
 	flipped = false;
+	reversed = false;
 }
 
 // Adds animation frame. Rect object represent a single sprite frame
@@ -43,17 +44,36 @@ void Animation::animate(float dt)
 		elapsedTime += dt;
 		if (elapsedTime >= animationSpeed)
 		{
-			currentFrame++;
-			if (currentFrame >= (int)frames.size())
+			if (!reversed)
 			{
-				if (isLooping)
+				currentFrame++;
+				if (currentFrame >= (int)frames.size())
 				{
-					currentFrame = 0;
+					if (isLooping)
+					{
+						currentFrame = 0;
+					}
+					else
+					{
+						currentFrame--;
+						setPlaying(false);
+					}
 				}
-				else
+			}
+			else
+			{
+				currentFrame--;
+				if (currentFrame < 0)
 				{
-					currentFrame--;
-					setPlaying(false);
+					if (isLooping)
+					{
+						currentFrame = (int)frames.size() - 1;
+					}
+					else
+					{
+						currentFrame++;
+						setPlaying(false);
+					}
 				}
 			}
 			elapsedTime = 0;

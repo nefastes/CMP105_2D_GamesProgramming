@@ -68,7 +68,8 @@ Boss::Boss()
 	dialogOver = false;				
 
 	//Other
-
+	oldTime = 0;
+	window = nullptr;
 }
 
 Boss::~Boss()
@@ -93,13 +94,28 @@ void Boss::update(float dt)
 				{
 					transform.animate(dt);
 					setTextureRect(transform.getCurrentFrame());
-					if (!transform.getPlaying())
+					if (!transform.getPlaying() && !transform.getReversed())
 						animMode = 6;
+					else if (!transform.getPlaying() && transform.getReversed())
+					{
+						taunted = true;
+						animMode = 0;
+					}
 				}
 				if (animMode == 6)
 				{
+					oldTime += dt;
+					
 					taunt.animate(dt);
 					setTextureRect(taunt.getCurrentFrame());
+					if (oldTime >= 1.5f)
+					{
+						taunt.stop();
+						animMode = 5;
+						transform.setReversed(true);
+						transform.setPlaying(true);
+						oldTime = 0;
+					}
 					
 				}
 			}
@@ -108,7 +124,8 @@ void Boss::update(float dt)
 		{
 			if (animMode == 0)
 			{
-
+				idlePhase1.animate(dt);
+				setTextureRect(idlePhase1.getCurrentFrame());
 			}
 			if (animMode == 1)
 			{

@@ -1,7 +1,2 @@
-﻿  Player.cpp
-E:\GitHub\CMP105 Assignment\Coursework\CMP105App\Player.cpp(16,32): warning C4244: 'argument': conversion from 'double' to 'T', possible loss of data
-          with
-          [
-              T=float
-          ]
+﻿  Boss.cpp
   CMP105App.vcxproj -> E:\GitHub\CMP105 Assignment\Coursework\x64\Debug\CMP105App.exe

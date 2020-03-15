@@ -84,6 +84,8 @@ void DialogBox::handleInput(float dt)
 		}
 		if (isWriting)
 		{
+			//TODO: ask the teachers about a way to check if the key was up before this check and get rid of dt below
+
 			skipTime += dt;
 			if(skipTime >= .75f)
 				if (input->isKeyDown(sf::Keyboard::F) || input->isKeyDown(sf::Keyboard::Enter))

@@ -36,6 +36,8 @@ public:
 	void play(bool play) { isPlaying = true; };
 	void stop();
 	void pause() { isPlaying = false; };
+	void setReversed(bool rev) { reversed = rev; currentFrame = (int)frames.size() - 1; };
+	bool getReversed() { return reversed; };
 
 protected:
 	std::vector<sf::IntRect>frames;
@@ -46,4 +48,5 @@ protected:
 	bool isLooping;
 	bool isPlaying;
 	float elapsedTime;
+	bool reversed;
 };
