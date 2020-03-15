@@ -7,39 +7,46 @@ Boss::Boss()
 
 	//Idle anim
 	idlePhase1.addFrame(sf::IntRect(0, 0, 64, 64));
-	idlePhase1.addFrame(sf::IntRect(0, 64, 64, 64));
-	idlePhase1.setFrameSpeed(1.f / 10.f);
+	idlePhase1.addFrame(sf::IntRect(64, 0, 64, 64));
+	idlePhase1.setLooping(true);
+	idlePhase1.setFrameSpeed(1.f / 6.f);
 
 	//Transformation anim
 	transform.addFrame(sf::IntRect(64, 128, 64, 64));
 	transform.addFrame(sf::IntRect(128, 128, 64, 64));
-	transform.setFrameSpeed(1.f / 10.f);
+	transform.setLooping(false);
+	transform.setFrameSpeed(1.f / 6.f);
 
 	//Taunt anim
 	taunt.addFrame(sf::IntRect(192, 128, 64, 64));
 	taunt.addFrame(sf::IntRect(0, 192, 64, 64));
+	taunt.setLooping(true);
 	taunt.setFrameSpeed(1.f / 6.f);
 
 	//Attack anim
 	intoAttackPhase1.addFrame(sf::IntRect(128, 0, 64, 64));
 	intoAttackPhase1.addFrame(sf::IntRect(192, 0, 64, 64));
-	intoAttackPhase1.setFrameSpeed(1.f / 10.f);
+	intoAttackPhase1.setLooping(false);
+	intoAttackPhase1.setFrameSpeed(1.f / 6.f);
 
 	//Attack Idle 1
 	attackIdlePhase1_1.addFrame(sf::IntRect(0, 64, 64, 64));
 	attackIdlePhase1_1.addFrame(sf::IntRect(192, 0, 64, 64));
-	attackIdlePhase1_1.setFrameSpeed(1.f / 10.f);
+	attackIdlePhase1_1.setLooping(true);
+	attackIdlePhase1_1.setFrameSpeed(1.f / 6.f);
 
 	//Attack Idle 2
 	attackIdlePhase1_2.addFrame(sf::IntRect(192, 64, 64, 64));
 	attackIdlePhase1_2.addFrame(sf::IntRect(128, 64, 64, 64));
-	attackIdlePhase1_2.setFrameSpeed(1.f / 10.f);
+	attackIdlePhase1_2.setLooping(true);
+	attackIdlePhase1_2.setFrameSpeed(1.f / 6.f);
 	
 
 	//Attack anim
 	attackPhase1.addFrame(sf::IntRect(64, 64, 64, 64));
 	attackPhase1.addFrame(sf::IntRect(128, 64, 64, 64));
-	attackPhase1.setFrameSpeed(1.f / 10.f);
+	attackPhase1.setLooping(false);
+	attackPhase1.setFrameSpeed(1.f / 6.f);
 
 
 	//-----------------------------------------------------------
@@ -51,6 +58,17 @@ Boss::Boss()
 	//-----------------------------------------------------------
 	//----------------------------------------------------Phase 3
 	//-----------------------------------------------------------
+
+
+
+	//Trackers init
+	phase = 1;						//Start on phase 1
+	taunted = false;				
+	animMode = 5;					//Start in idle
+	dialogOver = false;				
+
+	//Other
+
 }
 
 Boss::~Boss()
@@ -60,5 +78,67 @@ Boss::~Boss()
 
 void Boss::update(float dt)
 {
+	if (phase == 1)
+	{
+		if (!taunted)
+		{
+			if (!dialogOver)
+			{
+				idlePhase1.animate(dt);
+				setTextureRect(idlePhase1.getCurrentFrame());
+			}
+			else
+			{
+				if (animMode == 5)
+				{
+					transform.animate(dt);
+					setTextureRect(transform.getCurrentFrame());
+					if (!transform.getPlaying())
+						animMode = 6;
+				}
+				if (animMode == 6)
+				{
+					taunt.animate(dt);
+					setTextureRect(taunt.getCurrentFrame());
+					
+				}
+			}
+		}
+		else
+		{
+			if (animMode == 0)
+			{
 
+			}
+			if (animMode == 1)
+			{
+
+			}
+			if (animMode == 2)
+			{
+
+			}
+			if (animMode == 3)
+			{
+
+			}
+			if (animMode == 4)
+			{
+
+			}
+		}
+	}
+	else if (phase == 2)
+	{
+
+	}
+	else if (phase == 3)
+	{
+
+	}
+}
+
+void Boss::setDialogState(bool state)
+{
+	dialogOver = state;
 }

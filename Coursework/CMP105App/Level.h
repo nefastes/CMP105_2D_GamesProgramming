@@ -7,6 +7,7 @@
 #include "Player.h"
 #include "Background.h"
 #include "Boss.h"
+#include "DialogBox.h"
 #include <string>
 #include <iostream>
 
@@ -38,4 +39,12 @@ private:
 	//Backgrounds stuff
 	Background background;
 	sf::Texture backgroundImage;
+
+	//Boss stuff
+	Boss boss;
+	sf::Texture bossTex;
+
+	//Dialog stuff
+	DialogBox dialogBox;
+	sf::Texture dialogTex;
 };

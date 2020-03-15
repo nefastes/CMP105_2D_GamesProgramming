@@ -4,12 +4,12 @@ Player::Player()
 	//Walk anim
 	walk.addFrame(sf::IntRect(0, 0, 64, 64));
 	walk.addFrame(sf::IntRect(64, 0, 64, 64));
-	walk.setFrameSpeed(1.f / 10.f);
+	walk.setFrameSpeed(1.f / 6.f);
 
 	//Idle anim
 	idle.addFrame(sf::IntRect(0, 0, 64, 64));
 	idle.addFrame(sf::IntRect(0, 64, 64, 64));
-	idle.setFrameSpeed(1.f / 10.f);
+	idle.setFrameSpeed(1.f / 6.f);
 
 	//Physics
 	sScale = 40.f;

@@ -159,6 +159,7 @@
   <ItemGroup>
     <ClCompile Include="Background.cpp" />
     <ClCompile Include="Boss.cpp" />
+    <ClCompile Include="DialogBox.cpp" />
     <ClCompile Include="Framework\Animation.cpp" />
     <ClCompile Include="Framework\AudioManager.cpp" />
     <ClCompile Include="Framework\Collision.cpp" />
@@ -180,6 +181,7 @@
   <ItemGroup>
     <ClInclude Include="Background.h" />
     <ClInclude Include="Boss.h" />
+    <ClInclude Include="DialogBox.h" />
     <ClInclude Include="Framework\Animation.h" />
     <ClInclude Include="Framework\AudioManager.h" />
     <ClInclude Include="Framework\Collision.h" />
