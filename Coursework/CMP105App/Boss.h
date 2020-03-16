@@ -4,7 +4,7 @@
 class Boss : public GameObject
 {
 private:
-	//Phase 1 anims
+	//Phase 1 stuff
 	Animation transform;
 	Animation taunt;
 	Animation idlePhase1;
@@ -12,6 +12,12 @@ private:
 	Animation attackIdlePhase1_1;
 	Animation attackIdlePhase1_2;
 	Animation attackPhase1;
+
+	void bossPhase1(float dt);
+	void nextAttackPhase1();
+	void attack1_1();
+	void attack1_2();
+	void attack1_3();
 
 	//Phase 2 anims
 
@@ -24,12 +30,14 @@ private:
 
 	//State trackers
 	bool taunted;				//for the animation starting the fight
-	int animMode;				//0 - idle / 1 - preparing attack / 2 - preparing attack idle / 3 - attacking / 4 - going back to idle from attack / 5 - transform / 6 - taunt
+	int animMode;				//Is also the attack mode: 0 - idle / 1 - preparing attack / 2 - preparing attack idle / 3 - attacking / 4 - going back to idle from attack / 5 - transform / 6 - taunt
 	bool dialogOver;			//will be set to true whenever the dialog at the beginning is over
 	float oldTime;				//time tracker
 
 	//Other
 	sf::RenderWindow* window;
+	bool attackDone;
+	bool hasAttacked() { return attackDone; };
 
 public:
 	Boss();

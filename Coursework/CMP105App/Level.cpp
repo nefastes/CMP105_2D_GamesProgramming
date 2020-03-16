@@ -6,6 +6,7 @@ Level::Level(sf::RenderWindow* hwnd, Input* in)
 	input = in;
 
 	//initialise game objects
+
 	//Player init
 	playerTex.loadFromFile("custom_sprites/Player.png");
 	player.setInput(input);
