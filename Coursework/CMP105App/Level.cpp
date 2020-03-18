@@ -14,14 +14,18 @@ Level::Level(sf::RenderWindow* hwnd, Input* in)
 	player.setTexture(&playerTex);
 	player.setSize(sf::Vector2f(128, 128));
 	player.setOrigin(sf::Vector2f(player.getSize().x / 2, player.getSize().y / 2));
-	player.setPosition(444, 0 + player.getSize().y);
 	player.setVelocity(sf::Vector2f(200.f, 0));
 
 	//Backgrounds init
 	backgroundImage.loadFromFile("custom_sprites/Background.png");
 	background.setTexture(&backgroundImage);
+	background.setTextureRect(sf::IntRect(0, 0, 280, 120));
 	background.setSize(sf::Vector2f(1700, window->getSize().y));
 	background.setPosition(-500, 0);
+	frontground.setTexture(&backgroundImage);
+	frontground.setTextureRect(sf::IntRect(0, 120, 280, 120));
+	frontground.setSize(sf::Vector2f(1700, window->getSize().y));
+	frontground.setPosition(-500, 0);
 	
 	//Boss init
 	bossTex.loadFromFile("custom_sprites/Boss_Phase_1.png");
@@ -49,10 +53,6 @@ void Level::handleInput(float dt)
 	//Handle inputs of game objects
 	player.handleInput(dt);
 	dialogBox.handleInput(dt);
-
-
-	//Test input
-	if (input->isKeyDown(sf::Keyboard::V))	dialogBox.setActivated(true);
 }
 
 // Update game objects
@@ -65,7 +65,16 @@ void Level::update(float dt)
 
 
 	//Classes updates
-	if (dialogBox.isFinished()) boss.setDialogState(true);
+	if (player.isCutsceneFinished())
+	{
+		dialogBox.activateOnce();
+		player.freezeControls(true);
+	}
+	if (dialogBox.isFinished())
+	{
+		boss.setDialogState(true);
+		player.freezeControls(false);
+	}
 }
 
 // Render level
@@ -75,7 +84,11 @@ void Level::render()
 
 	//Draw everything to the screen
 	window->draw(background);
-	window->draw(player);
+	if(player.isBehindBackgroundFrontLayer())
+		window->draw(player);
+	window->draw(frontground);
+	if(!player.isBehindBackgroundFrontLayer())
+		window->draw(player);
 	window->draw(boss);
 	if (dialogBox.getActivated())
 	{

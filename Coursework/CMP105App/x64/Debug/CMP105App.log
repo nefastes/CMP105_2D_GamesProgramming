@@ -1,32 +1,7 @@
-﻿  Level.cpp
-M:\CMP105\Coursework\Coursework\CMP105App\Level.cpp(23,57): warning C4244:  'argument': conversion from 'T' to 'T', possible loss of data
-M:\CMP105\Coursework\Coursework\CMP105App\Level.cpp(23,57): warning C4244:         with
-M:\CMP105\Coursework\Coursework\CMP105App\Level.cpp(23,57): warning C4244:         [
-M:\CMP105\Coursework\Coursework\CMP105App\Level.cpp(23,57): warning C4244:             T=unsigned int
-M:\CMP105\Coursework\Coursework\CMP105App\Level.cpp(23,57): warning C4244:         ]
-M:\CMP105\Coursework\Coursework\CMP105App\Level.cpp(23,57): warning C4244:         and
-M:\CMP105\Coursework\Coursework\CMP105App\Level.cpp(23,57): warning C4244:         [
-M:\CMP105\Coursework\Coursework\CMP105App\Level.cpp(23,57): warning C4244:             T=float
-M:\CMP105\Coursework\Coursework\CMP105App\Level.cpp(23,57): warning C4244:         ]
-M:\CMP105\Coursework\Coursework\CMP105App\Level.cpp(36,74): warning C4244:  'argument': conversion from 'T' to 'T', possible loss of data
-M:\CMP105\Coursework\Coursework\CMP105App\Level.cpp(36,74): warning C4244:         with
-M:\CMP105\Coursework\Coursework\CMP105App\Level.cpp(36,74): warning C4244:         [
-M:\CMP105\Coursework\Coursework\CMP105App\Level.cpp(36,74): warning C4244:             T=unsigned int
-M:\CMP105\Coursework\Coursework\CMP105App\Level.cpp(36,74): warning C4244:         ]
-M:\CMP105\Coursework\Coursework\CMP105App\Level.cpp(36,74): warning C4244:         and
-M:\CMP105\Coursework\Coursework\CMP105App\Level.cpp(36,74): warning C4244:         [
-M:\CMP105\Coursework\Coursework\CMP105App\Level.cpp(36,74): warning C4244:             T=float
-M:\CMP105\Coursework\Coursework\CMP105App\Level.cpp(36,74): warning C4244:         ]
-  Main.cpp
-M:\CMP105\Coursework\Coursework\CMP105App\Level.cpp(36,50): warning C4244:  'argument': conversion from 'T' to 'T', possible loss of data
-M:\CMP105\Coursework\Coursework\CMP105App\Level.cpp(36,50): warning C4244:         with
-M:\CMP105\Coursework\Coursework\CMP105App\Level.cpp(36,50): warning C4244:         [
-M:\CMP105\Coursework\Coursework\CMP105App\Level.cpp(36,50): warning C4244:             T=unsigned int
-M:\CMP105\Coursework\Coursework\CMP105App\Level.cpp(36,50): warning C4244:         ]
-M:\CMP105\Coursework\Coursework\CMP105App\Level.cpp(36,50): warning C4244:         and
-M:\CMP105\Coursework\Coursework\CMP105App\Level.cpp(36,50): warning C4244:         [
-M:\CMP105\Coursework\Coursework\CMP105App\Level.cpp(36,50): warning C4244:             T=float
-M:\CMP105\Coursework\Coursework\CMP105App\Level.cpp(36,50): warning C4244:         ]
-  Generating Code...
-M:\CMP105\Coursework\Coursework\CMP105App\Main.cpp(24,12): warning C4244:  'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-  CMP105App.vcxproj -> M:\CMP105\Coursework\Coursework\x64\Debug\CMP105App.exe
+﻿  Player.cpp
+E:\GitHub\CMP105 Assignment\Coursework\CMP105App\Player.cpp(16,32): warning C4244: 'argument': conversion from 'double' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+  CMP105App.vcxproj -> E:\GitHub\CMP105 Assignment\Coursework\x64\Debug\CMP105App.exe

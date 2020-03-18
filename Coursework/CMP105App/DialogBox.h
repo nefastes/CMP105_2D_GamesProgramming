@@ -27,6 +27,7 @@ private:
 
 	//General activation bool, set it to false not to draw the dialog box
 	bool activated;
+	bool onlyOnce;
 	bool hasFinished;
 
 public:
@@ -37,7 +38,7 @@ public:
 	void handleInput(float dt) override;
 	void drawSentence(std::string& s);
 	sf::Text getDialog();
-	void setActivated(bool a);
+	void activateOnce();
 	bool getActivated();
 	bool isFinished();
 };

@@ -29,6 +29,7 @@ DialogBox::DialogBox()
 
 	//Global init
 	activated = false;
+	onlyOnce = true;
 	hasFinished = false;
 }
 
@@ -122,9 +123,13 @@ sf::Text DialogBox::getDialog()
 	return message;
 }
 
-void DialogBox::setActivated(bool a)
+void DialogBox::activateOnce()
 {
-	activated = a;
+	if (onlyOnce)
+	{
+		onlyOnce = false;
+		activated = true;
+	}
 }
 
 bool DialogBox::getActivated()

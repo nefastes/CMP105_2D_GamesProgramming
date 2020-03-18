@@ -6,6 +6,7 @@
 #include "Framework/GameState.h"
 #include "Player.h"
 #include "Background.h"
+#include "FrontGround.h"
 #include "Boss.h"
 #include "DialogBox.h"
 #include <string>
@@ -38,6 +39,7 @@ private:
 
 	//Backgrounds stuff
 	Background background;
+	FrontGround frontground;
 	sf::Texture backgroundImage;
 
 	//Boss stuff
