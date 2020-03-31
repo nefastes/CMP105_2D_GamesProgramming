@@ -33,11 +33,13 @@ private:
 	int animMode;				//Is also the attack mode: 0 - idle / 1 - preparing attack / 2 - preparing attack idle / 3 - attacking / 4 - going back to idle from attack / 5 - transform / 6 - taunt
 	bool dialogOver;			//will be set to true whenever the dialog at the beginning is over
 	float oldTime;				//time tracker
+	int rng;					//random number
 
 	//Other
 	sf::RenderWindow* window;
 	bool attackDone;
 	bool hasAttacked() { return attackDone; };
+	void assignRNG(int max, int min);
 
 public:
 	Boss();

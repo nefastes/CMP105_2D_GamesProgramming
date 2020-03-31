@@ -71,38 +71,41 @@ void DialogBox::handleInput(float dt)
 				boxAnim.animate(dt);
 				setTextureRect(boxAnim.getCurrentFrame());
 				textSpeed = .1f;
-				if (input->isKeyDown(sf::Keyboard::F) || input->isKeyDown(sf::Keyboard::Enter))
+				if (input->isKeyDown(sf::Keyboard::F) || input->isKeyDown(sf::Keyboard::Enter) || input->isMouseLDown())
 				{
 					++sentenceTracker;
 					isWriting = true;
+
+					//Reset the skip tracker so it only allows to skip it after .2 seconds it started drawing it
+					skipTime = 0;
 				}
 			}
 			else
 			{
 				++sentenceTracker;
 				isWriting = true;
+
+				//Reset the skip tracker so it only allows to skip it after .2 seconds it started drawing it
+				skipTime = 0;
 			}
 		}
 		if (isWriting)
 		{
-			//TODO: ask the teachers about a way to check if the key was up before this check and get rid of dt below
-
 			skipTime += dt;
-			if(skipTime >= .75f)
-				if (input->isKeyDown(sf::Keyboard::F) || input->isKeyDown(sf::Keyboard::Enter))
-				{
+			if (skipTime >= .2f)
+				if (input->isKeyDown(sf::Keyboard::F) || input->isKeyDown(sf::Keyboard::Enter) || input->isMouseLDown())
 					textSpeed = .01f;
-					skipTime = 0;
-				}
 		}
 	}
 }
 
 void DialogBox::drawSentence(std::string& s)
 {
+	//Draw the sentence letter by letter
 	std::string temp;
 	if (currentLetter <= s.size())
 	{
+		//If the sentence is too big (we have a 3 line sentence), scroll up one line
 		if (currentLetter >= 53 && sentenceTracker == 3)	message.setPosition(50, -50);
 		else												message.setPosition(50, 50);
 

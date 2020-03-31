@@ -100,6 +100,11 @@ void Boss::setDialogState(bool state)
 	dialogOver = state;
 }
 
+void Boss::assignRNG(int max, int min)
+{
+	rng = rand() % max + min;
+}
+
 void Boss::bossPhase1(float dt)
 {
 	if (!taunted)
@@ -121,6 +126,7 @@ void Boss::bossPhase1(float dt)
 				{
 					taunted = true;
 					animMode = 0;
+					assignRNG(10, 5);
 				}
 			}
 			if (animMode == 6)
@@ -149,7 +155,7 @@ void Boss::bossPhase1(float dt)
 			idlePhase1.animate(dt);
 			setTextureRect(idlePhase1.getCurrentFrame());
 			oldTime += dt;
-			if (oldTime > rand() % 15 + 5)
+			if (oldTime > rng)
 			{
 				animMode = 1;
 				oldTime = 0;
@@ -163,6 +169,7 @@ void Boss::bossPhase1(float dt)
 			{
 				animMode = 2;
 				oldTime = 0;
+				assignRNG(6, 2);
 			}
 		}
 		if (animMode == 2)
@@ -170,7 +177,7 @@ void Boss::bossPhase1(float dt)
 			attackIdlePhase1_1.animate(dt);
 			setTextureRect(attackIdlePhase1_1.getCurrentFrame());
 			oldTime += dt;
-			if (oldTime > rand() % 10 + 2)
+			if (oldTime > rng)
 			{
 				animMode = 3;
 				oldTime = 0;
@@ -187,6 +194,7 @@ void Boss::bossPhase1(float dt)
 		{
 			attackIdlePhase1_2.animate(dt);
 			setTextureRect(attackIdlePhase1_2.getCurrentFrame());
+			assignRNG(3, 1);
 			nextAttackPhase1();
 			if (hasAttacked())
 			{
@@ -198,7 +206,7 @@ void Boss::bossPhase1(float dt)
 
 void Boss::nextAttackPhase1()
 {
-	switch (rand() % 3 + 1)
+	switch (rng)
 	{
 	case 1:			attack1_1();		break;
 	case 2:			attack1_2();		break;
