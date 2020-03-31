@@ -1,23 +1,28 @@
 #include "MainMenu.h"
+MainMenu::MainMenu()
+{
+
+}
+
 MainMenu::MainMenu(sf::RenderWindow* hwnd, Input* in, GameState* gs)
 {
-	//Init window and input
+	//Init window, input and gameState
 	window = hwnd;
 	input = in;
 	gameState = gs;
 
 	//Init buttons text strings
 	startButton.setString("START GAME");
-	optionButton.setString("OPTION");
-	creditButton.setString("CREDIT");
+	optionButton.setString("OPTIONS");
+	creditButton.setString("CREDITS");
 	quitButton.setString("QUIT");
 
 	//Create buttons
 	font.loadFromFile("font/PressStart2P-vaV7.ttf");
-	initText(startButton);
-	initText(optionButton);
-	initText(creditButton);
-	initText(quitButton);
+	initText(startButton, font);
+	initText(optionButton, font);
+	initText(creditButton, font);
+	initText(quitButton, font);
 
 	//Position buttons, relative to one of the button height (all the same, so i chose optionButton)
 	startButton.setPosition(window->getSize().x / 2, 2 * window->getSize().y / 3 - 2 * optionButton.getGlobalBounds().height);
@@ -216,9 +221,9 @@ void MainMenu::endDraw()
 	window->display();
 }
 
-void MainMenu::initText(sf::Text& txt)
+void MainMenu::initText(sf::Text& txt, sf::Font& f)
 {
-	txt.setFont(font);
+	txt.setFont(f);
 	txt.setCharacterSize(24);
 	txt.setFillColor(sf::Color::White);
 	txt.setOrigin(txt.getGlobalBounds().width / 2, txt.getGlobalBounds().height / 2);	//Center the text alignment

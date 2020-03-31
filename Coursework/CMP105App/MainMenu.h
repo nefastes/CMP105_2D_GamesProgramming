@@ -7,11 +7,6 @@
 class MainMenu
 {
 private:
-	//Objects from MAIN
-	sf::RenderWindow* window;
-	Input* input;
-	GameState* gameState;
-
 	//Buttons
 	sf::Font font;
 	sf::Text startButton;
@@ -42,16 +37,23 @@ private:
 
 public:
 	//Required functions
+	MainMenu();
 	MainMenu(sf::RenderWindow* hwnd, Input* in, GameState* gs);
 	~MainMenu();
-	void update(float dt);
-	void handleInput(float dt);
-	void render();
+	virtual void update(float dt);
+	virtual void handleInput(float dt);
+	virtual void render();
 	void beginDraw();
 	void endDraw();
 
+protected:
+	//Objects from MAIN
+	sf::RenderWindow* window;
+	Input* input;
+	GameState* gameState;
+
 	//Other functions
-	void initText(sf::Text& txt);
+	void initText(sf::Text& txt, sf::Font& f);
 	void blinkText(sf::Text& txt, float dt);
 };
 
