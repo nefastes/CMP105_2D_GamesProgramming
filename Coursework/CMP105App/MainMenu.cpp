@@ -82,27 +82,19 @@ void MainMenu::update(float dt)
 		switch (selectionTracker)
 		{
 		case 0:
+			setButtonsToWhite();
 			startButton.setFillColor(sf::Color::Yellow);
-			optionButton.setFillColor(sf::Color::White);
-			creditButton.setFillColor(sf::Color::White);
-			quitButton.setFillColor(sf::Color::White);
 			break;
 		case 1:
-			startButton.setFillColor(sf::Color::White);
+			setButtonsToWhite();
 			optionButton.setFillColor(sf::Color::Yellow);
-			creditButton.setFillColor(sf::Color::White);
-			quitButton.setFillColor(sf::Color::White);
 			break;
 		case 2:
-			startButton.setFillColor(sf::Color::White);
-			optionButton.setFillColor(sf::Color::White);
+			setButtonsToWhite();
 			creditButton.setFillColor(sf::Color::Yellow);
-			quitButton.setFillColor(sf::Color::White);
 			break;
 		case 3:
-			startButton.setFillColor(sf::Color::White);
-			optionButton.setFillColor(sf::Color::White);
-			creditButton.setFillColor(sf::Color::White);
+			setButtonsToWhite();
 			quitButton.setFillColor(sf::Color::Yellow);
 		default:
 			break;
@@ -127,10 +119,29 @@ void MainMenu::update(float dt)
 			//When Blinking is finished, change the game state accordingly
 			switch (selectionTracker)
 			{
-			case 0:			gameState->setCurrentState(State::LEVEL);		break;
-			case 1:			gameState->setCurrentState(State::OPTION);		break;
-			case 2:			gameState->setCurrentState(State::CREDITS);		break;
-			default:														break;		//No need of case 3 since the window would have already closed
+			case 0:
+				gameState->setCurrentState(State::LEVEL);
+				selected = false;
+				timePassedTracker = 0;
+				hasFinishedBlinking = false;
+				break;
+			case 1:
+				gameState->setCurrentState(State::OPTION);
+				selected = false;
+				timePassedTracker = 0;
+				hasFinishedBlinking = false;
+				break;
+			case 2:
+				gameState->setCurrentState(State::CREDITS);
+				selected = false;
+				timePassedTracker = 0;
+				hasFinishedBlinking = false;
+				break;
+			default:
+				selected = false;
+				timePassedTracker = 0;
+				break;
+			//No need of case 3 since the window would have already closed
 			}
 		}
 	}
@@ -189,7 +200,9 @@ void MainMenu::handleInput(float dt)
 	}
 
 	//Make a selection
-	if (input->isKeyDown(sf::Keyboard::Enter) || input->isKeyDown(sf::Keyboard::F) || input->isMouseLDown()) selected = true;
+	if (timePassedTracker > .2f)
+		if (input->isKeyDown(sf::Keyboard::Enter) || input->isKeyDown(sf::Keyboard::F) || input->isMouseLDown())
+			selected = true;
 }
 
 // Render level
@@ -253,4 +266,13 @@ void MainMenu::blinkText(sf::Text& txt, float dt)
 		return;
 	}
 	hasFinishedBlinking = true;
+	blinkCount = 0;
+}
+
+void MainMenu::setButtonsToWhite()
+{
+	startButton.setFillColor(sf::Color::White);
+	optionButton.setFillColor(sf::Color::White);
+	creditButton.setFillColor(sf::Color::White);
+	quitButton.setFillColor(sf::Color::White);
 }

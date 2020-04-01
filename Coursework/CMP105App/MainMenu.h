@@ -55,5 +55,6 @@ protected:
 	//Other functions
 	void initText(sf::Text& txt, sf::Font& f);
 	void blinkText(sf::Text& txt, float dt);
+	virtual void setButtonsToWhite();
 };
 
