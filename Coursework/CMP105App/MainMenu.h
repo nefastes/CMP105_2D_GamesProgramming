@@ -4,6 +4,7 @@
 #include "Framework/Collision.h"
 #include "Framework/GameState.h"
 #include "Framework/Animation.h"
+#include "DebugUi.h"
 class MainMenu
 {
 private:
@@ -27,18 +28,10 @@ private:
 	sf::Texture backgroundTex;
 	sf::RectangleShape background[2];
 
-	//Trackers
-	float timePassedTracker;			//Track time
-	unsigned selectionTracker;			//Track which button is highlighted
-	bool selected;						//Track user selection
-	bool isBlinking;					//Track a blinking selected text
-	bool hasFinishedBlinking;			//Track if the blinking of the selected text is finished
-	unsigned blinkCount;				//Track how many blinking have been performed
-
 public:
 	//Required functions
 	MainMenu();
-	MainMenu(sf::RenderWindow* hwnd, Input* in, GameState* gs);
+	MainMenu(sf::RenderWindow* hwnd, Input* in, GameState* gs, DebugUi* dui);
 	~MainMenu();
 	virtual void update(float dt);
 	virtual void handleInput(float dt);
@@ -51,6 +44,16 @@ protected:
 	sf::RenderWindow* window;
 	Input* input;
 	GameState* gameState;
+	DebugUi* debugUi;
+
+	//Since we use those trackers in multiple menus, they must go inside protected
+	//Trackers
+	float timePassedTracker;			//Track time
+	unsigned selectionTracker;			//Track which button is highlighted
+	bool selected;						//Track user selection
+	bool isBlinking;					//Track a blinking selected text
+	unsigned blinkCount;				//Track how many blinking have been performed
+	bool hasFinishedBlinking;			//Track if the blinking of the selected text is finished
 
 	//Other functions
 	void initText(sf::Text& txt, sf::Font& f);

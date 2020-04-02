@@ -4,12 +4,13 @@ MainMenu::MainMenu()
 
 }
 
-MainMenu::MainMenu(sf::RenderWindow* hwnd, Input* in, GameState* gs)
+MainMenu::MainMenu(sf::RenderWindow* hwnd, Input* in, GameState* gs, DebugUi* dui)
 {
 	//Init window, input and gameState
 	window = hwnd;
 	input = in;
 	gameState = gs;
+	debugUi = dui;
 
 	//Init buttons text strings
 	startButton.setString("START GAME");
@@ -160,6 +161,10 @@ void MainMenu::update(float dt)
 	//Animated text update
 	defonotAnim.animate(dt);
 	defonotText.setTextureRect(defonotAnim.getCurrentFrame());
+
+	//Debug infos update
+	if (debugUi->isDebugging())
+		debugUi->updateDebugUi();
 }
 
 void MainMenu::handleInput(float dt)
@@ -218,6 +223,10 @@ void MainMenu::render()
 	window->draw(optionButton);
 	window->draw(creditButton);
 	window->draw(quitButton);
+
+	//Draw debug infos if enabled
+	if (debugUi->isDebugging())
+		window->draw(*debugUi->getUi());
 
 	endDraw();
 }
