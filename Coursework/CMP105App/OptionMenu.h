@@ -3,6 +3,7 @@
 #include "Framework/Input.h"
 #include "Framework/Collision.h"
 #include "Framework/GameState.h"
+#include "Framework/AudioManager.h"
 #include "MainMenu.h"
 class OptionMenu : public MainMenu
 {
@@ -42,7 +43,7 @@ private:
 
 public:
 	//Required functions
-	OptionMenu(sf::RenderWindow* hwnd, Input* in, GameState* gs, DebugUi* dui);
+	OptionMenu(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameState* gs, DebugUi* dui);
 	~OptionMenu();
 	void update(float dt) override;
 	void handleInput(float dt) override;

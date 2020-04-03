@@ -1,9 +1,10 @@
 #include "OptionMenu.h"
-OptionMenu::OptionMenu(sf::RenderWindow* hwnd, Input* in, GameState* gs, DebugUi* dui)
+OptionMenu::OptionMenu(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameState* gs, DebugUi* dui)
 {
 	//Init window, input and gameState
 	window = hwnd;
 	input = in;
+	audio = aud;
 	gameState = gs;
 	debugUi = dui;
 
@@ -81,7 +82,7 @@ OptionMenu::OptionMenu(sf::RenderWindow* hwnd, Input* in, GameState* gs, DebugUi
 
 	//Init option infos
 	frameLimit = 60;
-	musicVolume = 100;
+	musicVolume = 50;
 	verticalSync = false;
 	debugMode = false;
 
@@ -125,12 +126,7 @@ void OptionMenu::update(float dt)
 		//We must not allow any change of selection until this has been made, which is why we
 		//track the selection with the bool "selected".
 		//However, for the "back" and "apply" buttons we want them to blink first
-		if (selectionTracker == 5)
-			if (!hasFinishedBlinking)
-				blinkText(applyButton, dt);
-			else
-				changeSettings();
-		else if (selectionTracker == 6)
+		if (selectionTracker == 6)
 			if (!hasFinishedBlinking)
 				blinkText(backButton, dt);
 			else
@@ -264,6 +260,7 @@ void OptionMenu::applySettings()
 
 	//Music
 	debugUi->setMasterVolume(musicVolume);
+	audio->getMusic()->setVolume(musicVolume);
 
 	//Frame rate
 	window->setFramerateLimit(frameLimit);
@@ -320,9 +317,6 @@ void OptionMenu::changeButtonHighlights()
 
 void OptionMenu::changeSettings()
 {
-	//Changes will be made, thus this tracker needs to be updated
-	appliedSettings = false;
-
 	//Change the settings accordingly
 	if (timePassedTracker > .2f)
 	{
@@ -333,11 +327,17 @@ void OptionMenu::changeSettings()
 			{
 				if (frameLimit > 30)
 					frameLimit -= 30;
+
+				//Changes have been made, thus this tracker needs to be updated
+				appliedSettings = false;
 			}
 			else
 			{
 				if (frameLimit < 240)
 					frameLimit += 30;
+
+				//Changes have been made, thus this tracker needs to be updated
+				appliedSettings = false;
 			}
 			break;
 		case 1:
@@ -345,11 +345,17 @@ void OptionMenu::changeSettings()
 			{
 				if (musicVolume > 0)
 					musicVolume -= 10;
+
+				//Changes have been made, thus this tracker needs to be updated
+				appliedSettings = false;
 			}
 			else
 			{
 				if (musicVolume < 100)
 					musicVolume += 10;
+
+				//Changes have been made, thus this tracker needs to be updated
+				appliedSettings = false;
 			}
 			break;
 		case 2:						//Enable vSync
@@ -357,11 +363,17 @@ void OptionMenu::changeSettings()
 			{
 				verticalSync = true;
 				checkboxes[0].setTextureRect(sf::IntRect(0, 24, 8, 8));
+
+				//Changes have been made, thus this tracker needs to be updated
+				appliedSettings = false;
 			}
 			else
 			{
 				verticalSync = false;
 				checkboxes[0].setTextureRect(sf::IntRect(0, 8, 8, 8));
+
+				//Changes have been made, thus this tracker needs to be updated
+				appliedSettings = false;
 			}
 			break;
 		case 3:						//Enable Debug Mode
@@ -369,14 +381,21 @@ void OptionMenu::changeSettings()
 			{
 				debugMode = true;
 				checkboxes[1].setTextureRect(sf::IntRect(0, 24, 8, 8));
+
+				//Changes have been made, thus this tracker needs to be updated
+				appliedSettings = false;
 			}
 			else
 			{
 				debugMode = false;
 				checkboxes[1].setTextureRect(sf::IntRect(0, 8, 8, 8));
+
+				//Changes have been made, thus this tracker needs to be updated
+				appliedSettings = false;
 			}
 			break;
 		case 4:						//Enable Tutorial
+			//Change the game state to the tutorial level
 
 			break;
 		case 5:						//Apply settings

@@ -4,11 +4,12 @@ MainMenu::MainMenu()
 
 }
 
-MainMenu::MainMenu(sf::RenderWindow* hwnd, Input* in, GameState* gs, DebugUi* dui)
+MainMenu::MainMenu(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameState* gs, DebugUi* dui)
 {
 	//Init window, input and gameState
 	window = hwnd;
 	input = in;
+	audio = aud;
 	gameState = gs;
 	debugUi = dui;
 
@@ -62,11 +63,16 @@ MainMenu::MainMenu(sf::RenderWindow* hwnd, Input* in, GameState* gs, DebugUi* du
 	background[1].setSize(sf::Vector2f(window->getSize().x, window->getSize().y));
 	background[1].setPosition(sf::Vector2f(window->getSize().x, 0));
 
+	//Init audi
+	audio->addMusic("sfx/Mega_Man_2_Menu.ogg", "menu");
+
 	//Init trackers
 	selectionTracker = 0;
 	isBlinking = false;
 	hasFinishedBlinking = false;
 	blinkCount = 0;
+	afkTimeTracker = 0;
+	prevSelection = selectionTracker;
 }
 
 MainMenu::~MainMenu()
@@ -76,86 +82,25 @@ MainMenu::~MainMenu()
 
 void MainMenu::update(float dt)
 {
+	//Play the main menu theme
+	if (audio->getMusic()->getStatus() == sf::SoundSource::Stopped)
+		audio->playMusicbyName("menu");
+
 	//Menu Selection update
 	if (!selected)
-	{
-		//Change the button highlight
-		switch (selectionTracker)
-		{
-		case 0:
-			setButtonsToWhite();
-			startButton.setFillColor(sf::Color::Yellow);
-			break;
-		case 1:
-			setButtonsToWhite();
-			optionButton.setFillColor(sf::Color::Yellow);
-			break;
-		case 2:
-			setButtonsToWhite();
-			creditButton.setFillColor(sf::Color::Yellow);
-			break;
-		case 3:
-			setButtonsToWhite();
-			quitButton.setFillColor(sf::Color::Yellow);
-		default:
-			break;
-		}
-	}
+		changeButtonHighlight();
 	else
-	{
-		if (!hasFinishedBlinking)
-		{
-			//Blink the selection, or close the window immediately, accordingly
-			switch (selectionTracker)
-			{
-			case 0:			blinkText(startButton, dt);			break;
-			case 1:			blinkText(optionButton, dt);		break;
-			case 2:			blinkText(creditButton, dt);		break;
-			case 3:			window->close();					break;
-			default:											break;
-			}
-		}
-		else
-		{
-			//When Blinking is finished, change the game state accordingly
-			switch (selectionTracker)
-			{
-			case 0:
-				gameState->setCurrentState(State::LEVEL);
-				selected = false;
-				timePassedTracker = 0;
-				hasFinishedBlinking = false;
-				break;
-			case 1:
-				gameState->setCurrentState(State::OPTION);
-				selected = false;
-				timePassedTracker = 0;
-				hasFinishedBlinking = false;
-				break;
-			case 2:
-				gameState->setCurrentState(State::CREDITS);
-				selected = false;
-				timePassedTracker = 0;
-				hasFinishedBlinking = false;
-				break;
-			default:
-				selected = false;
-				timePassedTracker = 0;
-				break;
-			//No need of case 3 since the window would have already closed
-			}
-		}
-	}
+		makeSelection(dt);
 
 	//Moving background update
 	for (unsigned i = 0; i < 2; ++i)
-	{
 		background[i].move(sf::Vector2f(-100, 0) * dt);
-		if (background[i].getPosition().x + background[i].getSize().x <= 0)		//Reset position to the right if hidden left
-		{
-			background[i].setPosition(sf::Vector2f(window->getSize().x, 0));
-			background[i].move(sf::Vector2f(-100, 0) * dt);						//need to move it again or we will have a black line
-		}
+	//Instead of moving them one after another each time one is outside of the screen, reset both positions once
+	//the first once is out of bounds. That will prevent de-sync
+	if (background[0].getPosition().x + background[0].getSize().x <= 0)		//Reset position to the right if hidden left
+	{
+		background[0].setPosition(sf::Vector2f(0, 0));
+		background[1].setPosition(sf::Vector2f(window->getSize().x, 0));
 	}
 
 	//Animated text update
@@ -165,6 +110,29 @@ void MainMenu::update(float dt)
 	//Debug infos update
 	if (debugUi->isDebugging())
 		debugUi->updateDebugUi();
+
+	//Change to the intro cinematic after 10s if nothing happens in the meantime
+	afkTimeTracker += dt;
+	if (selectionTracker == prevSelection && !selected)
+	{
+		if (afkTimeTracker >= 10.f)
+		{
+			//Reset trackers, stop music and change game state
+			prevSelection = selectionTracker;
+			afkTimeTracker = 0;
+			selected = false;
+			timePassedTracker = 0;
+			hasFinishedBlinking = false;
+			audio->stopAllMusic();
+			gameState->setCurrentState(State::INTRO);
+		}
+	}
+	else
+	{
+		prevSelection = selectionTracker;
+		afkTimeTracker = 0;
+	}
+
 }
 
 void MainMenu::handleInput(float dt)
@@ -174,35 +142,7 @@ void MainMenu::handleInput(float dt)
 
 	//Change the selection
 	if (!selected)
-	{
-		if (timePassedTracker > .2f)		//Allow a change of selection every .2 seconds, so that we do not need to be a ninja to select
-		{
-			//Keyboard selection highlight
-			if (input->isKeyDown(sf::Keyboard::Up))
-			{
-				if (selectionTracker == 0) selectionTracker = 3;
-				else --selectionTracker;
-				timePassedTracker = 0;
-			}
-			if (input->isKeyDown(sf::Keyboard::Down))
-			{
-				if (selectionTracker == 3) selectionTracker = 0;
-				else ++selectionTracker;
-				timePassedTracker = 0;
-			}
-
-			//Mouse selection highlight
-			sf::Vector2i mousePos = sf::Vector2i(input->getMouseX(), input->getMouseY());
-			if (Collision::checkBoundingBox(&startButton.getGlobalBounds(), mousePos))
-				selectionTracker = 0;
-			if (Collision::checkBoundingBox(&optionButton.getGlobalBounds(), mousePos))
-				selectionTracker = 1;
-			if (Collision::checkBoundingBox(&creditButton.getGlobalBounds(), mousePos))
-				selectionTracker = 2;
-			if (Collision::checkBoundingBox(&quitButton.getGlobalBounds(), mousePos))
-				selectionTracker = 3;
-		}
-	}
+		changeSelectionTracker();
 
 	//Make a selection
 	if (timePassedTracker > .2f)
@@ -284,4 +224,114 @@ void MainMenu::setButtonsToWhite()
 	optionButton.setFillColor(sf::Color::White);
 	creditButton.setFillColor(sf::Color::White);
 	quitButton.setFillColor(sf::Color::White);
+}
+
+void MainMenu::changeButtonHighlight()
+{
+	//Change the button highlight accordingly
+	switch (selectionTracker)
+	{
+	case 0:
+		setButtonsToWhite();
+		startButton.setFillColor(sf::Color::Yellow);
+		break;
+	case 1:
+		setButtonsToWhite();
+		optionButton.setFillColor(sf::Color::Yellow);
+		break;
+	case 2:
+		setButtonsToWhite();
+		creditButton.setFillColor(sf::Color::Yellow);
+		break;
+	case 3:
+		setButtonsToWhite();
+		quitButton.setFillColor(sf::Color::Yellow);
+	default:
+		break;
+	}
+}
+
+void MainMenu::makeSelection(float dt)
+{
+	//Before making a selection, check if the button has correclty been blinking
+	if (!hasFinishedBlinking)
+	{
+		//Blink the selection, or close the window immediately, accordingly
+		switch (selectionTracker)
+		{
+		case 0:			blinkText(startButton, dt);			break;
+		case 1:			blinkText(optionButton, dt);		break;
+		case 2:			blinkText(creditButton, dt);		break;
+		case 3:			window->close();					break;
+		default:											break;
+		}
+	}
+	else
+	{
+		//When Blinking is finished, change the game state accordingly
+		switch (selectionTracker)
+		{
+		case 0:
+			//Reset trackers and change game state
+			prevSelection = selectionTracker;
+			afkTimeTracker = 0;
+			selected = false;
+			timePassedTracker = 0;
+			hasFinishedBlinking = false;
+			gameState->setCurrentState(State::LEVEL);
+			break;
+		case 1:
+			//Reset trackers and change game state
+			prevSelection = selectionTracker;
+			afkTimeTracker = 0;
+			selected = false;
+			timePassedTracker = 0;
+			hasFinishedBlinking = false;
+			gameState->setCurrentState(State::OPTION);
+			break;
+		case 2:
+			//Reset trackers and change game state
+			prevSelection = selectionTracker;
+			afkTimeTracker = 0;
+			selected = false;
+			timePassedTracker = 0;
+			hasFinishedBlinking = false;
+			gameState->setCurrentState(State::CREDITS);
+			break;
+		default:
+			break;
+			//No need of case 3 since the window would have already closed
+		}
+	}
+}
+
+void MainMenu::changeSelectionTracker()
+{
+	if (timePassedTracker > .2f)		//Allow a change of selection every .2 seconds, so that we do not need to be a ninja to select
+	{
+		//Keyboard selection highlight
+		if (input->isKeyDown(sf::Keyboard::Up))
+		{
+			if (selectionTracker == 0) selectionTracker = 3;
+			else --selectionTracker;
+			timePassedTracker = 0;
+		}
+		if (input->isKeyDown(sf::Keyboard::Down))
+		{
+			if (selectionTracker == 3) selectionTracker = 0;
+			else ++selectionTracker;
+			timePassedTracker = 0;
+		}
+
+		//Mouse selection highlight
+		sf::Vector2i mousePos = sf::Vector2i(input->getMouseX(), input->getMouseY());
+		if (Collision::checkBoundingBox(&startButton.getGlobalBounds(), mousePos))
+			selectionTracker = 0;
+		if (Collision::checkBoundingBox(&optionButton.getGlobalBounds(), mousePos))
+			selectionTracker = 1;
+		if (Collision::checkBoundingBox(&creditButton.getGlobalBounds(), mousePos))
+			selectionTracker = 2;
+		if (Collision::checkBoundingBox(&quitButton.getGlobalBounds(), mousePos))
+			selectionTracker = 3;
+	}
 }
