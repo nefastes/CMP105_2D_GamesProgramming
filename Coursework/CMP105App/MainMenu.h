@@ -37,10 +37,12 @@ public:
 	virtual void update(float dt);
 	virtual void handleInput(float dt);
 	virtual void render();
+
+protected:
+	//Draw functions
 	void beginDraw();
 	void endDraw();
 
-protected:
 	//Objects from MAIN
 	sf::RenderWindow* window;
 	Input* input;
@@ -48,7 +50,7 @@ protected:
 	GameState* gameState;
 	DebugUi* debugUi;
 
-	//Since we use those trackers in multiple menus, they must go inside protected
+	//Since we (may) use those trackers in multiple menus, they must go inside protected
 	//Trackers
 	float timePassedTracker;			//Track time
 	unsigned selectionTracker;			//Track which button is highlighted
@@ -56,17 +58,19 @@ protected:
 	bool isBlinking;					//Track a blinking selected text
 	unsigned blinkCount;				//Track how many blinking have been performed
 	bool hasFinishedBlinking;			//Track if the blinking of the selected text is finished
-	float afkTimeTracker;				//Track the time were nothing happens in the menu, used to change to the intro cinematic after 10s
+	float afkTimeTracker;				//Track the time were nothing happens in the menu, used to change to the intro cinematic after 30s
 	unsigned prevSelection;				//Store the selectionTracker of the previous frame
 
 	//Other functions
 	void initText(sf::Text& txt, sf::Font& f);
 	void blinkText(sf::Text& txt, float dt);
 	virtual void setButtonsToWhite();
+	void changeGameState(unsigned state);		//0 = main menu, 1 = stage select, 2 = options, 3 = credits
 
 private:
 	void changeButtonHighlight();
 	void makeSelection(float dt);
 	void changeSelectionTracker();
+	void checkAfkTime();
 };
 

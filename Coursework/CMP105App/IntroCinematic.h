@@ -27,6 +27,7 @@ private:
 	sf::Texture fortressFrontgroundTex;
 	sf::Texture fortressLightningTex;
 	sf::Texture megamanTex;
+	sf::Texture laserTex;
 
 	//Shapes
 	sf::RectangleShape logoDisplay;
@@ -39,6 +40,7 @@ private:
 	sf::RectangleShape fortressFrontground;
 	sf::RectangleShape fortressLightning;
 	sf::RectangleShape finalMegaman;
+	sf::RectangleShape finalLaser;
 
 	//Sentences
 	sf::Font font;
@@ -59,6 +61,8 @@ private:
 	bool conflict;				//Tracks if the conflict has been displayed
 	bool fortress;				//Tracks if the fortress has been displayed
 	bool megaman;				//Tracks if the final scene has been displayed
+	bool megaFront;				//Tracks whether megaman is to be drawn behind or in front of the black fading screen
+	bool megaJump;				//Changed to true when we want to change the megaman texture rect to the jump one
 
 	//Trackers
 	float timePassedTracker;
@@ -87,5 +91,6 @@ private:
 	void updateFortress(float dt);
 	void updateFinalScreen(float dt);
 	void fadeToBlackTransition(float transiTime, float dt, bool fadeIn);
+	void changeGameStateToMenu();
 };
 

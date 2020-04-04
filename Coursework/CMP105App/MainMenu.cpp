@@ -63,8 +63,13 @@ MainMenu::MainMenu(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameSta
 	background[1].setSize(sf::Vector2f(window->getSize().x, window->getSize().y));
 	background[1].setPosition(sf::Vector2f(window->getSize().x, 0));
 
-	//Init audi
+	//Init audio music and sound effects
 	audio->addMusic("sfx/Mega_Man_2_Menu.ogg", "menu");
+	audio->addMusic("sfx/Megaman_1_Stage_Select.ogg", "stageSelect");
+	audio->addMusic("sfx/Megaman_1_Stage_Start.ogg", "stageStart");
+	audio->addSound("sfx/Megaman_1_Select.ogg", "select");
+	audio->addSound("sfx/Megaman_1_Press.ogg", "press");
+	audio->addSound("sfx/Megaman_1_Change_Selection.ogg", "changeSelection");
 
 	//Init trackers
 	selectionTracker = 0;
@@ -84,7 +89,10 @@ void MainMenu::update(float dt)
 {
 	//Play the main menu theme
 	if (audio->getMusic()->getStatus() == sf::SoundSource::Stopped)
+	{
 		audio->playMusicbyName("menu");
+		audio->getMusic()->setLoop(true);
+	}
 
 	//Menu Selection update
 	if (!selected)
@@ -111,28 +119,9 @@ void MainMenu::update(float dt)
 	if (debugUi->isDebugging())
 		debugUi->updateDebugUi();
 
-	//Change to the intro cinematic after 10s if nothing happens in the meantime
+	//Change to the intro cinematic after 30s if nothing happens in the meantime
 	afkTimeTracker += dt;
-	if (selectionTracker == prevSelection && !selected)
-	{
-		if (afkTimeTracker >= 10.f)
-		{
-			//Reset trackers, stop music and change game state
-			prevSelection = selectionTracker;
-			afkTimeTracker = 0;
-			selected = false;
-			timePassedTracker = 0;
-			hasFinishedBlinking = false;
-			audio->stopAllMusic();
-			gameState->setCurrentState(State::INTRO);
-		}
-	}
-	else
-	{
-		prevSelection = selectionTracker;
-		afkTimeTracker = 0;
-	}
-
+	checkAfkTime();
 }
 
 void MainMenu::handleInput(float dt)
@@ -147,7 +136,11 @@ void MainMenu::handleInput(float dt)
 	//Make a selection
 	if (timePassedTracker > .2f)
 		if (input->isKeyDown(sf::Keyboard::Enter) || input->isKeyDown(sf::Keyboard::F) || input->isMouseLDown())
+		{
 			selected = true;
+			//Selection made, play the selection sound
+			audio->playSoundbyName("select");
+		}
 }
 
 // Render level
@@ -271,36 +264,11 @@ void MainMenu::makeSelection(float dt)
 		//When Blinking is finished, change the game state accordingly
 		switch (selectionTracker)
 		{
-		case 0:
-			//Reset trackers and change game state
-			prevSelection = selectionTracker;
-			afkTimeTracker = 0;
-			selected = false;
-			timePassedTracker = 0;
-			hasFinishedBlinking = false;
-			gameState->setCurrentState(State::LEVEL);
-			break;
-		case 1:
-			//Reset trackers and change game state
-			prevSelection = selectionTracker;
-			afkTimeTracker = 0;
-			selected = false;
-			timePassedTracker = 0;
-			hasFinishedBlinking = false;
-			gameState->setCurrentState(State::OPTION);
-			break;
-		case 2:
-			//Reset trackers and change game state
-			prevSelection = selectionTracker;
-			afkTimeTracker = 0;
-			selected = false;
-			timePassedTracker = 0;
-			hasFinishedBlinking = false;
-			gameState->setCurrentState(State::CREDITS);
-			break;
-		default:
-			break;
-			//No need of case 3 since the window would have already closed
+		case 0:		changeGameState(1);			break;
+		case 1:		changeGameState(2);			break;
+		case 2:		changeGameState(3);			break;
+		default:								break;
+		//No need of case 3 since the window would have already closed
 		}
 	}
 }
@@ -333,5 +301,47 @@ void MainMenu::changeSelectionTracker()
 			selectionTracker = 2;
 		if (Collision::checkBoundingBox(&quitButton.getGlobalBounds(), mousePos))
 			selectionTracker = 3;
+	}
+}
+
+void MainMenu::checkAfkTime()
+{
+	if (selectionTracker == prevSelection && !selected)
+	{
+		if (afkTimeTracker >= 30.f)
+			changeGameState(4);
+	}
+	else
+	{
+		//Selection highlight has changed, play the change sound
+		if (!selected)
+			audio->playSoundbyName("changeSelection");
+		prevSelection = selectionTracker;
+		afkTimeTracker = 0;
+	}
+}
+
+void MainMenu::changeGameState(unsigned state)
+{
+	//Reset trackers
+	prevSelection = selectionTracker;
+	afkTimeTracker = 0;
+	selected = false;
+	timePassedTracker = 0;
+	hasFinishedBlinking = false;
+
+	//Stop music unless we are going to the option menu (2) or going back to the main menu (0)
+	if (state != 2 && state != 0)
+		audio->stopAllMusic();
+	
+	//switch the game state and change accordingly
+	switch (state)
+	{
+	case 0:	gameState->setCurrentState(State::MENU);			break;
+	case 1:	gameState->setCurrentState(State::STAGESELECT);		break;
+	case 2:	gameState->setCurrentState(State::OPTION);			break;
+	case 3:	gameState->setCurrentState(State::CREDITS);			break;
+	case 4: gameState->setCurrentState(State::INTRO);			break;
+	default:													break;
 	}
 }

@@ -88,6 +88,7 @@ OptionMenu::OptionMenu(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, Gam
 
 	//Init trackers
 	selectionTracker = 0;
+	prevSelection = selectionTracker;
 	timePassedTracker = 0;
 	selected = false;
 	leftArrow = false;
@@ -158,7 +159,14 @@ void OptionMenu::handleInput(float dt)
 		if (selectionTracker > 1)
 		{
 			if (input->isKeyDown(sf::Keyboard::Enter) || input->isKeyDown(sf::Keyboard::F) || input->isMouseLDown())
+			{
+				//For the "back" button play a different sound that others
+				if (selectionTracker != 6)
+					audio->playSoundbyName("press");
+				else
+					audio->playSoundbyName("select");
 				selected = true;
+			}
 		}
 		else
 		{
@@ -168,11 +176,13 @@ void OptionMenu::handleInput(float dt)
 			{
 				leftArrow = true;
 				selected = true;
+				audio->playSoundbyName("press");
 			}
 			if (input->isKeyDown(sf::Keyboard::Right) || input->isMouseLDown() && !leftArrow)
 			{
 				leftArrow = false;
 				selected = true;
+				audio->playSoundbyName("press");
 			}
 		}
 	}
@@ -244,7 +254,8 @@ void OptionMenu::applySettings()
 		debugUi->setVerticalSync(true);
 		window->setVerticalSyncEnabled(true);
 		//SFML Vsync only supports up to 60 fps
-		frameLimit = 60;
+		if(frameLimit > 60)
+			frameLimit = 60;
 	}
 	else
 	{
@@ -399,14 +410,10 @@ void OptionMenu::changeSettings()
 
 			break;
 		case 5:						//Apply settings
-			//Reset the blink check (in order to work correctly on the next blink in the option menu) and apply
-			hasFinishedBlinking = false;
 			applySettings();
 			break;
 		case 6:
-			//Reset the blink check (in order to work on the next time we go the the option screen) and change state
-			hasFinishedBlinking = false;
-			gameState->setCurrentState(State::MENU);
+			changeGameState(0);
 			break;
 		default:
 			break;
@@ -471,5 +478,12 @@ void OptionMenu::trackButtonSelection()
 			selectionTracker = 5;
 		if (Collision::checkBoundingBox(&backButton.getGlobalBounds(), mousePos))
 			selectionTracker = 6;
+
+		//If change of selection has been made, play an audio sound
+		if (prevSelection != selectionTracker)
+		{
+			audio->playSoundbyName("changeSelection");
+			prevSelection = selectionTracker;
+		}
 	}
 }
