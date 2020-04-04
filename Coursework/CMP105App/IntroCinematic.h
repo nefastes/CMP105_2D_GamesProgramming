@@ -65,9 +65,9 @@ private:
 	bool megaJump;				//Changed to true when we want to change the megaman texture rect to the jump one
 
 	//Trackers
-	float timePassedTracker;
+	float timePassedTracker;	//Tracks the time
 
-	//Variables for the fade screen
+	//Variables and trackers for the fade screen
 	uint8_t alpha;			//Initialise an aplha variable that we will change over time (starts transparent as we want a fade in
 	bool hasFadeIn;			//Bool to check if the fade in has been made
 	bool isFadingIn;		//Bool to check if a transition is currently being made
@@ -82,10 +82,10 @@ public:
 	void handleInput(float dt);
 	void update(float dt);
 	void render();
-	void beginDraw();
-	void endDraw();
 
 private:
+	void beginDraw();
+	void endDraw();
 	void updateHouse(float dt);
 	void updateConflict(float dt);
 	void updateFortress(float dt);

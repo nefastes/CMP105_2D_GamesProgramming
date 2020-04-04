@@ -125,7 +125,7 @@ void IntroCinematic::update(float dt)
 	{
 
 		//Wait 2 seconds to make it more confortable
-		if (timePassedTracker > 2.f)
+		if (timePassedTracker >= 2.f)
 		{
 			//Play the Infogrames sound
 			if (audio->getMusic()->getStatus() == sf::SoundSource::Stopped)
