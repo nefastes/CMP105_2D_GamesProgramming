@@ -65,7 +65,7 @@ protected:
 	void initText(sf::Text& txt, sf::Font& f);
 	void blinkText(sf::Text& txt, float dt);
 	virtual void setButtonsToWhite();
-	void changeGameState(unsigned state);		//0 = main menu, 1 = stage select, 2 = options, 3 = credits
+	void changeGameState(unsigned state);		//0 = main menu, 1 = stage select, 2 = options, 3 = credits, 4 = intro, 5 = tutorial
 
 private:
 	void changeButtonHighlight();

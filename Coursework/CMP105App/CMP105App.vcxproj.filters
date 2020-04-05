@@ -84,6 +84,12 @@
     <ClCompile Include="StageMenu.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Tutorial.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TileManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="README.txt">
@@ -155,6 +161,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StageMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Tutorial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TileManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

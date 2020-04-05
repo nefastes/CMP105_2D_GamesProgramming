@@ -136,11 +136,11 @@ void IntroCinematic::update(float dt)
 
 			//Only fade out if it's not fading in
 			if (!isFadingIn)
-				fadeToBlackTransition(2.f, dt, false);		//fade out for 2 seconds
+				fadeToBlackTransition(255 / 60 / 2, dt, false);		//fade out for 2 seconds
 			//Since the fade out took 2 seconds, wait 8 seconds so the logo is fully shown for 6 seconds
-			if (timePassedTracker >= 8.f)
+			if (audio->getMusic()->getPlayingOffset() >= sf::seconds(8.f))
 			{
-				fadeToBlackTransition(2.f, dt, true);		//fade in for 2 seconds
+				fadeToBlackTransition(255 / 60 / 2, dt, true);		//fade in for 2 seconds
 				//When the fading in has been done, update these trackers to start displaying the next cinematic screen
 				if (hasFadeIn)
 				{
@@ -162,15 +162,15 @@ void IntroCinematic::update(float dt)
 
 		//Only fade out if it's not fading in
 		if (!isFadingIn)
-			fadeToBlackTransition(2.f, dt, false);		//fade out for 2 seconds
+			fadeToBlackTransition(255 / 60 / 2, dt, false);		//fade out for 2 seconds
 
 		//Update the house screen
 		updateHouse(dt);
 
 		//Since the fade out took 2 seconds, wait 3 seconds so that the screen is fully shown for 1 second
-		if (timePassedTracker >= 5.f)
+		if (timePassedTracker >= 6.f)
 		{
-			fadeToBlackTransition(2.f, dt, true);		//fade in for 2 seconds
+			fadeToBlackTransition(255 / 60 / 2, dt, true);		//fade in for 2 seconds
 			//When the fading in has been done, update these trackers to start displaying the next cinematic screen
 			if (hasFadeIn)
 			{
@@ -183,7 +183,7 @@ void IntroCinematic::update(float dt)
 	{
 		//Only fade out if it's not fading in
 		if (!isFadingIn)
-			fadeToBlackTransition(2.f, dt, false);		//fade out for 2 seconds
+			fadeToBlackTransition(255 / 60 / 2, dt, false);		//fade out for 2 seconds
 
 		//Update the conflict screen
 		updateConflict(dt);
@@ -192,9 +192,9 @@ void IntroCinematic::update(float dt)
 		message.setString(sentence[1]);
 
 		//Since the fade out took 2 seconds, wait 3 seconds so that the screen is fully shown for 1 second
-		if (timePassedTracker >= 5.f)
+		if (timePassedTracker >= 6.f)
 		{
-			fadeToBlackTransition(2.f, dt, true);		//fade in for 2 seconds
+			fadeToBlackTransition(255 / 60 / 2, dt, true);		//fade in for 2 seconds
 			//When the fading in has been done, update these trackers to start displaying the next cinematic screen
 			if (hasFadeIn)
 			{
@@ -207,7 +207,7 @@ void IntroCinematic::update(float dt)
 	{
 		//Only fade out if it's not fading in
 		if (!isFadingIn)
-			fadeToBlackTransition(2.f, dt, false);		//fade out for 2 seconds
+			fadeToBlackTransition(255 / 60 / 2, dt, false);		//fade out for 2 seconds
 
 		//Update the fortress screen
 		lightningBolt.animate(dt);
@@ -218,9 +218,9 @@ void IntroCinematic::update(float dt)
 		message.setString(sentence[2]);
 
 		//Since the fade out took 2 seconds, wait 3 seconds so that the screen is fully shown for 1 second
-		if (timePassedTracker >= 5.f)
+		if (timePassedTracker >= 8.f)
 		{
-			fadeToBlackTransition(2.f, dt, true);		//fade in for 2 seconds
+			fadeToBlackTransition(255 / 60 / 2, dt, true);		//fade in for 2 seconds
 			//When the fading in has been done, update these trackers to start displaying the next cinematic screen
 			if (hasFadeIn)
 			{
@@ -233,7 +233,7 @@ void IntroCinematic::update(float dt)
 	{
 		//Only fade out if it's not fading in
 		if (!isFadingIn)
-			fadeToBlackTransition(2.f, dt, false);		//fade out for 2 seconds
+			fadeToBlackTransition(255 / 60 / 2, dt, false);		//fade out for 2 seconds
 
 		//Update the Final screen
 		updateFinalScreen(dt);
@@ -242,22 +242,20 @@ void IntroCinematic::update(float dt)
 		message.setString(sentence[3]);
 
 		//Since the fade out took 2 seconds, wait 3 seconds so that the screen is fully shown for 1 second
-		if (timePassedTracker >= 5.f)
+		if (timePassedTracker >= 7.f)
 		{
 			megaFront = true;							//Make megaman appearing in the front layer
-			fadeToBlackTransition(2.f, dt, true);		//fade in for 2 seconds
+			fadeToBlackTransition(255 / 60 / 2, dt, true);		//fade in for 2 seconds
 			//When the fading in has been done, change game state to menu
 			if (hasFadeIn)
 			{
 				//Make megaman jump on the last note of the song
-				if (timePassedTracker >= 10.f)
-				{
+				if (audio->getMusic()->getPlayingOffset() >= sf::seconds(37.75f))
 					megaJump = true;
-					if (audio->getMusic()->getStatus() == sf::SoundSource::Stopped)		//Change the game state at the end of the soundtrack
-					{
-						megaman = true;			//Mean the intro cinematic is now finished
-						changeGameStateToMenu();
-					}
+				if (megaJump && audio->getMusic()->getStatus() == sf::SoundSource::Stopped)		//Change the game state at the end of the soundtrack
+				{
+					megaman = true;			//Mean the intro cinematic is now finished
+					changeGameStateToMenu();
 				}
 			}
 		}
@@ -399,9 +397,12 @@ void IntroCinematic::fadeToBlackTransition(float transiTime, float dt, bool fade
 	//Fade in
 	if (alpha < 255 && fadeIn)
 	{
-		if (fadeTimeTracker > transiTime / 2 / 255)
+		if (fadeTimeTracker >= transiTime / 255)
 		{
-			alpha += 1;
+			if (alpha + std::round((1 * dt) / (transiTime / 255)) < 255)
+				alpha += std::round((1 * dt) / (transiTime / 255));
+			else
+				alpha = 255;
 			fadeTimeTracker = 0;
 		}
 
@@ -415,9 +416,12 @@ void IntroCinematic::fadeToBlackTransition(float transiTime, float dt, bool fade
 	//Fade out
 	else if (alpha > 0 && !fadeIn)
 	{
-		if (fadeTimeTracker > transiTime / 2 / 255)
+		if (fadeTimeTracker > transiTime / 255)
 		{
-			alpha -= 1;
+			if (alpha - std::round((1 * dt) / (transiTime / 255)) > 0)
+				alpha -= std::round((1 * dt) / (transiTime / 255));
+			else
+				alpha = 0;
 			fadeTimeTracker = 0;
 		}
 

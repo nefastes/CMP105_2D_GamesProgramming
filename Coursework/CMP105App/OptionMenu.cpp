@@ -272,6 +272,7 @@ void OptionMenu::applySettings()
 	//Music
 	debugUi->setMasterVolume(musicVolume);
 	audio->getMusic()->setVolume(musicVolume);
+	audio->setSoundsVolume(musicVolume);
 
 	//Frame rate
 	window->setFramerateLimit(frameLimit);
@@ -407,7 +408,7 @@ void OptionMenu::changeSettings()
 			break;
 		case 4:						//Enable Tutorial
 			//Change the game state to the tutorial level
-
+			changeGameState(5);
 			break;
 		case 5:						//Apply settings
 			applySettings();

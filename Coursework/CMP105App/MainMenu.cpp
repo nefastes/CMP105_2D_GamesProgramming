@@ -342,6 +342,7 @@ void MainMenu::changeGameState(unsigned state)
 	case 2:	gameState->setCurrentState(State::OPTION);			break;
 	case 3:	gameState->setCurrentState(State::CREDITS);			break;
 	case 4: gameState->setCurrentState(State::INTRO);			break;
+	case 5: gameState->setCurrentState(State::TUTORIAL);		break;
 	default:													break;
 	}
 }

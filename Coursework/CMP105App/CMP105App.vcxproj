@@ -179,6 +179,8 @@
     <ClCompile Include="OptionMenu.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="StageMenu.cpp" />
+    <ClCompile Include="TileManager.cpp" />
+    <ClCompile Include="Tutorial.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="DO_NOT_EDIT.txt" />
@@ -206,6 +208,8 @@
     <ClInclude Include="OptionMenu.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="StageMenu.h" />
+    <ClInclude Include="TileManager.h" />
+    <ClInclude Include="Tutorial.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

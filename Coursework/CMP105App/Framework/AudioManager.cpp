@@ -17,8 +17,9 @@ void AudioManager::addSound(std::string filename, std::string lname)
 {
 	
 	sounds.push_back(s);
+	sounds.back().sound.setVolume(50);			//Set a default sound volume of 50 (same as music)
 	sounds.back().loadSound(filename, lname);
-	
+
 }
 
 // Play back sound based on provided key.
@@ -53,6 +54,12 @@ sf::Sound* AudioManager::getSound(std::string lname)
 		}
 	}
 	return nullptr;
+}
+
+void AudioManager::setSoundsVolume(unsigned vol)
+{
+	for (unsigned i = 0; i < sounds.size(); i++)
+		sounds[i].sound.setVolume(vol);
 }
 
 // Stores filename and key of music file. These are not loaded into memory but streamed when required.

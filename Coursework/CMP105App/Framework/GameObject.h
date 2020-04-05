@@ -34,6 +34,9 @@ public:
 	void setCollisionBox(float x, float y, float width, float height) { collisionBox = sf::FloatRect(x, y, width, height); };
 	void setCollisionBox(sf::FloatRect fr) { collisionBox = fr; };
 	virtual void collisionResponse(GameObject* collider);
+	//Set and get the object ID so we can have different collisions responses based on that as well
+	void setTargetName(std::string tname) { targetname = tname; };		//ID exmaples: "world", "ladder", "door", etc.
+	std::string getTargetname() { return targetname; };
 
 	// Set the input component
 	void setInput(Input* in) { input = in; };
@@ -46,6 +49,9 @@ protected:
 	// Collision vars
 	sf::FloatRect collisionBox;
 	bool collider;
+
+	//Additionnal informations (ID used for tiles)
+	std::string targetname;
 
 	// input component
 	Input* input;

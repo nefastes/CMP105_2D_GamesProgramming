@@ -23,6 +23,8 @@ public:
 	void stopAllSounds();
 	// Returns the sound object (based on key string). Can be useful for tracking play state, looping, volume etc.
 	sf::Sound* getSound(std::string lname);
+	//Set the volume for all added sounds
+	void setSoundsVolume(unsigned vol);
 
 	// Add music object, provide file path and key string.
 	void addMusic(std::string filename, std::string lname);

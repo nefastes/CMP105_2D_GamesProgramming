@@ -59,7 +59,7 @@ StageMenu::StageMenu(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameS
 			bossNames[i].setPosition(selectionBoxes[i].getPosition().x - bossNames[i].getGlobalBounds().width, selectionBoxes[i].getPosition().y);
 	}
 	bossNames[0].setFillColor(sf::Color::Yellow);
-	bossNames[1].setString("SCIENCEMAN");
+	bossNames[1].setString("SCIMAN");
 
 	//Init trackers
 	selectionTracker = 0;
