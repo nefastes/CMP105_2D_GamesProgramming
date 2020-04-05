@@ -21,6 +21,10 @@ private:
 	//Create the tileManager object
 	TileManager tileManager;
 
+	//Create the player object
+	sf::Texture playerTex;
+	Player player;
+
 public:
 	Tutorial(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameState* gs, DebugUi* dui);
 	~Tutorial();

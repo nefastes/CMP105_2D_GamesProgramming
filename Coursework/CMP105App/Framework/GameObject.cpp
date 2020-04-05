@@ -50,3 +50,16 @@ sf::FloatRect GameObject::getCollisionBox() {
 void GameObject::collisionResponse(GameObject * collider)
 {
 }
+
+void GameObject::setCollisionBoxColor(sf::Color color)
+{
+	debugCollisionBox.setOutlineColor(color);
+}
+
+void GameObject::updateDebugBoxes()
+{
+	debugSize.setSize(sf::Vector2f(getSize()));
+	debugSize.setPosition(getPosition());
+	debugCollisionBox.setSize(sf::Vector2f(getCollisionBox().width, getCollisionBox().height));
+	debugCollisionBox.setPosition(getPosition());
+}

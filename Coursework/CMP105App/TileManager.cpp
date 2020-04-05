@@ -1,13 +1,14 @@
 #include "TileManager.h"
 TileManager::TileManager()
 {
+
 	//Load the tile sheet
 	tileMap.loadTexture("custom_sprites/NES_Mega_Man_Tiles.PNG");
 
 	for (int i = 0; i <= 34; i++)
 	{
-		tile.setSize(sf::Vector2f(75, 75));		//We want the screen to have 9 tiles vertically and 16 tiles horiyontally (adjut later)
-		tile.setCollisionBox(0, 0, 75, 75);
+		tile.setSize(sf::Vector2f(50, 50));		//We will be able to draw 13.5 (14) tiles vertically and 24 tiles horizontally
+		tile.setCollisionBox(0, 0, 50, 50);
 		//all normal non colliding tiles init
 		if (i < 22)
 		{
@@ -83,9 +84,38 @@ TileManager::~TileManager()
 
 }
 
+void TileManager::update(float dt, Player& p)
+{
+	bool hasCollided = false;
+	std::vector<GameObject>* world = tileMap.getLevel();
+	for (unsigned i = 0; i < (int)world->size(); ++i)
+	{
+		if ((*world)[i].isCollider())
+		{
+			if (Collision::checkBoundingBox(&p, &(*world)[i]))
+			{
+				p.collisionResponse(&(*world)[i]);
+				hasCollided = true;
+			}
+		}
+	}
+	if (!hasCollided) p.setStates(false, false, false);	//Need this line to re-enable controls and physics in air
+}
+
 void TileManager::render(sf::RenderWindow* window)
 {
 	tileMap.render(window);
+
+	//Debug tiles
+	std::vector<GameObject>* world = tileMap.getLevel();
+	for (unsigned i = 0; i < (int)world->size(); ++i)
+	{
+		if (debugUi->isDebugging())
+		{
+			(*world)[i].updateDebugBoxes();
+			window->draw(*(*world)[i].getDebugCollisionBox());
+		}
+	}
 }
 
 void TileManager::createMap(Maps mapMode)
@@ -94,17 +124,22 @@ void TileManager::createMap(Maps mapMode)
 	{
 	case Maps::TUTORIAL:
 		// Map dimensions
-		mapSize = sf::Vector2u(16, 9);
+		mapSize = sf::Vector2u(40, 14);
 		map = {
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 26, 27, 25,
-			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 26, 27, 25,
-			24, 24, 24, 24, 32, 24, 24, 0, 0, 0, 0, 0, 0, 26, 27, 25,
-			6, 4, 6, 6, 32, 28, 29, 19, 20, 20, 20, 20, 21, 26, 27, 27,
-			8, 8, 8, 7, 32, 30, 31, 11, 10, 15, 16, 10, 14, 0, 34, 34,
-			9, 9, 9, 28, 29, 28, 29, 11, 10, 12, 13, 10, 14, 0, 34, 34,
-			1, 2, 3, 30, 31, 30, 31, 11, 10, 17, 18, 10, 14, 33, 34, 34,
-			24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24,
-			22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23, 22, 23
+			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	26,	27,	25,
+			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	26,	27,	25,
+			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	26,	27,	25,
+			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	26,	27,	25,
+			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	26,	27,	25,
+			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	32,	24,	24,	24,	24,	24,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	26,	27,	25,
+			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	22,	23,	22,	23,	6,	4,	6,	6,	4,	6,	32,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	26,	27,	25,
+			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	22,	23,	22,	23,	7,	7,	1,	2,	2,	3,	32,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	34,	34,
+			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	6,	6,	6,	6,	7,	7,	7,	7,	7,	7,	32,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	34,	34,
+			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	8,	8,	8,	8,	7,	7,	5,	7,	7,	7,	32,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	34,	34,
+			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	9,	9,	9,	9,	7,	5,	24,	24,	24,	24,	24,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	24,	24,	24,	24,	24,	24,	24,	24,	24,
+			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	7,	7,	5,	7,	7,	7,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	23,	22,	23,	22,	23,	22,	23,	22,	23,
+			24,	24,	24,	24, 24, 24, 24, 24, 24, 24,	24,	24,	24,	24,	24,	24,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	33,	33,	33,	33,	33,	23,	22,	23,	22,	23,	22,	23,	22,	23,
+			22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23
 		};
 		break;
 	case Maps::SCIMAN:

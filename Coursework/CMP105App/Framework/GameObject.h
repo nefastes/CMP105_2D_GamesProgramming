@@ -41,6 +41,14 @@ public:
 	// Set the input component
 	void setInput(Input* in) { input = in; };
 
+	//Debugging
+	void setDebugging(bool debug) { debugging = debug; };
+	bool isDebugging() { return debugging; };
+	void setCollisionBoxColor(sf::Color color);
+	void updateDebugBoxes();
+	sf::RectangleShape* getDebugObjectSize() { return &debugSize; };
+	sf::RectangleShape* getDebugCollisionBox() { return &debugCollisionBox; };
+
 protected:
 	// Sprite properties
 	sf::Vector2f velocity;
@@ -55,4 +63,9 @@ protected:
 
 	// input component
 	Input* input;
+
+	//Debugging
+	bool debugging;
+	sf::RectangleShape debugSize;
+	sf::RectangleShape debugCollisionBox;
 };

@@ -58,6 +58,7 @@ void Level::handleInput(float dt)
 // Update game objects
 void Level::update(float dt)
 {
+	/*
 	//Update game objects
 	player.update(dt);
 	boss.update(dt);
@@ -75,6 +76,7 @@ void Level::update(float dt)
 		boss.setDialogState(true);
 		player.freezeControls(false);
 	}
+	*/
 }
 
 // Render level
@@ -84,11 +86,7 @@ void Level::render()
 
 	//Draw everything to the screen
 	window->draw(background);
-	if(player.isBehindBackgroundFrontLayer())
-		window->draw(player);
-	window->draw(frontground);
-	if(!player.isBehindBackgroundFrontLayer())
-		window->draw(player);
+	window->draw(player);
 	window->draw(boss);
 	if (dialogBox.getActivated())
 	{

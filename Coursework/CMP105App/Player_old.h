@@ -1,21 +1,23 @@
 #pragma once
 #include "Framework/GameObject.h"
 #include "Framework/Animation.h"
-#include <cmath>
+#include "DialogBox.h"
 class Player : public GameObject
 {
 private:
 	sf::RenderWindow* window;
 	Animation walk;
-	bool allowControls;
+	Animation idle;
 	bool isMoving;
 	bool isOnGround;
-	bool isCollidingRight;
-	bool isCollidingLeft;
 	float sScale;
-	float prevTime;
 	sf::Vector2f gravity;
 	sf::Vector2f stepVelocity;
+	bool hasEnteredRoom;
+	float timeTracker;
+	int cutsceneTracker;
+	bool backFrontLayer;
+	bool allowControls;
 
 public:
 	Player();
@@ -23,8 +25,8 @@ public:
 	void update(float dt) override;
 	void handleInput(float dt) override;
 	void setWindow(sf::RenderWindow* hwnd) { window = hwnd; };
-	void collisionResponse(GameObject* collider);
-	void setStates(bool left, bool right, bool ground) { isCollidingLeft = left; isCollidingRight = right; isOnGround = ground; };
+	bool isBehindBackgroundFrontLayer() { return backFrontLayer; };
+	bool isCutsceneFinished() { return hasEnteredRoom; };
 	void freezeControls(bool freeze) { allowControls = !freeze; };
 };
 
