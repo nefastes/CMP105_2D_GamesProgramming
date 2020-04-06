@@ -21,10 +21,14 @@ private:
 	bool isCollidingRight;
 	bool isCollidingLeft;
 
+	//Neighbour tiles tracker
+	std::string leftTargetname, topTargetname, rightTargetname, bottomTargetname;
+
 	//Ladder trackers
 	bool isLadderAvailable;
 	bool isClimbing;
 	bool isClimbingDownwards;
+	bool isFinishingClimb;
 	bool isOnLadder;
 
 	//General trackers
@@ -50,6 +54,7 @@ public:
 	void setStates(bool left, bool right, bool ground) { isCollidingLeft = left; isCollidingRight = right; isOnGround = ground; };
 	void setLadderAvailable(bool available) { isLadderAvailable = available; }
 	void freezeControls(bool freeze) { allowControls = !freeze; };
+	void setNeighborsTilesTargetNames(std::string left, std::string top, std::string right, std::string bottom);
 
 private:
 	//Other functions for the player specifically

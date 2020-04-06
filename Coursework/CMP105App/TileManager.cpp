@@ -92,7 +92,7 @@ void TileManager::update(float dt, Player& p)
 	std::vector<GameObject>* world = tileMap.getLevel();
 
 	//Check for collisions
-	for (unsigned i = 0; i < (int)world->size(); ++i)
+	for (unsigned i = 0; i < (unsigned)world->size(); ++i)
 	{
 		if ((*world)[i].isCollider())
 		{
@@ -100,7 +100,29 @@ void TileManager::update(float dt, Player& p)
 			{
 				//Check if it was a special tile
 				if ((*world)[i].getTargetname() == "ladder")
+				{
 					hasCollidedWithLadder = true;
+
+					//Get neighbour tiles targetname in range
+					std::string left, top, right, bottom;
+					if (i > 0)
+						left = (*world)[i - 1].getTargetname();
+					else
+						left = "none";
+					if (i > mapSize.x)
+						top = (*world)[i - mapSize.x].getTargetname();
+					else
+						top = "none";
+					if (i < mapSize.x * mapSize.y)
+						right = (*world)[i + 1].getTargetname();
+					else
+						right = "none";
+					if (i < mapSize.x * (mapSize.y - 1))
+						bottom = (*world)[i + mapSize.x].getTargetname();
+					else
+						bottom = "none";
+					p.setNeighborsTilesTargetNames(left, top, right, bottom);
+				}
 
 				//If they collided, trigger the response
 				p.collisionResponse(&(*world)[i]);

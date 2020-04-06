@@ -31,6 +31,7 @@ Player::Player()
 	isLadderAvailable = false;
 	isClimbing = false;
 	isClimbingDownwards = false;
+	isFinishingClimb = false;
 	isOnLadder = false;
 
 	//General trackers
@@ -104,15 +105,29 @@ void Player::handleInput(float dt)
 	}
 
 	//Ladder
-	if (isLadderAvailable && input->isKeyDown(sf::Keyboard::W))
+	if (isLadderAvailable && topTargetname != "world" && input->isKeyDown(sf::Keyboard::W))
 	{
+		isFinishingClimb = false;
 		isClimbing = true;
 		isClimbingDownwards = false;
 		isOnLadder = true;
 		changePlayerMode(3);
 	}
-	else if (isLadderAvailable && !isOnGround && input->isKeyDown(sf::Keyboard::S))
+	else if (isLadderAvailable && topTargetname == "world" && input->isKeyDown(sf::Keyboard::W))
 	{
+		isFinishingClimb = true;
+		isClimbing = true;
+		isClimbingDownwards = false;
+		isOnLadder = true;
+		changePlayerMode(3);
+	}
+	//After OR: allows the user to climb down a ladder from the top of it
+	else if (isLadderAvailable && !isOnGround && input->isKeyDown(sf::Keyboard::S) || isOnGround && bottomTargetname == "ladder" && input->isKeyDown(sf::Keyboard::S))
+	{
+		if (topTargetname == "world")
+			isFinishingClimb = true;
+		else
+			isFinishingClimb = false;
 		isClimbing = true;
 		isClimbingDownwards = true;
 		isOnLadder = true;
@@ -141,9 +156,14 @@ void Player::update(float dt)
 	}
 	else if (isOnLadder)
 	{
-		if(isClimbing)
-			climb.animate(dt);
-		setTextureRect(climb.getCurrentFrame());
+		if (!isFinishingClimb)
+		{
+			if (isClimbing)
+				climb.animate(dt);
+			setTextureRect(climb.getCurrentFrame());
+		}
+		else
+			setTextureRect(sf::IntRect(239, 0, 16, 30));
 	}
 	else if (!isOnGround)
 	{
@@ -189,6 +209,13 @@ void Player::update(float dt)
 				isRngSet = false;
 			}
 		}
+	}
+
+	//Simple ladder check that prevents impossible scenarios
+	if (!isLadderAvailable)
+	{
+		isOnLadder = false;
+		changePlayerMode(1);
 	}
 
 	//Physics
@@ -295,6 +322,14 @@ void Player::collisionResponse(GameObject* collider)
 			isLadderAvailable = true;
 		}
 
+		//Finish the climb if the player pos.y > ladder tile pos.y
+		if (getCollisionBox().top + getCollisionBox().height / 2 < collider->getPosition().y && isFinishingClimb && !isClimbingDownwards)
+		{
+			setPosition(sf::Vector2f(getPosition().x, collider->getPosition().y - getCollisionBox().height));
+			isOnLadder = false;
+			changePlayerMode(1);
+		}
+
 		//If he is on a ladder, center the player pos at the center of the ladder tile
 		if (isOnLadder)
 			setPosition(collider->getPosition().x - (getCollisionBox().left - getPosition().x), getPosition().y);
@@ -327,4 +362,12 @@ void Player::changePlayerMode(unsigned mode)
 	default:
 		break;
 	}
+}
+
+void Player::setNeighborsTilesTargetNames(std::string left, std::string top, std::string right, std::string bottom)
+{
+	leftTargetname = left;
+	topTargetname = top;
+	rightTargetname = right;
+	bottomTargetname = bottom;
 }
