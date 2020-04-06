@@ -2,6 +2,18 @@
 
 GameObject::GameObject()
 {
+	//Init global debug infos
+	debugging = false;
+	debugSize.setSize(sf::Vector2f(getSize()));
+	debugSize.setOutlineColor(sf::Color::White);
+	debugSize.setOutlineThickness(1);
+	debugSize.setFillColor(sf::Color::Transparent);
+	debugCollisionBox.setSize(sf::Vector2f(getCollisionBox().width, getCollisionBox().height));
+	debugCollisionBox.setOutlineColor(sf::Color::Red);
+	debugCollisionBox.setFillColor(sf::Color::Transparent);
+	debugCollisionBox.setOutlineThickness(1);
+
+	//Init input pointer
 	input = nullptr;
 }
 

@@ -63,7 +63,7 @@ IntroCinematic::IntroCinematic(sf::RenderWindow* hwnd, Input* in, AudioManager* 
 	megamanTex.loadFromFile("custom_sprites/NES _Mega_Man.PNG");
 	laserTex.loadFromFile("custom_sprites/NES_Mega_Man_Laser.PNG");
 	finalMegaman.setTexture(&megamanTex);
-	finalMegaman.setTextureRect(sf::IntRect(0, 8, 21, 24));
+	finalMegaman.setTextureRect(sf::IntRect(1, 8, 21, 24));
 	finalMegaman.setSize(sf::Vector2f(105, 120));
 	//Change the origin of the sprite to it's center (it's the only one with this change !!)
 	finalMegaman.setOrigin(finalMegaman.getSize().x / 2, finalMegaman.getSize().y / 2);

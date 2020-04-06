@@ -86,20 +86,42 @@ TileManager::~TileManager()
 
 void TileManager::update(float dt, Player& p)
 {
+	//Init vars
 	bool hasCollided = false;
+	bool hasCollidedWithLadder = false;
 	std::vector<GameObject>* world = tileMap.getLevel();
+
+	//Check for collisions
 	for (unsigned i = 0; i < (int)world->size(); ++i)
 	{
 		if ((*world)[i].isCollider())
 		{
 			if (Collision::checkBoundingBox(&p, &(*world)[i]))
 			{
+				//Check if it was a special tile
+				if ((*world)[i].getTargetname() == "ladder")
+					hasCollidedWithLadder = true;
+
+				//If they collided, trigger the response
 				p.collisionResponse(&(*world)[i]);
 				hasCollided = true;
+				
+				//Only show the collision boxes of the collided tiles if debug is ON
+				if (debugUi->isDebugging())
+					(*world)[i].setDebugging(true);
+				else
+					(*world)[i].setDebugging(false);
+			}
+			else
+			{
+				//To every tile that we did not collided with, make sure their debug is turned off
+				if((*world)[i].isDebugging())
+					(*world)[i].setDebugging(false);
 			}
 		}
 	}
 	if (!hasCollided) p.setStates(false, false, false);	//Need this line to re-enable controls and physics in air
+	if (!hasCollidedWithLadder) p.setLadderAvailable(false);	//Need to reset the ladder availability
 }
 
 void TileManager::render(sf::RenderWindow* window)
@@ -107,13 +129,16 @@ void TileManager::render(sf::RenderWindow* window)
 	tileMap.render(window);
 
 	//Debug tiles
-	std::vector<GameObject>* world = tileMap.getLevel();
-	for (unsigned i = 0; i < (int)world->size(); ++i)
+	if (debugUi->isDebugging())
 	{
-		if (debugUi->isDebugging())
+		std::vector<GameObject>* world = tileMap.getLevel();
+		for (unsigned i = 0; i < (int)world->size(); ++i)
 		{
-			(*world)[i].updateDebugBoxes();
-			window->draw(*(*world)[i].getDebugCollisionBox());
+			if ((*world)[i].isDebugging())
+			{
+				(*world)[i].updateDebugBoxes();
+				window->draw(*(*world)[i].getDebugCollisionBox());
+			}
 		}
 	}
 }
