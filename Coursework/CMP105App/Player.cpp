@@ -58,7 +58,7 @@ void Player::handleInput(float dt)
 
 	if (input->isKeyDown(sf::Keyboard::Right) || input->isKeyDown(sf::Keyboard::D))
 	{
-		if (!isCollidingLeft)	//Prevent going right if it touches the left of a wall
+		if (!isCollidingLeft && !isOnLadder)	//Prevent going right if it touches the left of a wall
 		{
 			//walk
 			isMoving = true;
@@ -68,7 +68,7 @@ void Player::handleInput(float dt)
 	}
 	else if (input->isKeyDown(sf::Keyboard::Left) || input->isKeyDown(sf::Keyboard::A))
 	{
-		if (!isCollidingRight)	//Prevent going left if it touches the right of a wall
+		if (!isCollidingRight && !isOnLadder)	//Prevent going left if it touches the right of a wall
 		{
 			//walk but reversed
 			isMoving = true;
@@ -119,6 +119,7 @@ void Player::handleInput(float dt)
 		isClimbing = true;
 		isClimbingDownwards = false;
 		isOnLadder = true;
+		isOnGround = false;
 		changePlayerMode(3);
 	}
 	//After OR: allows the user to climb down a ladder from the top of it
@@ -131,6 +132,7 @@ void Player::handleInput(float dt)
 		isClimbing = true;
 		isClimbingDownwards = true;
 		isOnLadder = true;
+		isOnGround = false;
 		changePlayerMode(3);
 	}
 	else
@@ -289,7 +291,7 @@ void Player::collisionResponse(GameObject* collider)
 					stepVelocity.y = 0;
 					isOnLadder = false;					//If he touches the ground, he is not on a ladder anymore
 					changePlayerMode(0);				//He is now on ground, so we change the mode back to normal (0)
-					setPosition(sf::Vector2f(getPosition().x, collider->getPosition().y - getCollisionBox().height - (getSize().y - getCollisionBox().height)));	//Set pos in reguard of the hitbox
+					setPosition(sf::Vector2f(getPosition().x, collider->getPosition().y - getCollisionBox().height - (getSize().y - getCollisionBox().height)));	//Set pos in reguard of the hitbox height minus the diff between the size and the hitbox height
 				}
 			}
 		}
@@ -315,24 +317,37 @@ void Player::collisionResponse(GameObject* collider)
 	//Ladder response
 	else if (collider->getTargetname() == "ladder")
 	{
-		//Disallow standing on ladders and update the traceker
-		if (getCollisionBox().left + 3 * getCollisionBox().width / 4 > collider->getPosition().x)
+		//Disallow standing on ladders unless it's the top one and update the tracker
+		if (getCollisionBox().left + 3 * getCollisionBox().width / 4 > collider->getPosition().x && topTargetname == "ladder")
 		{
 			isOnGround = false;
 			isLadderAvailable = true;
 		}
 
-		//Finish the climb if the player pos.y > ladder tile pos.y
+		//Finish the climb if the player is on the last tile before the end of the tile to make it more realistic
 		if (getCollisionBox().top + getCollisionBox().height / 2 < collider->getPosition().y && isFinishingClimb && !isClimbingDownwards)
 		{
-			setPosition(sf::Vector2f(getPosition().x, collider->getPosition().y - getCollisionBox().height));
-			isOnLadder = false;
 			changePlayerMode(1);
+			isOnLadder = false;
+			isFinishingClimb = false;
+			isOnGround = true;
+			setPosition(sf::Vector2f(getPosition().x, collider->getPosition().y - getCollisionBox().height));
 		}
 
 		//If he is on a ladder, center the player pos at the center of the ladder tile
 		if (isOnLadder)
 			setPosition(collider->getPosition().x - (getCollisionBox().left - getPosition().x), getPosition().y);
+
+
+		//If the player is on top of the ladder and begin descend, we do the reverse of the climb finish
+		//Which is put the player position down to half of it's hitbox height and align horizontally with the ladder tile to center it
+		//This should only happen on the last tile of the ladder which is why we check for a "world" tile on top of it
+		if (getCollisionBox().top + getCollisionBox().height / 2 < collider->getPosition().y && isFinishingClimb && isClimbingDownwards && topTargetname == "world")
+			setPosition(sf::Vector2f(collider->getPosition().x - (getCollisionBox().left - getPosition().x), collider->getPosition().y - getCollisionBox().height / 2));
+
+		//Disable the ladder availability if the player is standing on top of it, in order to prevent try to climb up of nothing
+		if (topTargetname == "world" && isOnGround && !isFinishingClimb)
+			isLadderAvailable = false;
 	}
 }
 
