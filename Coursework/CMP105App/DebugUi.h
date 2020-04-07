@@ -29,4 +29,5 @@ public:
 	//Others
 	void updateDebugUi();
 	sf::Text* getUi();
+	void updateUiPos(sf::Vector2f pos);
 };

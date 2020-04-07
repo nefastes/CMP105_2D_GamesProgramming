@@ -75,3 +75,8 @@ sf::Text* DebugUi::getUi()
 {
 	return &ui;
 }
+
+void DebugUi::updateUiPos(sf::Vector2f pos)
+{
+	ui.setPosition(pos);
+}

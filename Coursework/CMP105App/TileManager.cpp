@@ -19,7 +19,7 @@ TileManager::TileManager()
 		else if (i >= 22 && i < 31)
 		{
 			tile.setCollider(true);
-			tile.setTargetName("world");
+			tile.setTargetName("worldSolid");
 		}
 		//all special tiles init
 		else if (i >= 32)

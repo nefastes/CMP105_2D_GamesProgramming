@@ -159,7 +159,8 @@
   <ItemGroup>
     <ClCompile Include="Background.cpp" />
     <ClCompile Include="Boss.cpp" />
-    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="DeathParticle.cpp" />
+    <ClCompile Include="DeathParticleManager.cpp" />
     <ClCompile Include="DebugUi.cpp" />
     <ClCompile Include="DialogBox.cpp" />
     <ClCompile Include="Framework\Animation.cpp" />
@@ -190,7 +191,8 @@
   <ItemGroup>
     <ClInclude Include="Background.h" />
     <ClInclude Include="Boss.h" />
-    <ClInclude Include="Camera.h" />
+    <ClInclude Include="DeathParticle.h" />
+    <ClInclude Include="DeathParticleManager.h" />
     <ClInclude Include="DebugUi.h" />
     <ClInclude Include="DialogBox.h" />
     <ClInclude Include="Framework\Animation.h" />
