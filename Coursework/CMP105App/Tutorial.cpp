@@ -148,15 +148,17 @@ void Tutorial::endDraw()
 void Tutorial::startLevel(float dt)
 {
 	//Move the player down until it reaches the ground (ground is at map line 13, so 12 lines of tiles of height 50)
-	if(player.getPosition().y <= 12.f * 50.f - player.getSize().y)
-		player.move(sf::Vector2f(0, 600.f) * dt);
+	if(player.getPosition().y <= 12.f * 50.f - player.getCollisionBox().height)
+		player.move(sf::Vector2f(0, 1000.f) * dt);
 	else
 	{
 		if (player.isTeleportAnimFinished(dt))
 		{
 			player.setTexture(&playerTex);
+			player.setTextureRect(sf::IntRect(0, 8, 24, 24));
 			player.setHealth(100);
 			player.setAlive(true);
+			player.setStates(false, false, true);
 			playerSpawned = true;
 		}
 	}

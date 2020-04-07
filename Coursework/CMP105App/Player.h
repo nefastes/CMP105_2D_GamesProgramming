@@ -60,7 +60,7 @@ public:
 	void setLadderAvailable(bool available) { isLadderAvailable = available; }
 	void freezeControls(bool freeze) { allowControls = !freeze; };
 	void setNeighborsTilesTargetNames(std::string left, std::string top, std::string right, std::string bottom);
-	bool isTeleportAnimFinished(float dt) { teleportation.animate(dt);  return !teleportation.getPlaying(); };
+	bool isTeleportAnimFinished(float dt) { teleportation.animate(dt); setTextureRect(teleportation.getCurrentFrame());  return !teleportation.getPlaying(); };
 	void setHealth(short int h) { health = h; };
 
 private:

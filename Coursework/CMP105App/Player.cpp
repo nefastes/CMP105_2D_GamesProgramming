@@ -17,7 +17,7 @@ Player::Player()
 	teleportation.addFrame(sf::IntRect(10, 0, 23, 32));
 	teleportation.addFrame(sf::IntRect(34, 0, 23, 32));
 	teleportation.addFrame(sf::IntRect(10, 0, 23, 32));
-	teleportation.setFrameSpeed(1.f / 10.f);
+	teleportation.setFrameSpeed(1.f / 20.f);
 	teleportation.setLooping(false);
 
 	//Physics
