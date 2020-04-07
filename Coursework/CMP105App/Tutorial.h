@@ -8,6 +8,7 @@
 #include "DialogBox.h"
 #include "DebugUi.h"
 #include "TileManager.h"
+
 class Tutorial
 {
 private:
@@ -24,6 +25,9 @@ private:
 	//Create the player object
 	sf::Texture playerTex;
 	Player player;
+
+	//Create the window camera
+	sf::View camera;
 
 public:
 	Tutorial(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameState* gs, DebugUi* dui);

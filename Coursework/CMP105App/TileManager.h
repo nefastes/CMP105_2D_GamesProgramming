@@ -32,5 +32,6 @@ public:
 	void render(sf::RenderWindow* window);
 	void createMap(Maps mapMode);
 	void setDebugRef(DebugUi* dui) { debugUi = dui; };
+	sf::Vector2u getMapSize() { return mapSize; };
 };
 

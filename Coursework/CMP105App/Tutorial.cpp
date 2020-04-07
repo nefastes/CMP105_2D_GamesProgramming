@@ -24,6 +24,9 @@ Tutorial::Tutorial(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameSta
 	player.setVelocity(sf::Vector2f(200, 0));
 	player.setCollisionBox(sf::FloatRect(10, 5, 55, 70));
 	player.setCollisionBoxColor(sf::Color::Red);
+
+	//Init camera
+	camera = window->getView();
 }
 
 Tutorial::~Tutorial()
@@ -41,6 +44,11 @@ void Tutorial::update(float dt)
 	player.update(dt);
 	tileManager.update(dt, player);
 
+	//Set the camera relatively to the player's position
+	//the 50 is because of the tile size
+	if (player.getPosition().x >= 0 + camera.getSize().x / 2 && player.getPosition().x <= tileManager.getMapSize().x * 50 - camera.getSize().x / 2)
+		camera.move(sf::Vector2f(player.getPosition().x - camera.getCenter().x, 0));
+
 	//Update debug infos
 	if (debugUi->isDebugging())
 	{
@@ -54,12 +62,14 @@ void Tutorial::render()
 {
 	beginDraw();
 
+	//Set the window view
+	window->setView(camera);
+
 	//Draw everything to the screen
 	tileManager.render(window);
 	window->draw(player);
 
 	//Draw debug infos
-	//Debug infos update
 	if (debugUi->isDebugging())
 	{
 		window->draw(*debugUi->getUi());
