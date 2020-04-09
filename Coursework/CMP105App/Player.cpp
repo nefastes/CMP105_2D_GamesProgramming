@@ -223,8 +223,8 @@ void Player::collisionResponse(GameObject* collider)
 		else
 			isFinishingClimb = false;
 
-		//Enables ladder physics, climbing on a ladder, if 3/4th of the player colbox touches the ladder tile
-		if (getCollisionBox().left + 3 * getCollisionBox().width / 4 > collider->getPosition().x&& topTargetname == "ladder")
+		//Enables ladder physics, climbing on a ladder, if at least 3/4th of the player colbox touches the ladder tile
+		if (getCollisionBox().left + 3 * getCollisionBox().width / 4 >= collider->getPosition().x && topTargetname == "ladder")
 			isLadderAvailable = true;
 		else if(!isOnLadder)
 			isLadderAvailable = false;
@@ -235,6 +235,7 @@ void Player::collisionResponse(GameObject* collider)
 			isOnGround = true;
 			stepVelocity.y = 0;
 			isOnLadder = false;					//If he is on top, he is not on a ladder anymore
+			isClimbing = false;					//He is not climbing anymore
 			isLadderAvailable = true;			//We are now on top of the last ladder tile, the ladder is still available
 			changePlayerMode(0);				//He is now on ground and not shooting, so we change the mode back to normal (0)
 			setPosition(sf::Vector2f(getPosition().x, collider->getPosition().y -
@@ -247,6 +248,8 @@ void Player::collisionResponse(GameObject* collider)
 			isCollidingRight = false;
 			isCollidingLeft = false;
 			isShooting = false;
+			//If he is on a ladder, he is defo not on ground
+			isOnGround = false;
 			changePlayerMode(3);
 			setPosition(collider->getPosition().x - (getCollisionBox().left - getPosition().x), getPosition().y);
 		}
@@ -319,7 +322,7 @@ void Player::changePlayerMode(unsigned mode)
 		}
 		else
 		{
-
+			//TODO
 		}
 		break;
 	default:
@@ -386,8 +389,10 @@ void Player::playerJump(float dt)
 		else
 		{
 			//The player jumps out of the ladder, thus is is NOT on a ladder and NOT on the ground
+			//We also reset the velocity in case it was not 0 before jumping on the ladder, so it always drops the same
 			isOnLadder = false;
 			isOnGround = false;
+			stepVelocity.y = 0;
 			changePlayerMode(1);
 		}
 	}
@@ -403,11 +408,14 @@ void Player::checkLadderInputs()
 	//Ladder
 	if (isLadderAvailable && input->isKeyDown(sf::Keyboard::W))
 	{
-		if ((!isOnGround || isFinishingClimb) && topTargetname != "ladder" || topTargetname == "ladder")
+		if ((!isOnGround && !isJumping || isFinishingClimb) && topTargetname != "ladder" || topTargetname == "ladder")
 		{
+			//Set up the trackers to climb the ladder
 			isClimbing = true;
 			isClimbingDownwards = false;
 			isOnLadder = true;
+			//The player will be on the ladder, therefore must NOT be jumping (makes you fly otherwise)
+			isJumping = false;
 		}
 	}
 	//After OR: allows the user to climb down a ladder from the top of it
@@ -415,9 +423,12 @@ void Player::checkLadderInputs()
 	{
 		if ((isOnGround || isFinishingClimb) && topTargetname != "ladder" || !isOnGround && topTargetname == "ladder" && !isFinishingClimb)
 		{
+			//Set up the trackers to climb the ladder
 			isClimbing = true;
 			isClimbingDownwards = true;
 			isOnLadder = true;
+			//The player will be on the ladder, therefore must NOT be jumping (makes you fly otherwise)
+			isJumping = false;
 		}
 	}
 	else
@@ -572,7 +583,8 @@ void Player::playerPhysics(float dt)
 			allowJump = false;
 		}
 	}
-	if (isClimbing)
+	//Cannot climb when shoot in original games
+	if (isClimbing && !isShooting)
 	{
 		allowJump = true;
 		if (isClimbingDownwards)

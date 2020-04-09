@@ -129,8 +129,8 @@ void Tutorial::update(float dt)
 
 	//Set the camera relatively to the player's horizontal position (megaman games do not follow the player vertically)
 	//the 50 is because of the tile size
-	if (player.getPosition().x >= 0 + camera.getSize().x / 2 && player.getPosition().x <= tileManager.getMapSize().x * 50 - camera.getSize().x / 2)
-		camera.move(sf::Vector2f(player.getPosition().x - camera.getCenter().x, 0));
+	if (player.getCollisionBox().left + player.getCollisionBox().width / 2 >= 0 + camera.getSize().x / 2 && player.getPosition().x <= tileManager.getMapSize().x * 50 - camera.getSize().x / 2)
+		camera.move(sf::Vector2f(player.getCollisionBox().left + player.getCollisionBox().width / 2 - camera.getCenter().x, 0));
 
 	//Update debug infos
 	if (debugUi->isDebugging())
