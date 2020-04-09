@@ -63,13 +63,19 @@ MainMenu::MainMenu(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameSta
 	background[1].setSize(sf::Vector2f(window->getSize().x, window->getSize().y));
 	background[1].setPosition(sf::Vector2f(window->getSize().x, 0));
 
-	//Init audio music and sound effects
+	//Init ALL audio musics and ALL sound effects
 	audio->addMusic("sfx/Mega_Man_2_Menu.ogg", "menu");
 	audio->addMusic("sfx/Megaman_1_Stage_Select.ogg", "stageSelect");
 	audio->addMusic("sfx/Megaman_1_Stage_Start.ogg", "stageStart");
+	audio->addMusic("sfx/Megaman_1_Cut_Man_Stage.ogg", "cutMan");
 	audio->addSound("sfx/Megaman_1_Select.ogg", "select");
 	audio->addSound("sfx/Megaman_1_Press.ogg", "press");
 	audio->addSound("sfx/Megaman_1_Change_Selection.ogg", "changeSelection");
+	audio->addSound("sfx/Megaman_1_Land.ogg", "land");
+	audio->addSound("sfx/Megaman_1_Death.ogg", "death");
+	audio->addSound("sfx/Megaman_1_Pause.ogg", "pause");
+	audio->addSound("sfx/Megaman_1_Player_Damage.ogg", "damage");
+	audio->addSound("sfx/Megaman_1_Shoot.ogg", "shoot");
 
 	//Init trackers
 	selectionTracker = 0;
@@ -137,9 +143,11 @@ void MainMenu::handleInput(float dt)
 	if (timePassedTracker > .2f)
 		if (input->isKeyDown(sf::Keyboard::Enter) || input->isKeyDown(sf::Keyboard::F) || input->isMouseLDown())
 		{
+			//Selection made, play the selection sound only once
+			if(!selected)
+				audio->playSoundbyName("select");
+
 			selected = true;
-			//Selection made, play the selection sound
-			audio->playSoundbyName("select");
 		}
 }
 

@@ -25,8 +25,13 @@ private:
 
 	//Create the player object
 	sf::Texture playerTex;
-	sf::Texture teleportationTex;
 	Player player;
+
+	//Redy message
+	sf::Font font;
+	sf::Text readyText;
+	int readyBlinkCount;
+	bool isReadyBlinking;
 
 	//Checkpoints positions (the tutorial only has one checkpoint, but on other levels this would be an array of checkpoints)
 	sf::Vector2f checkpoint;

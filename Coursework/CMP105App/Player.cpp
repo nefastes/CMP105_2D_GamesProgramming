@@ -8,15 +8,22 @@ Player::Player()
 	walk.addFrame(sf::IntRect(104, 8, 24, 24));
 	walk.setFrameSpeed(1.f / 10.f);
 
+	//Shooting and walking animation
+	walkShoot.addFrame(sf::IntRect(321, 8, 31, 24));
+	walkShoot.addFrame(sf::IntRect(354, 8, 31, 24));
+	walkShoot.addFrame(sf::IntRect(387, 8, 31, 24));
+	walkShoot.addFrame(sf::IntRect(354, 8, 31, 24));
+	walkShoot.setFrameSpeed(1.f / 10.f);
+
 	//Climb animation
 	climb.addFrame(sf::IntRect(222, 0, 16, 30));
 	climb.addFrame(sf::IntRect(238, 0, -16, 30));
 	climb.setFrameSpeed(1.f / 10.f);
 
 	//Teleporation animation
-	teleportation.addFrame(sf::IntRect(10, 0, 23, 32));
-	teleportation.addFrame(sf::IntRect(34, 0, 23, 32));
-	teleportation.addFrame(sf::IntRect(10, 0, 23, 32));
+	teleportation.addFrame(sf::IntRect(494, 0, 23, 32));
+	teleportation.addFrame(sf::IntRect(508, 0, 23, 32));
+	teleportation.addFrame(sf::IntRect(494, 0, 23, 32));
 	teleportation.setFrameSpeed(1.f / 20.f);
 	teleportation.setLooping(false);
 
@@ -33,10 +40,19 @@ Player::Player()
 	allowJump = true;
 	isCollidingRight = false;
 	isCollidingLeft = false;
+	isFacingRight = false;
 
 	//Init health
 	health = 100;
 	setAlive(true);
+	healthTex.loadFromFile("custom_sprites/NES _Mega_Man_Life.PNG");
+	for (unsigned i = 0; i < 5; ++i)
+	{
+		healthBlocks[i].setTexture(&healthTex);
+		healthBlocks[i].setTextureRect(sf::IntRect(0, 0, 8, 8));		//Init full health
+		healthBlocks[i].setSize(sf::Vector2f(32, 32));
+		healthBlocks[i].setPosition(-100, -100);						//Set them off screen first as the player did not spawn yet
+	}
 
 	//Ladder trackers
 	isLadderAvailable = false;
@@ -44,6 +60,10 @@ Player::Player()
 	isClimbingDownwards = false;
 	isFinishingClimb = false;
 	isOnLadder = false;
+
+	//Weapon tracker
+	isShooting = false;
+	shootTimeTracker = 0;
 
 	//General trackers
 	timePassedTracker = 0;
@@ -76,6 +96,8 @@ void Player::handleInput(float dt)
 		playerJump(dt);
 		//Ladder ?
 		checkLadderInputs();
+		//Shooting ?
+		shoot();
 	}
 }
 
@@ -97,8 +119,14 @@ void Player::update(float dt)
 		if (health <= 0)
 			setAlive(false);
 
+		//Update helath bar
+		updateHealth();
+
 		//Animate accordingly
 		animations(dt);
+
+		//Update any potential bullet
+		bulletManager.update(dt);
 
 		//Simple ladder check that prevents impossible scenarios
 		if (!isLadderAvailable)
@@ -137,12 +165,17 @@ void Player::collisionResponse(GameObject* collider)
 			{
 				if (std::abs(dx) < collider->getSize().x / 2 + getCollisionBox().width / 2 && topTargetname != "worldSolid")	//Need this line to prevent standing on the very edge
 				{
-					isOnGround = true;
+					//If he just landed play the sound and update the ground tracker
+					if (!isOnGround)
+					{
+						audio->playSoundbyName("land");
+						isOnGround = true;
+					}
 					isCollidingRight = false;
 					isCollidingLeft = false;
 					stepVelocity.y = 0;
 					isOnLadder = false;					//If he touches the ground, he is not on a ladder anymore
-					changePlayerMode(0);				//He is now on ground, so we change the mode back to normal (0)
+					changePlayerMode(0);				//He is now on ground and not shooting, so we change the mode back to normal (0)
 					setPosition(sf::Vector2f(getPosition().x, collider->getPosition().y - getCollisionBox().height - (getSize().y - getCollisionBox().height)));	//Set pos in reguard of the hitbox height minus the diff between the size and the hitbox height
 				}
 			}
@@ -186,7 +219,7 @@ void Player::collisionResponse(GameObject* collider)
 		//Finish the climb if the player is on the last tile before the end of the tile to make it more realistic
 		if (getCollisionBox().top + getCollisionBox().height / 2 < collider->getPosition().y && isFinishingClimb && !isClimbingDownwards)
 		{
-			changePlayerMode(1);
+			changePlayerMode(0);
 			isOnLadder = false;
 			isFinishingClimb = false;
 			isOnGround = true;
@@ -225,20 +258,42 @@ void Player::changePlayerMode(unsigned mode)
 	switch (mode)
 	{
 	case 0:
-		setSize(sf::Vector2f(75, 75));
-		setCollisionBox(sf::FloatRect(10, 5, 55, 70));
+		if (!isShooting)
+		{
+			setSize(sf::Vector2f(75, 75));
+			setCollisionBox(sf::FloatRect(10, 5, 55, 70));
+		}
+		else
+		{
+			setSize(sf::Vector2f(97, 75));
+			setCollisionBox(sf::FloatRect(21, 5, 55, 70));
+		}
 		break;
 	case 1:
-		setSize(sf::Vector2f(78, 90));
-		setCollisionBox(sf::FloatRect(12, 5, 54, 70));
+		if (!isShooting)
+		{
+			setSize(sf::Vector2f(78, 90));
+			setCollisionBox(sf::FloatRect(12, 5, 54, 70));
+		}
+		else
+		{
+			setSize(sf::Vector2f(84, 90));
+			setCollisionBox(sf::FloatRect(15, 5, 54, 70));
+		}
 		break;
 	case 2:
-		setSize(sf::Vector2f(75, 75));
-		setCollisionBox(sf::FloatRect(10, 5, 55, 70));
+		//Unused yet
 		break;
 	case 3:
-		setSize(sf::Vector2f(64, 90));
-		setCollisionBox(sf::FloatRect(8, 5, 48, 70));
+		if (!isShooting)
+		{
+			setSize(sf::Vector2f(64, 90));
+			setCollisionBox(sf::FloatRect(8, 5, 48, 70));
+		}
+		else
+		{
+
+		}
 		break;
 	default:
 		break;
@@ -263,8 +318,10 @@ void Player::moveH(float dt)
 			//walk
 			isMoving = true;
 			move(velocity.x * dt, 0);
-			walk.setFlipped(true);
 		}
+		isFacingRight = true;
+		walk.setFlipped(true);
+		walkShoot.setFlipped(true);
 	}
 	else if (input->isKeyDown(sf::Keyboard::Left) || input->isKeyDown(sf::Keyboard::A))
 	{
@@ -273,8 +330,10 @@ void Player::moveH(float dt)
 			//walk but reversed
 			isMoving = true;
 			move(-velocity.x * dt, 0);
-			walk.setFlipped(false);
 		}
+		isFacingRight = false;
+		walk.setFlipped(false);
+		walkShoot.setFlipped(false);
 	}
 	else
 	{
@@ -317,6 +376,7 @@ void Player::checkLadderInputs()
 		isClimbing = true;
 		isClimbingDownwards = false;
 		isOnLadder = true;
+		isShooting = false;
 		changePlayerMode(3);
 	}
 	else if (isLadderAvailable && topTargetname == "world" && input->isKeyDown(sf::Keyboard::W))
@@ -326,6 +386,7 @@ void Player::checkLadderInputs()
 		isClimbingDownwards = false;
 		isOnLadder = true;
 		isOnGround = false;
+		isShooting = false;
 		changePlayerMode(3);
 	}
 	else
@@ -341,19 +402,49 @@ void Player::checkLadderInputs()
 		isClimbingDownwards = true;
 		isOnLadder = true;
 		isOnGround = false;
+		isShooting = false;
+		setOrigin(0, 0);
 		changePlayerMode(3);
+	}
+}
+
+void Player::shoot()
+{
+	if (input->isKeyDown(sf::Keyboard::F) || input->isKeyDown(sf::Keyboard::Enter) || input->isMouseLDown())
+	{
+		isShooting = true;
+		shootTimeTracker = 0;
+		if (timePassedTracker > .2f)
+		{
+			playerShoot();
+			timePassedTracker = 0;
+		}
 	}
 }
 
 void Player::animations(float dt)
 {
+	//Update the shoot anim time tracker
+	shootTimeTracker += dt;
+	//If the player has not clicked after 1 second, reset the shooting tracker
+	if (shootTimeTracker >= 1.f)
+	{
+		isShooting = false;
+		setOrigin(0, 0);
+	}
+
 	//Animation
-	if (isMoving && isOnGround)
+	if (isMoving && isOnGround && !isShooting)
 	{
 		walk.animate(dt);
 		setTextureRect(walk.getCurrentFrame());
 	}
-	else if (isOnLadder)
+	else if (isMoving && isOnGround && isShooting)
+	{
+		walkShoot.animate(dt);
+		setTextureRect(walkShoot.getCurrentFrame());
+	}
+	else if (isOnLadder && !isShooting)
 	{
 		if (!isFinishingClimb)
 		{
@@ -364,49 +455,72 @@ void Player::animations(float dt)
 		else
 			setTextureRect(sf::IntRect(239, 0, 16, 30));
 	}
-	else if (!isOnGround)
+	else if (isOnLadder && isShooting)
 	{
-		//If the walk anim was flipped, we have to flip the jump frame rect as well
-		if (walk.getFlipped())
+		if(isFacingRight)
+			setTextureRect(sf::IntRect(478, 0, -24, 30));
+		else
+			setTextureRect(sf::IntRect(454, 0, 24, 30));
+	}
+	else if (!isOnGround && !isShooting)
+	{
+		if (isFacingRight)
 			setTextureRect(sf::IntRect(218, 0, -26, 30));
 		else
 			setTextureRect(sf::IntRect(192, 0, 26, 30));
 	}
+	else if (!isOnGround && isShooting)
+	{
+		if (isFacingRight)
+			setTextureRect(sf::IntRect(451, 0, -30, 30));
+		else
+			setTextureRect(sf::IntRect(421, 0, 30, 30));
+	}
 	else
 	{
-		//If the walk anim was flipped, we have to flip the non-moving frame texture as well
-		if (walk.getFlipped())
-			setTextureRect(sf::IntRect(24, 8, -24, 24));
-		else
-			setTextureRect(sf::IntRect(0, 8, 24, 24));
-
-		//Init the rng for the next step
-		if (!isRngSet)
+		if (!isShooting)
 		{
-			//generates a number between 2.0f and 5.0f found on stackoverflow
-			rng = 2 + static_cast<float> (std::rand() / static_cast<float> (RAND_MAX / (5 - 2)));
-			isRngSet = true;
-		}
-
-		//If the player doesnt move after a random amount of time between 2 and 5 seconds, we change the texture rect to make megaman blink
-		if (timePassedTracker > rng)
-		{
-			if (walk.getFlipped())
-				setTextureRect(sf::IntRect(48, 8, -24, 24));
+			//If the walk anim was flipped, we have to flip the non-moving frame texture as well
+			if (isFacingRight)
+				setTextureRect(sf::IntRect(24, 8, -24, 24));
 			else
-				setTextureRect(sf::IntRect(24, 8, 24, 24));
-			//and .2 seconds later reset to normal sprite
-			if (timePassedTracker > rng + .2f)
+				setTextureRect(sf::IntRect(0, 8, 24, 24));
+
+			//Init the rng for the next step
+			if (!isRngSet)
+			{
+				//generates a number between 2.0f and 5.0f found on stackoverflow
+				rng = 2 + static_cast<float> (std::rand() / static_cast<float> (RAND_MAX / (5 - 2)));
+				isRngSet = true;
+			}
+
+			//If the player doesnt move after a random amount of time between 2 and 5 seconds, we change the texture rect to make megaman blink
+			if (timePassedTracker > rng)
 			{
 				if (walk.getFlipped())
-					setTextureRect(sf::IntRect(24, 8, -24, 24));
+					setTextureRect(sf::IntRect(48, 8, -24, 24));
 				else
-					setTextureRect(sf::IntRect(0, 8, 24, 24));
+					setTextureRect(sf::IntRect(24, 8, 24, 24));
+				//and .2 seconds later reset to normal sprite
+				if (timePassedTracker > rng + .2f)
+				{
+					if (walk.getFlipped())
+						setTextureRect(sf::IntRect(24, 8, -24, 24));
+					else
+						setTextureRect(sf::IntRect(0, 8, 24, 24));
 
-				//Finally, reset the time tracker and allow rng regeneration
-				timePassedTracker = 0;
-				isRngSet = false;
+					//Finally, reset the time tracker and allow rng regeneration
+					timePassedTracker = 0;
+					isRngSet = false;
+				}
 			}
+		}
+		else
+		{
+			if(isFacingRight)
+				setTextureRect(sf::IntRect(320, 8, -31, 24));
+			else
+				setTextureRect(sf::IntRect(289, 8, 31, 24));
 		}
 	}
 }
@@ -451,4 +565,83 @@ void Player::playerPhysics(float dt)
 	}
 	if (isOnGround)
 		allowJump = true;
+}
+
+void Player::updateHealth()
+{
+	//Set the position of the health bar relatively to the view
+	sf::Vector2f topLeft = sf::Vector2f(window->getView().getCenter() - window->getView().getSize() / 2.f);
+	for(int i = 0; i < 5; ++i)
+		healthBlocks[i].setPosition(topLeft.x + healthBlocks[i].getSize().x, topLeft.y + (5 - i) * healthBlocks[i].getSize().y);		//Set the healthbar vertically
+
+	//Determine the last block to display full health and which amount of health it should display
+	//For instance: with health = 50, the last two blocks are still full health and the middle block has half
+	int blockNumber = (int)health / 20;
+	if (blockNumber == 5) blockNumber = 4;					//if it was 5 it means the player has 100 hp, 99 hp wil give 4, so we need to adjust to stay in bound of the array
+	int blockHealth = (int)health - 20 * blockNumber;		//will give us the exact health remaining
+	int blockBars = (int)blockHealth / 4;					//will give how how much bars is to be displayed
+
+	//Display all block full health
+	for (int i = 0; i <= blockNumber; ++i)
+		healthBlocks[i].setTextureRect(sf::IntRect(0, 0, 8, 8));
+
+	//Display the black with non full health
+	switch(blockBars)
+	{
+	case 0:			healthBlocks[blockNumber].setTextureRect(sf::IntRect(0, 36, 8, 8));				break;
+	case 1:			healthBlocks[blockNumber].setTextureRect(sf::IntRect(0, 27, 8, 8));				break;
+	case 2:			healthBlocks[blockNumber].setTextureRect(sf::IntRect(0, 18, 8, 8));				break;
+	case 3:			healthBlocks[blockNumber].setTextureRect(sf::IntRect(0, 9, 8, 8));				break;
+	case 4:			healthBlocks[blockNumber].setTextureRect(sf::IntRect(0, 0, 8, 8));				break;
+	default:																						break;
+	}
+
+	//Display all remaining blocks with no health
+	for (int i = 4; i > blockNumber; --i)
+		healthBlocks[i].setTextureRect(sf::IntRect(0, 36, 8, 8));
+}
+
+void Player::drawHealth(sf::RenderWindow* window)
+{
+	for (unsigned i = 0; i < 5; ++i)
+		window->draw(healthBlocks[i]);
+}
+
+void Player::resetHealthPos(sf::Vector2f pos)
+{
+	//This function sets all the health blocks to the give coordinates
+	//Used to put it all off screen
+	for(unsigned i = 0; i < 5; ++i)
+		healthBlocks[i].setPosition(pos);
+}
+
+void Player::playerShoot()
+{
+	//This fucntion spawns a bullet at the correct place and plays the shoot sound
+	if (isOnGround)
+	{
+		if(isFacingRight)
+			bulletManager.spawnBullet(sf::Vector2f(getPosition().x + getSize().x, getPosition().y + getSize().y / 2), true);
+		else
+			bulletManager.spawnBullet(sf::Vector2f(getPosition().x, getPosition().y + getSize().y / 2), false);
+	}
+	else if (!isOnGround && !isOnLadder)
+	{
+		if (isFacingRight)
+			bulletManager.spawnBullet(sf::Vector2f(getPosition().x + getSize().x, getPosition().y + getSize().y / 3), true);
+		else
+			bulletManager.spawnBullet(sf::Vector2f(getPosition().x, getPosition().y + getSize().y / 3), false);
+	}
+	else if (isOnLadder)
+	{
+		if (isFacingRight)
+			bulletManager.spawnBullet(sf::Vector2f(getPosition().x + getSize().x, getPosition().y + getSize().y / 3), true);
+		else
+			bulletManager.spawnBullet(sf::Vector2f(getPosition().x, getPosition().y + getSize().y / 3), false);
+	}
+}
+
+void Player::renderBullets(sf::RenderWindow* window)
+{
+	bulletManager.renderBullets(window);
 }

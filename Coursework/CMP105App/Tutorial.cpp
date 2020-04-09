@@ -15,21 +15,34 @@ Tutorial::Tutorial(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameSta
 	tileManager.createMap(Maps::TUTORIAL);
 
 	//Init checkpoints positions
-	checkpoint = sf::Vector2f(100, 0);
+	checkpoint = sf::Vector2f(100, -100);
 
 	//Init player
 	playerTex.loadFromFile("custom_sprites/NES _Mega_Man.PNG");
-	teleportationTex.loadFromFile("custom_sprites/Megaman_Teleportation.PNG");
-	player.setTexture(&teleportationTex);
-	player.setTextureRect(sf::IntRect(0, 0, 9, 32));
+	player.setTexture(&playerTex);
+	player.setTextureRect(sf::IntRect(484, 0, 9, 32));
 	player.setSize(sf::Vector2f(75, 75));
 	player.setInput(input);
 	player.setWindow(window);
+	player.setAudio(audio);
 	player.setPosition(checkpoint);
 	player.setVelocity(sf::Vector2f(200, 0));
 	player.setCollisionBox(sf::FloatRect(10, 5, 55, 70));
 	player.setCollisionBoxColor(sf::Color::Red);
 	player.setAlive(false);
+
+	//Init ready text
+	font.loadFromFile("font/PressStart2P-vaV7.ttf");
+	readyText.setFont(font);
+	readyText.setCharacterSize(24);
+	readyText.setFillColor(sf::Color::White);
+	readyText.setOutlineColor(sf::Color::Black);
+	readyText.setOutlineThickness(1);
+	readyText.setString("READY");
+	readyText.setOrigin(readyText.getGlobalBounds().width / 2, readyText.getGlobalBounds().height / 2);
+	readyText.setPosition(window->getSize().x / 2, window->getSize().y / 2);
+	readyBlinkCount = 0;
+	isReadyBlinking = false;
 
 	//Init camera
 	camera = window->getDefaultView();
@@ -68,6 +81,9 @@ void Tutorial::update(float dt)
 	//If the player dies, do the following
 	else if (playerSpawned)
 	{
+		//Player dead, stop all musics
+		audio->stopAllMusic();
+
 		//Update time tracker
 		timePassedTracker += dt;
 
@@ -76,6 +92,7 @@ void Tutorial::update(float dt)
 			if (timePassedTracker > .5f)
 			{
 				deathParticleManager.spawnParticles(player.getPosition() + player.getSize() / 2.f);
+				audio->playSoundbyName("death");
 				timePassedTracker = 0;
 			}
 		}
@@ -117,10 +134,21 @@ void Tutorial::render()
 	//Draw everything to the screen
 	tileManager.render(window);
 	
+	//Draw any potential bullet
+	player.renderBullets(window);
+
+	//Draw the player if he is not dead yet (the death particle have not spawned yet)
 	if(!deathParticleManager.haveParticlesSpawned())
 		window->draw(player);
 	else
 		deathParticleManager.render(window);
+
+	//Draw level ui stuff
+	if(playerSpawned)
+		player.drawHealth(window);
+
+	if (!isReadyBlinking)
+		window->draw(readyText);
 
 	//Draw debug infos
 	if (debugUi->isDebugging())
@@ -147,19 +175,54 @@ void Tutorial::endDraw()
 
 void Tutorial::startLevel(float dt)
 {
-	//Move the player down until it reaches the ground (ground is at map line 13, so 12 lines of tiles of height 50)
-	if(player.getPosition().y <= 12.f * 50.f - player.getCollisionBox().height)
-		player.move(sf::Vector2f(0, 1000.f) * dt);
+	//Play the music if it was stopped
+	if (audio->getMusic()->getStatus() == sf::SoundSource::Stopped)
+	{
+		audio->playMusicbyName("cutMan");
+		//The music has a small intro at the beginning, so we have to set loop points
+		audio->getMusic()->setLoopPoints(sf::Music::TimeSpan(sf::seconds(3.36f), sf::seconds(41.698f)));
+	}
+
+	if (readyBlinkCount < 4)
+	{
+		//update time tracker
+		timePassedTracker += dt;
+
+		if (timePassedTracker >= .4f)
+		{
+			if (!isReadyBlinking)
+			{
+				readyText.setFillColor(sf::Color::Transparent);
+				isReadyBlinking = true;
+				timePassedTracker = 0;
+				++readyBlinkCount;
+			}
+			else
+			{
+				readyText.setFillColor(sf::Color::White);
+				isReadyBlinking = false;
+				timePassedTracker = 0;
+			}
+		}
+	}
 	else
 	{
-		if (player.isTeleportAnimFinished(dt))
+		//Make ready text invisible
+		isReadyBlinking = true;
+
+		//Move the player down until it reaches the ground (ground is at map line 13, so 12 lines of tiles of height 50)
+		if (player.getPosition().y <= 12.f * 50.f - player.getCollisionBox().height)
+			player.move(sf::Vector2f(0, 1000.f) * dt);
+		else
 		{
-			player.setTexture(&playerTex);
-			player.setTextureRect(sf::IntRect(0, 8, 24, 24));
-			player.setHealth(100);
-			player.setAlive(true);
-			player.setStates(false, false, true);
-			playerSpawned = true;
+			if (player.isTeleportAnimFinished(dt))
+			{
+				player.setTextureRect(sf::IntRect(0, 8, 24, 24));
+				player.setHealth(100);
+				player.setAlive(true);
+				player.setStates(false, false, true);
+				playerSpawned = true;
+			}
 		}
 	}
 }
@@ -169,15 +232,26 @@ void Tutorial::restartLevel()
 	//Reset all trackers
 	timePassedTracker = 0;
 	playerSpawned = false;
+	isReadyBlinking = false;
+	readyBlinkCount = 0;
 
 	//Reset the player position
 	player.setPosition(checkpoint);
-	player.setTexture(&teleportationTex);
-	player.setTextureRect(sf::IntRect(0, 0, 9, 32));
+	player.setTextureRect(sf::IntRect(484, 0, 9, 32));
+	player.resetTeleportAnim();
 
 	//Kill death particles
 	deathParticleManager.killAllParticles();
 
 	//Reset the camera
 	camera.setCenter(window->getSize().x / 2, window->getSize().y / 2);
+
+	//Reset the health bar off screen
+	player.resetHealthPos(sf::Vector2f(-100, -100));
+
+	//reset the ready text color
+	readyText.setFillColor(sf::Color::White);
+
+	//Kill all remaining alive bullets
+	player.killAllBullets();
 }
