@@ -44,6 +44,24 @@ Tutorial::Tutorial(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameSta
 	readyBlinkCount = 0;
 	isReadyBlinking = false;
 
+	//Init hints textures
+	moveTex.loadFromFile("custom_sprites/Move.PNG");
+	jumpTex.loadFromFile("custom_sprites/Jump.PNG");
+	climbTex.loadFromFile("custom_sprites/Climb.PNG");
+	spikeTex.loadFromFile("custom_sprites/Spikes.PNG");
+	hintMove.setTexture(&moveTex);
+	hintMove.setSize(sf::Vector2f(200, 100));
+	hintMove.setPosition(100, 400);
+	hintJump.setTexture(&jumpTex);
+	hintJump.setSize(sf::Vector2f(200, 100));
+	hintJump.setPosition(825, 525);
+	hintClimb.setTexture(&climbTex);
+	hintClimb.setSize(sf::Vector2f(200, 100));
+	hintClimb.setPosition(700, 100);
+	hintSpike.setTexture(&spikeTex);
+	hintSpike.setSize(sf::Vector2f(200, 100));
+	hintSpike.setPosition(1325, 400);
+
 	//Init camera
 	camera = window->getDefaultView();
 
@@ -134,6 +152,12 @@ void Tutorial::render()
 	//Draw everything to the screen
 	tileManager.render(window);
 	
+	//Draw hints
+	window->draw(hintMove);
+	window->draw(hintJump);
+	window->draw(hintClimb);
+	window->draw(hintSpike);
+
 	//Draw any potential bullet
 	player.renderBullets(window);
 

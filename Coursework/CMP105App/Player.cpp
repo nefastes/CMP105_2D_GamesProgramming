@@ -1,4 +1,5 @@
 #include "Player.h"
+#include <iostream>
 Player::Player()
 {
 	//Walk Animation
@@ -138,6 +139,7 @@ void Player::update(float dt)
 		//Calculate physics
 		playerPhysics(dt);
 	}
+	std::cout << isOnLadder << " |||| " << isOnGround << " |||| " << isJumping << " |||| " << isClimbing << " |||| " << isLadderAvailable << std::endl;
 }
 
 void Player::collisionResponse(GameObject* collider)
@@ -174,9 +176,13 @@ void Player::collisionResponse(GameObject* collider)
 					isCollidingRight = false;
 					isCollidingLeft = false;
 					stepVelocity.y = 0;
-					isOnLadder = false;					//If he touches the ground, he is not on a ladder anymore
+					isOnLadder = false;					//If he touches the ground on a descent, he is not on a ladder anymore
 					changePlayerMode(0);				//He is now on ground and not shooting, so we change the mode back to normal (0)
-					setPosition(sf::Vector2f(getPosition().x, collider->getPosition().y - getCollisionBox().height - (getSize().y - getCollisionBox().height)));	//Set pos in reguard of the hitbox height minus the diff between the size and the hitbox height
+					//Set pos in reguard of the hitbox, the top of the hitbox is lower than the top of the player sprite (thus higher in coord since y
+					//increases downwards), which is why we subtract it by the player's sprite y position to get the delta (we could use std::abs but lazy)
+					//This will set the bottom of the hitbox just on top of the ground contact
+					setPosition(sf::Vector2f(getPosition().x, collider->getPosition().y -
+						getCollisionBox().height - (getCollisionBox().top - getPosition().y)));
 				}
 			}
 		}
@@ -191,16 +197,18 @@ void Player::collisionResponse(GameObject* collider)
 				{
 					isCollidingRight = true;
 					isCollidingLeft = false;
-					isOnGround = false;
-					setPosition(sf::Vector2f(collider->getPosition().x + collider->getSize().x - ((getSize().x - getCollisionBox().width) / 2), getPosition().y));	//Set pos in reguard of the hitbox
+					//Set the position in reguard of the hitbox placement, makes it independent of the player's size
+					setPosition(sf::Vector2f(collider->getPosition().x + collider->getSize().x -
+						(getCollisionBox().left - getPosition().x), getPosition().y));
 				}
 				//Left side hit
 				else
 				{
 					isCollidingRight = false;
 					isCollidingLeft = true;
-					isOnGround = false;
-					setPosition(sf::Vector2f(collider->getPosition().x - (getCollisionBox().width + ((getSize().x - getCollisionBox().width) / 2)), getPosition().y));	//Set pos in reguard of the hitbox
+					//Set the position in reguard of the hitbox placement, makes it independent of the player's size
+					setPosition(sf::Vector2f(collider->getPosition().x - (getCollisionBox().width +
+						((getPosition().x + getSize().x) - (getCollisionBox().left + getCollisionBox().width))), getPosition().y));
 				}
 			}
 		}
@@ -208,38 +216,54 @@ void Player::collisionResponse(GameObject* collider)
 	//Ladder response
 	else if (collider->getTargetname() == "ladder")
 	{
-		//Disallow standing on ladders unless it's the top one and update the tracker
-		//Enables ladder physics, climbing on a ladder, if 3/4th of the player colbox touches the ladder tile
-		if (getCollisionBox().left +  3 * getCollisionBox().width / 4 > collider->getPosition().x && topTargetname == "ladder")
-		{
-			isOnGround = false;
-			isLadderAvailable = true;
-		}
-
-		//Finish the climb if the player is on the last tile before the end of the tile to make it more realistic
-		if (getCollisionBox().top + getCollisionBox().height / 2 < collider->getPosition().y && isFinishingClimb && !isClimbingDownwards)
-		{
-			changePlayerMode(0);
-			isOnLadder = false;
+		//If the player is at the last tile of the ladder, he is currently finishing climbing.
+		//We set the climb finish tracker accordingly
+		if (isOnLadder && topTargetname == "world")
+			isFinishingClimb = true;
+		else
 			isFinishingClimb = false;
+
+		//Enables ladder physics, climbing on a ladder, if 3/4th of the player colbox touches the ladder tile
+		if (getCollisionBox().left + 3 * getCollisionBox().width / 4 > collider->getPosition().x&& topTargetname == "ladder")
+			isLadderAvailable = true;
+		else if(!isOnLadder)
+			isLadderAvailable = false;
+
+		//Finish the climb if the player is on the last tile before the end of the tile to make it more accurate
+		if (getCollisionBox().top + getCollisionBox().height / 2 < collider->getPosition().y && topTargetname == "world")
+		{
 			isOnGround = true;
-			setPosition(sf::Vector2f(getPosition().x, collider->getPosition().y - getCollisionBox().height));
+			stepVelocity.y = 0;
+			isOnLadder = false;					//If he is on top, he is not on a ladder anymore
+			isLadderAvailable = true;			//We are now on top of the last ladder tile, the ladder is still available
+			changePlayerMode(0);				//He is now on ground and not shooting, so we change the mode back to normal (0)
+			setPosition(sf::Vector2f(getPosition().x, collider->getPosition().y -
+				getCollisionBox().height - (getCollisionBox().top - getPosition().y)));
 		}
 
-		//If he is on a ladder, center the player pos at the center of the ladder tile
+		//If he is on a ladder, center the player pos at the center of the ladder tile and adjust hitbox, size and stuff
 		if (isOnLadder)
+		{
+			isCollidingRight = false;
+			isCollidingLeft = false;
+			isShooting = false;
+			changePlayerMode(3);
 			setPosition(collider->getPosition().x - (getCollisionBox().left - getPosition().x), getPosition().y);
+		}
 
 
 		//If the player is on top of the ladder and begin descend, we do the reverse of the climb finish
 		//Which is put the player position down to half of it's hitbox height and align horizontally with the ladder tile to center it
 		//This should only happen on the last tile of the ladder which is why we check for a "world" tile on top of it
-		if (getCollisionBox().top + getCollisionBox().height / 2 < collider->getPosition().y && isFinishingClimb && isClimbingDownwards && topTargetname == "world")
-			setPosition(sf::Vector2f(collider->getPosition().x - (getCollisionBox().left - getPosition().x), collider->getPosition().y - getCollisionBox().height / 2));
-
-		//Disable the ladder availability if the player is standing on top of it, in order to prevent try to climb up of nothing
-		if (topTargetname == "world" && isOnGround && !isFinishingClimb)
-			isLadderAvailable = false;
+		if (getCollisionBox().top + getCollisionBox().height / 2 < collider->getPosition().y
+			&& isClimbingDownwards && topTargetname == "world")
+		{
+			setPosition(sf::Vector2f(collider->getPosition().x - (getCollisionBox().left - getPosition().x),
+				collider->getPosition().y - getCollisionBox().height / 2));
+			isOnGround = false;
+			isOnLadder = true;
+			changePlayerMode(3);
+		}
 	}
 	//Spike response
 	else if (collider->getTargetname() == "spike")
@@ -266,7 +290,10 @@ void Player::changePlayerMode(unsigned mode)
 		else
 		{
 			setSize(sf::Vector2f(97, 75));
-			setCollisionBox(sf::FloatRect(21, 5, 55, 70));
+			if(isFacingRight)
+				setCollisionBox(sf::FloatRect(10, 5, 55, 70));
+			else
+				setCollisionBox(sf::FloatRect(30, 5, 55, 70));
 		}
 		break;
 	case 1:
@@ -351,12 +378,16 @@ void Player::playerJump(float dt)
 		{
 			//set the jump tracker, change the player mode to the jump mode (1) and update the jumpTimeTracker for every frame space is pressed
 			isJumping = true;
+			//No longer on the ground not matter what, this MUST be false
+			isOnGround = false;
 			changePlayerMode(1);
 			jumpKeyPressTracker += dt;
 		}
 		else
 		{
+			//The player jumps out of the ladder, thus is is NOT on a ladder and NOT on the ground
 			isOnLadder = false;
+			isOnGround = false;
 			changePlayerMode(1);
 		}
 	}
@@ -370,41 +401,29 @@ void Player::playerJump(float dt)
 void Player::checkLadderInputs()
 {
 	//Ladder
-	if (isLadderAvailable && topTargetname != "world" && input->isKeyDown(sf::Keyboard::W))
+	if (isLadderAvailable && input->isKeyDown(sf::Keyboard::W))
 	{
-		isFinishingClimb = false;
-		isClimbing = true;
-		isClimbingDownwards = false;
-		isOnLadder = true;
-		isShooting = false;
-		changePlayerMode(3);
+		if ((!isOnGround || isFinishingClimb) && topTargetname != "ladder" || topTargetname == "ladder")
+		{
+			isClimbing = true;
+			isClimbingDownwards = false;
+			isOnLadder = true;
+		}
 	}
-	else if (isLadderAvailable && topTargetname == "world" && input->isKeyDown(sf::Keyboard::W))
+	//After OR: allows the user to climb down a ladder from the top of it
+	else if (isLadderAvailable && input->isKeyDown(sf::Keyboard::S))
 	{
-		isFinishingClimb = true;
-		isClimbing = true;
-		isClimbingDownwards = false;
-		isOnLadder = true;
-		isOnGround = false;
-		isShooting = false;
-		changePlayerMode(3);
+		if ((isOnGround || isFinishingClimb) && topTargetname != "ladder" || !isOnGround && topTargetname == "ladder" && !isFinishingClimb)
+		{
+			isClimbing = true;
+			isClimbingDownwards = true;
+			isOnLadder = true;
+		}
 	}
 	else
-		isClimbing = false;
-	//After OR: allows the user to climb down a ladder from the top of it
-	if (isLadderAvailable && !isOnGround && input->isKeyDown(sf::Keyboard::S) || isOnGround && bottomTargetname == "ladder" && input->isKeyDown(sf::Keyboard::S))
 	{
-		if (topTargetname == "world")
-			isFinishingClimb = true;
-		else
-			isFinishingClimb = false;
-		isClimbing = true;
-		isClimbingDownwards = true;
-		isOnLadder = true;
-		isOnGround = false;
-		isShooting = false;
-		setOrigin(0, 0);
-		changePlayerMode(3);
+		//Need this line to disable climbing if the user doesnt want to climb (remove this and it makes very funny stuff)
+		isClimbing = false;
 	}
 }
 
@@ -430,7 +449,6 @@ void Player::animations(float dt)
 	if (shootTimeTracker >= 1.f)
 	{
 		isShooting = false;
-		setOrigin(0, 0);
 	}
 
 	//Animation
@@ -528,9 +546,10 @@ void Player::animations(float dt)
 void Player::playerPhysics(float dt)
 {
 	//Physics
-	if (!isOnGround && !isJumping && !isOnLadder)	//Avoid doing more calculations when touches the ground or when the player jumps
+	//Avoid doing more calculations when touches the ground or when the player jumps
+	if (!isOnGround && !isJumping && !isOnLadder)
 	{
-		//Reset jump stats
+		//Reset jump stats in case ?
 		allowJump = false;
 
 		//Apply gravity
@@ -540,7 +559,7 @@ void Player::playerPhysics(float dt)
 	}
 	if (isJumping && allowJump)
 	{
-		//Increase the velocity each frame as long as the space key is press. When max vel is reached, reset the jump tracker
+		//Set the velocity to 600 upwards until it is no longer allowed to jump (after .2 second)
 		if (jumpKeyPressTracker < .2f)
 		{
 			stepVelocity.y = -600.f;
@@ -551,8 +570,6 @@ void Player::playerPhysics(float dt)
 		{
 			isJumping = false;
 			allowJump = false;
-			//Not on ground anymore
-			isOnGround = false;
 		}
 	}
 	if (isClimbing)

@@ -33,6 +33,16 @@ private:
 	int readyBlinkCount;
 	bool isReadyBlinking;
 
+	//Hints
+	sf::Texture moveTex;
+	sf::Texture jumpTex;
+	sf::Texture climbTex;
+	sf::Texture spikeTex;
+	sf::RectangleShape hintMove;
+	sf::RectangleShape hintJump;
+	sf::RectangleShape hintClimb;
+	sf::RectangleShape hintSpike;
+
 	//Checkpoints positions (the tutorial only has one checkpoint, but on other levels this would be an array of checkpoints)
 	sf::Vector2f checkpoint;
 
