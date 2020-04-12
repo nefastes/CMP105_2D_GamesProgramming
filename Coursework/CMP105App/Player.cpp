@@ -36,12 +36,17 @@ Player::Player()
 	//Player trackers
 	allowControls = true;
 	isMoving = false;
-	isOnGround = false;
+	isOnGround = true;				//Even though we have a spawn anim, he will be on ground when we gain controls
 	isJumping = false;
 	allowJump = true;
 	isCollidingRight = false;
 	isCollidingLeft = false;
 	isFacingRight = false;
+
+	//Collision trackers
+	hasCollidedVertically - false;
+	hasCollidedHorizontally = false;
+	hasCollidedWithLadder = false;
 
 	//Init health
 	health = 100;
@@ -136,10 +141,34 @@ void Player::update(float dt)
 			changePlayerMode(1);
 		}
 
+		//Re-enable physics according to the collision trackers
+		if (!hasCollidedVertically && !hasCollidedHorizontally && !hasCollidedWithLadder ||
+			!hasCollidedVertically && hasCollidedWithLadder && middleTargetname != "world")
+		{
+			//If all fails, the player is in the air not touching anything or just touching the body of a ladder
+			//Need this to re-enable controls and physics in air
+			isCollidingLeft = false;
+			isCollidingRight = false;
+			isOnGround = false;
+		}
+		if (hasCollidedHorizontally && !hasCollidedVertically)
+			isOnGround = false;
+		if (hasCollidedWithLadder && !isLadderAvailable && !hasCollidedVertically)
+			isOnGround = false;
+		if (!hasCollidedWithLadder)
+			//Need to reset the ladder availability
+			isLadderAvailable = false;
+
 		//Calculate physics
 		playerPhysics(dt);
+
+		//Reset collision trackers
+		hasCollidedVertically = false;
+		hasCollidedHorizontally = false;
+		hasCollidedWithLadder = false;
 	}
-	std::cout << topTargetname << " |||| " << rightTargetname << " |||| " << bottomTargetname << " |||| " << leftTargetname << " |||| " << middleTargetname << " |||| " << isLadderAvailable << std::endl;
+	std::cout << topTargetname << " |||| " << rightTargetname << " |||| " << bottomTargetname << " |||| " <<
+		leftTargetname << " |||| " << middleTargetname << " |||| " << isOnGround << std::endl;
 }
 
 void Player::collisionResponse(GameObject* collider)
@@ -160,7 +189,9 @@ void Player::collisionResponse(GameObject* collider)
 				//Need this line to prevent standing on the very edge
 				if (std::abs(dx) < collider->getSize().x / 2 + getCollisionBox().width / 2)
 				{
-					stepVelocity = sf::Vector2f(0, 0);
+					stepVelocity.y = 0;
+					isJumping = false;
+					allowJump = false;
 				}
 			}
 			//Top hit
@@ -177,6 +208,7 @@ void Player::collisionResponse(GameObject* collider)
 						audio->playSoundbyName("land");
 						isOnGround = true;
 					}
+					hasCollidedVertically = true;		//We have collided vertically, note that we only set it to true for top collisions
 					isCollidingRight = false;
 					isCollidingLeft = false;
 					stepVelocity.y = 0;
@@ -193,12 +225,16 @@ void Player::collisionResponse(GameObject* collider)
 		//X axis hit
 		else
 		{
+			//We have collided horizontally
+			hasCollidedHorizontally = true;
+
 			//If he is currently on ground, we have to make sure the player mode is correctly adapted
 			if(isOnGround)
 				changePlayerMode(0);
 
 			//Only do a response for horizontal collisions if the player is not on a ladder
-			if (!isOnLadder)
+			//We also check if the player is further away inside than just touching the wall to avoid more calculations and bugs
+			if (!isOnLadder && std::abs(dx) < collider->getSize().x / 2 + getCollisionBox().width / 2)
 			{
 				//Right side hit
 				if (dx < 0)
@@ -224,6 +260,9 @@ void Player::collisionResponse(GameObject* collider)
 	//Ladder response
 	else if (collider->getTargetname() == "ladder")
 	{
+		//We have collided with a ladder
+		hasCollidedWithLadder = true;
+
 		//Enables ladder physics, climbing on a ladder, if at least 3/4th of the player colbox touches the ladder tile
 		if (getCollisionBox().left + 3 * getCollisionBox().width / 4 >= collider->getPosition().x && (middleTargetname == "ladder" || bottomTargetname == "ladder"))
 			isLadderAvailable = true;
@@ -257,6 +296,7 @@ void Player::collisionResponse(GameObject* collider)
 					//means that he is anywhere else but on top of it
 					else if(bottomTargetname == "ladder" && middleTargetname == "world")
 					{
+						hasCollidedVertically = true;		//We have collided vertically, note that we only set it to true for top collisions
 						if (!isOnGround)
 						{
 							audio->playSoundbyName("land");
@@ -299,6 +339,7 @@ void Player::collisionResponse(GameObject* collider)
 			if (getCollisionBox().top + 3 * getCollisionBox().height / 4 < collider->getPosition().y &&
 				isLadderAvailable && isFinishingClimb && !isClimbingDownwards)
 			{
+				hasCollidedVertically = true;		//We have collided vertically, note that we only set it to true for top collisions
 				isOnGround = true;
 				stepVelocity.y = 0;
 				isOnLadder = false;					//If he is on top, he is not on a ladder anymore
@@ -331,27 +372,27 @@ void Player::changePlayerMode(unsigned mode)
 		if (!isShooting)
 		{
 			setSize(sf::Vector2f(75, 75));
-			setCollisionBox(sf::FloatRect(10, 5, 55, 70));
+			setCollisionBox(sf::FloatRect(15, 5, 45, 70));
 		}
 		else
 		{
 			setSize(sf::Vector2f(97, 75));
 			if(isFacingRight)
-				setCollisionBox(sf::FloatRect(10, 5, 55, 70));
+				setCollisionBox(sf::FloatRect(15, 5, 45, 70));
 			else
-				setCollisionBox(sf::FloatRect(30, 5, 55, 70));
+				setCollisionBox(sf::FloatRect(35, 5, 45, 70));
 		}
 		break;
 	case 1:
 		if (!isShooting)
 		{
 			setSize(sf::Vector2f(78, 90));
-			setCollisionBox(sf::FloatRect(12, 5, 54, 70));
+			setCollisionBox(sf::FloatRect(17, 5, 44, 70));
 		}
 		else
 		{
 			setSize(sf::Vector2f(84, 90));
-			setCollisionBox(sf::FloatRect(15, 5, 54, 70));
+			setCollisionBox(sf::FloatRect(20, 5, 44, 70));
 		}
 		break;
 	case 2:
@@ -360,8 +401,8 @@ void Player::changePlayerMode(unsigned mode)
 	case 3:
 		if (!isShooting)
 		{
-			setSize(sf::Vector2f(64, 90));
-			setCollisionBox(sf::FloatRect(8, 5, 48, 70));
+			setSize(sf::Vector2f(65, 90));
+			setCollisionBox(sf::FloatRect(10, 5, 45, 70));
 		}
 		else
 		{
@@ -396,8 +437,6 @@ void Player::moveH(float dt)
 			move(velocity.x * dt, 0);
 		}
 		isFacingRight = true;
-		walk.setFlipped(true);
-		walkShoot.setFlipped(true);
 	}
 	else if (input->isKeyDown(sf::Keyboard::A))
 	{
@@ -410,8 +449,6 @@ void Player::moveH(float dt)
 			move(-velocity.x * dt, 0);
 		}
 		isFacingRight = false;
-		walk.setFlipped(false);
-		walkShoot.setFlipped(false);
 	}
 	else
 	{
@@ -517,11 +554,21 @@ void Player::animations(float dt)
 	//Animation
 	if (isMoving && isOnGround && !isShooting)
 	{
+		if (isFacingRight)
+			walk.setFlipped(true);
+		else
+			walk.setFlipped(false);
+
 		walk.animate(dt);
 		setTextureRect(walk.getCurrentFrame());
 	}
 	else if (isMoving && isOnGround && isShooting)
 	{
+		if(isFacingRight)
+			walkShoot.setFlipped(true);
+		else
+			walkShoot.setFlipped(false);
+
 		walkShoot.animate(dt);
 		setTextureRect(walkShoot.getCurrentFrame());
 	}

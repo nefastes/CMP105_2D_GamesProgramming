@@ -30,6 +30,12 @@ private:
 	bool isCollidingLeft;
 	bool isFacingRight;
 
+	//Collisions trackers, used to renable certain physics if only some or neither are set in the update function
+	//After that, we reset them to be rady for the next collision tests
+	bool hasCollidedVertically;
+	bool hasCollidedHorizontally;
+	bool hasCollidedWithLadder;
+
 	//Player health (must be int (short cause it's not gonna go over 100 and under -100, saves space)
 	//cause it can go negative if he is low on health and takes damage)
 	short int health;
@@ -71,8 +77,6 @@ public:
 	void setWindow(sf::RenderWindow* hwnd) { window = hwnd; };
 	void setAudio(AudioManager* aud) { audio = aud; bulletManager.setAudio(aud); };
 	void collisionResponse(GameObject* collider);
-	void setStates(bool left, bool right, bool ground) { isCollidingLeft = left; isCollidingRight = right; isOnGround = ground; };
-	void setLadderAvailable(bool available) { isLadderAvailable = available; }
 	void freezeControls(bool freeze) { allowControls = !freeze; };
 	void setNeighborsTilesTargetNames(std::string left, std::string top, std::string right, std::string bottom, std::string middle);
 	bool isTeleportAnimFinished(float dt) { teleportation.animate(dt); setTextureRect(teleportation.getCurrentFrame());  return !teleportation.getPlaying(); };

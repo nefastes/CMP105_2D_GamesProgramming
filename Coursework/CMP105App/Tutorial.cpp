@@ -241,10 +241,10 @@ void Tutorial::startLevel(float dt)
 		{
 			if (player.isTeleportAnimFinished(dt))
 			{
+				audio->playSoundbyName("land");
 				player.setTextureRect(sf::IntRect(0, 8, 24, 24));
 				player.setHealth(100);
 				player.setAlive(true);
-				player.setStates(false, false, true);
 				playerSpawned = true;
 			}
 		}

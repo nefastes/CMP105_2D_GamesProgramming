@@ -87,8 +87,6 @@ TileManager::~TileManager()
 void TileManager::update(float dt, Player& p)
 {
 	//Init vars
-	bool hasCollidedWithSolid = false;
-	bool hasCollidedWithLadder = false;
 	std::vector<GameObject>* world = tileMap.getLevel();
 	std::string left, top, right, bottom, middle;
 
@@ -99,38 +97,44 @@ void TileManager::update(float dt, Player& p)
 		//Will help a lot with stuff like ladders
 		if (Collision::checkBoundingBox(&(*world)[i], sf::Vector2i(p.getPosition() + p.getSize() / 2.f)))
 		{
-			//Get neighbour tiles targetname in range
-			if (i > 0)
-				left = (*world)[i - 1].getTargetname();
-			else
-				left = "none";
+			//Use a for loop for left and right tiles, as the array will give a result for i - 1 while you are standing
+			//next to the void, we need to check if the middle is at anyone of the left hand or right hand sides tiles
+			for (unsigned j = 0; j < mapSize.x * (mapSize.y - 1) - 1; j += mapSize.x)
+			{
+				if (i == j)
+				{
+					left = "none";
+					break;
+				}
+				else left = (*world)[i - 1].getTargetname();
+			}
 			if (i > mapSize.x)
 				top = (*world)[i - mapSize.x].getTargetname();
 			else
 				top = "none";
-			if (i < mapSize.x * mapSize.y)
-				right = (*world)[i + 1].getTargetname();
-			else
-				right = "none";
+			for (unsigned j = mapSize.x - 1; j < mapSize.x * mapSize.y - 1; j += mapSize.x)
+			{
+				if (i == j)
+				{
+					right = "none";
+					break;
+				}
+				else right = (*world)[i + 1].getTargetname();
+			}
 			if (i < mapSize.x * (mapSize.y - 1))
 				bottom = (*world)[i + mapSize.x].getTargetname();
 			else
 				bottom = "none";
-			if (i >= 0 && i <= mapSize.x * mapSize.y)
-				middle = (*world)[i].getTargetname();
-			else
-				middle = "none";
+			middle = (*world)[i].getTargetname();
+			//Neighbour tiles have been detected, assigne the to the player
 			p.setNeighborsTilesTargetNames(left, top, right, bottom, middle);
 		}
+
+		//Collision detection
 		if ((*world)[i].isCollider())
 		{
 			if (Collision::checkBoundingBox(&p, &(*world)[i]))
 			{
-				//Check if it was a special tile
-				if ((*world)[i].getTargetname() == "ladder")
-					hasCollidedWithLadder = true;
-				else hasCollidedWithSolid = true;
-
 				//If they collided, trigger the response
 				p.collisionResponse(&(*world)[i]);
 				
@@ -148,15 +152,6 @@ void TileManager::update(float dt, Player& p)
 			}
 		}
 	}
-	if (!hasCollidedWithSolid && !hasCollidedWithLadder)
-		//Need this line to re-enable controls and physics in air
-		p.setStates(false, false, false);
-	if(!hasCollidedWithSolid && hasCollidedWithLadder && middle != "world")
-		//Need this line to re-enable controls and physics in air if colliding with the body of a ladder
-		p.setStates(false, false, false);
-	if(!hasCollidedWithLadder)
-		//Need to reset the ladder availability
-		p.setLadderAvailable(false);
 }
 
 void TileManager::render(sf::RenderWindow* window)
