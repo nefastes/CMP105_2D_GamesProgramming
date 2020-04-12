@@ -129,8 +129,11 @@ void Tutorial::update(float dt)
 
 	//Set the camera relatively to the player's horizontal position (megaman games do not follow the player vertically)
 	//the 50 is because of the tile size
-	if (player.getCollisionBox().left + player.getCollisionBox().width / 2 >= 0 + camera.getSize().x / 2 && player.getPosition().x <= tileManager.getMapSize().x * 50 - camera.getSize().x / 2)
-		camera.move(sf::Vector2f(player.getCollisionBox().left + player.getCollisionBox().width / 2 - camera.getCenter().x, 0));
+	if (player.getCollisionBox().left + player.getCollisionBox().width / 2 >= 0 + camera.getSize().x / 2 && player.getCollisionBox().left + player.getCollisionBox().width / 2 <= tileManager.getMapSize().x * 50 - camera.getSize().x / 2)
+		//camera.move(sf::Vector2f(player.getCollisionBox().left + player.getCollisionBox().width / 2 - camera.getCenter().x, 0));
+		camera.setCenter(sf::Vector2f(player.getPosition().x + player.getSize().x / 2, camera.getCenter().y));
+	//Set the window view
+	window->setView(camera);
 
 	//Update debug infos
 	if (debugUi->isDebugging())
@@ -145,9 +148,6 @@ void Tutorial::update(float dt)
 void Tutorial::render()
 {
 	beginDraw();
-
-	//Set the window view
-	window->setView(camera);
 
 	//Draw everything to the screen
 	tileManager.render(window);
@@ -269,6 +269,8 @@ void Tutorial::restartLevel()
 
 	//Reset the camera
 	camera.setCenter(window->getSize().x / 2, window->getSize().y / 2);
+	//Set the window view
+	window->setView(camera);
 
 	//Reset the health bar off screen
 	player.resetHealthPos(sf::Vector2f(-100, -100));

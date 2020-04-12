@@ -37,7 +37,7 @@ private:
 	sf::RectangleShape healthBlocks[5];		//Will make the health bar sprite
 
 	//Neighbour tiles tracker
-	std::string leftTargetname, topTargetname, rightTargetname, bottomTargetname;
+	std::string leftTargetname, topTargetname, rightTargetname, bottomTargetname, middleTargetname;
 
 	//Ladder trackers
 	bool isLadderAvailable;
@@ -74,7 +74,7 @@ public:
 	void setStates(bool left, bool right, bool ground) { isCollidingLeft = left; isCollidingRight = right; isOnGround = ground; };
 	void setLadderAvailable(bool available) { isLadderAvailable = available; }
 	void freezeControls(bool freeze) { allowControls = !freeze; };
-	void setNeighborsTilesTargetNames(std::string left, std::string top, std::string right, std::string bottom);
+	void setNeighborsTilesTargetNames(std::string left, std::string top, std::string right, std::string bottom, std::string middle);
 	bool isTeleportAnimFinished(float dt) { teleportation.animate(dt); setTextureRect(teleportation.getCurrentFrame());  return !teleportation.getPlaying(); };
 	void resetTeleportAnim() { teleportation.setPlaying(true); };
 	void setHealth(short int h) { health = h; };

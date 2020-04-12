@@ -87,45 +87,52 @@ TileManager::~TileManager()
 void TileManager::update(float dt, Player& p)
 {
 	//Init vars
-	bool hasCollided = false;
+	bool hasCollidedWithSolid = false;
 	bool hasCollidedWithLadder = false;
 	std::vector<GameObject>* world = tileMap.getLevel();
+	std::string left, top, right, bottom, middle;
 
 	//Check for collisions
 	for (unsigned i = 0; i < (unsigned)world->size(); ++i)
 	{
+		//Determine the tiles around the center of the sprite so we can base our physics on that
+		//Will help a lot with stuff like ladders
+		if (Collision::checkBoundingBox(&(*world)[i], sf::Vector2i(p.getPosition() + p.getSize() / 2.f)))
+		{
+			//Get neighbour tiles targetname in range
+			if (i > 0)
+				left = (*world)[i - 1].getTargetname();
+			else
+				left = "none";
+			if (i > mapSize.x)
+				top = (*world)[i - mapSize.x].getTargetname();
+			else
+				top = "none";
+			if (i < mapSize.x * mapSize.y)
+				right = (*world)[i + 1].getTargetname();
+			else
+				right = "none";
+			if (i < mapSize.x * (mapSize.y - 1))
+				bottom = (*world)[i + mapSize.x].getTargetname();
+			else
+				bottom = "none";
+			if (i >= 0 && i <= mapSize.x * mapSize.y)
+				middle = (*world)[i].getTargetname();
+			else
+				middle = "none";
+			p.setNeighborsTilesTargetNames(left, top, right, bottom, middle);
+		}
 		if ((*world)[i].isCollider())
 		{
 			if (Collision::checkBoundingBox(&p, &(*world)[i]))
 			{
 				//Check if it was a special tile
 				if ((*world)[i].getTargetname() == "ladder")
-				{
 					hasCollidedWithLadder = true;
-					//Get neighbour tiles targetname in range
-					std::string left, top, right, bottom;
-					if (i > 0)
-						left = (*world)[i - 1].getTargetname();
-					else
-						left = "none";
-					if (i > mapSize.x)
-						top = (*world)[i - mapSize.x].getTargetname();
-					else
-						top = "none";
-					if (i < mapSize.x * mapSize.y)
-						right = (*world)[i + 1].getTargetname();
-					else
-						right = "none";
-					if (i < mapSize.x * (mapSize.y - 1))
-						bottom = (*world)[i + mapSize.x].getTargetname();
-					else
-						bottom = "none";
-					p.setNeighborsTilesTargetNames(left, top, right, bottom);
-				}
+				else hasCollidedWithSolid = true;
 
 				//If they collided, trigger the response
 				p.collisionResponse(&(*world)[i]);
-				hasCollided = true;
 				
 				//Only show the collision boxes of the collided tiles if debug is ON
 				if (debugUi->isDebugging())
@@ -141,8 +148,15 @@ void TileManager::update(float dt, Player& p)
 			}
 		}
 	}
-	if (!hasCollided) p.setStates(false, false, false);	//Need this line to re-enable controls and physics in air
-	if (!hasCollidedWithLadder) p.setLadderAvailable(false);	//Need to reset the ladder availability
+	if (!hasCollidedWithSolid && !hasCollidedWithLadder)
+		//Need this line to re-enable controls and physics in air
+		p.setStates(false, false, false);
+	if(!hasCollidedWithSolid && hasCollidedWithLadder && middle != "world")
+		//Need this line to re-enable controls and physics in air if colliding with the body of a ladder
+		p.setStates(false, false, false);
+	if(!hasCollidedWithLadder)
+		//Need to reset the ladder availability
+		p.setLadderAvailable(false);
 }
 
 void TileManager::render(sf::RenderWindow* window)
@@ -172,16 +186,16 @@ void TileManager::createMap(Maps mapMode)
 		// Map dimensions
 		mapSize = sf::Vector2u(40, 14);
 		map = {
-			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	26,	27,	25,
-			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	26,	27,	25,
-			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	26,	27,	25,
-			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	26,	27,	25,
-			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	32,	0,	0,	0,	0,	26,	27,	25,
-			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	32,	24,	24,	24,	24,	24,	0,	0,	0,	0,	0,	0,	32,	0,	0,	0,	0,	26,	27,	25,
-			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	22,	23,	22,	23,	6,	4,	6,	6,	4,	6,	32,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	0,	32,	0,	0,	0,	0,	26,	27,	25,
-			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	22,	23,	22,	23,	7,	7,	1,	2,	2,	3,	32,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	34,	34,
-			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	6,	6,	6,	6,	7,	7,	7,	7,	7,	7,	32,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	34,	34,
-			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	8,	8,	8,	8,	7,	7,	5,	7,	7,	7,	32,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	34,	34,
+			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	0,	0,	0,	32,	0,	0,	0,	0,	0,	0,	0,
+			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	32,	0,	0,	0,	0,	0,	0,	0,
+			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	24,	32,	0,	0,	0,	0,	0,	0,	0,
+			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	24,	24,	24,	0,	0,	0,	0,	0,	0,
+			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	24,	24,	32,	0,	0,
+			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	32,	24,	24,	24,	24,	24,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	24,	32,	0,	0,
+			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	22,	23,	22,	23,	6,	4,	6,	6,	4,	6,	32,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	32,	0,	0,
+			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	22,	23,	22,	23,	7,	7,	1,	2,	2,	3,	32,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	32,	0,	0,
+			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	6,	6,	6,	6,	7,	7,	7,	7,	7,	7,	32,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	32,	0,	0,
+			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	8,	8,	8,	8,	7,	7,	5,	7,	7,	7,	32,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	32,	0,	0,
 			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	9,	9,	9,	9,	7,	5,	24,	24,	24,	24,	24,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	24,	24,	24,	24,	24,	24,	24,	24,	24,
 			0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	7,	7,	5,	7,	7,	7,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	0,	0,	0,	0,	0,	23,	22,	23,	22,	23,	22,	23,	22,	23,
 			24,	24,	24,	24, 24, 24, 24, 24, 24, 24,	24,	24,	24,	24,	24,	24,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	33,	33,	33,	33,	33,	23,	22,	23,	22,	23,	22,	23,	22,	23,
