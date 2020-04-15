@@ -78,9 +78,7 @@ Tutorial::~Tutorial()
 void Tutorial::handleInput(float dt)
 {
 	if (player.isAlive())
-	{
 		player.handleInput(dt);
-	}
 }
 
 void Tutorial::update(float dt)
@@ -131,7 +129,7 @@ void Tutorial::update(float dt)
 	//as an INTEGER (otherwise we will have dead pixels, lines). The 50 is because of the tile size which is 50
 	if (player.getCollisionBox().left + player.getCollisionBox().width / 2 >= 0 + camera.getSize().x / 2 &&
 		player.getCollisionBox().left + player.getCollisionBox().width / 2 <= tileManager.getMapSize().x * 50 - camera.getSize().x / 2)
-		camera.setCenter(sf::Vector2f((int)player.getCollisionBox().left + (int)player.getCollisionBox().width / 2, camera.getCenter().y));
+		camera.setCenter(sf::Vector2f((int)(player.getCollisionBox().left + player.getCollisionBox().width / 2), camera.getCenter().y));
 	//Set the window view
 	window->setView(camera);
 
@@ -259,7 +257,8 @@ void Tutorial::restartLevel()
 	isReadyBlinking = false;
 	readyBlinkCount = 0;
 
-	//Reset the player position
+	//Reset origin to default and the player position
+	player.resetSettings();
 	player.setPosition(checkpoint);
 	player.setTextureRect(sf::IntRect(484, 0, 9, 32));
 	player.resetTeleportAnim();

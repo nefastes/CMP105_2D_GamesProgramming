@@ -375,10 +375,14 @@ void Player::changePlayerMode(unsigned mode)
 		}
 		else
 		{
-			if (isFacingRight)
+			if (isFacingRight && !isMoving)
 				setOrigin(-10, 0);
-			else
+			else if (isFacingRight && isMoving)
+				setOrigin(0, 0);
+			else if (!isFacingRight && !isMoving)
 				setOrigin(30, 0);
+			else
+				setOrigin(20, 0);
 			setSize(sf::Vector2f(97, 75));
 		}
 		break;
@@ -787,4 +791,35 @@ void Player::playerShoot()
 void Player::renderBullets(sf::RenderWindow* window)
 {
 	bulletManager.renderBullets(window);
+}
+
+void Player::resetSettings()
+{
+	//Reset the origin
+	setOrigin(0, 0);
+	//Reset player trackers
+	isMoving = false;
+	isOnGround = true;				//Even though we have a spawn anim, he will be on ground when we gain controls
+	isJumping = false;
+	allowJump = true;
+	isCollidingRight = false;
+	isCollidingLeft = false;
+	isFacingRight = false;
+	//Reset health
+	health = 100;
+	//Reset ladder trackers
+	isLadderAvailable = false;
+	isClimbing = false;
+	isClimbingDownwards = false;
+	isFinishingClimb = false;
+	isOnLadder = false;
+	//Reset weapon tracker
+	isShooting = false;
+	shootTimeTracker = 0;
+	//Reset general trackers
+	timePassedTracker = 0;
+	jumpKeyPressTracker = 0;
+	//Reset rng
+	rng = 0;
+	isRngSet = false;
 }

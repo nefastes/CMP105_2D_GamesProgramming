@@ -86,6 +86,7 @@ public:
 	void resetHealthPos(sf::Vector2f pos);
 	void renderBullets(sf::RenderWindow* window);
 	void killAllBullets() { bulletManager.killAllBullets(); };
+	void resetSettings();	//Called by the level when the player dies
 
 private:
 	//Other functions for the player specifically
