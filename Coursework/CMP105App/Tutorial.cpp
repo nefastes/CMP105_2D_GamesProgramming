@@ -27,7 +27,7 @@ Tutorial::Tutorial(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameSta
 	player.setAudio(audio);
 	player.setPosition(checkpoint);
 	player.setVelocity(sf::Vector2f(200, 0));
-	player.setCollisionBox(sf::FloatRect(10, 5, 55, 70));
+	player.setCollisionBox(sf::FloatRect(15, 5, 45, 70));
 	player.setCollisionBoxColor(sf::Color::Red);
 	player.setAlive(false);
 
@@ -63,7 +63,7 @@ Tutorial::Tutorial(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameSta
 	hintSpike.setPosition(1325, 400);
 
 	//Init camera
-	camera = window->getDefaultView();
+	camera = window->getView();
 
 	//Init trackers
 	timePassedTracker = 0;
@@ -128,10 +128,10 @@ void Tutorial::update(float dt)
 	}
 
 	//Set the camera relatively to the player's horizontal position (megaman games do not follow the player vertically)
-	//the 50 is because of the tile size
-	if (player.getCollisionBox().left + player.getCollisionBox().width / 2 >= 0 + camera.getSize().x / 2 && player.getCollisionBox().left + player.getCollisionBox().width / 2 <= tileManager.getMapSize().x * 50 - camera.getSize().x / 2)
-		//camera.move(sf::Vector2f(player.getCollisionBox().left + player.getCollisionBox().width / 2 - camera.getCenter().x, 0));
-		camera.setCenter(sf::Vector2f(player.getPosition().x + player.getSize().x / 2, camera.getCenter().y));
+	//as an INTEGER (otherwise we will have dead pixels, lines). The 50 is because of the tile size which is 50
+	if (player.getCollisionBox().left + player.getCollisionBox().width / 2 >= 0 + camera.getSize().x / 2 &&
+		player.getCollisionBox().left + player.getCollisionBox().width / 2 <= tileManager.getMapSize().x * 50 - camera.getSize().x / 2)
+		camera.setCenter(sf::Vector2f((int)player.getCollisionBox().left + (int)player.getCollisionBox().width / 2, camera.getCenter().y));
 	//Set the window view
 	window->setView(camera);
 
@@ -267,8 +267,8 @@ void Tutorial::restartLevel()
 	//Kill death particles
 	deathParticleManager.killAllParticles();
 
-	//Reset the camera
-	camera.setCenter(window->getSize().x / 2, window->getSize().y / 2);
+	//Reset the camera as an INTEGER (otherwise we will have dead pixels, lines)
+	camera.setCenter((int)window->getSize().x / 2, camera.getCenter().y);
 	//Set the window view
 	window->setView(camera);
 

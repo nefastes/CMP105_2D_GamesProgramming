@@ -113,7 +113,7 @@ void Player::update(float dt)
 	if (debugging)
 	{
 		debugSize.setSize(sf::Vector2f(getSize()));
-		debugSize.setPosition(getPosition());
+		debugSize.setPosition(getPosition() - getOrigin());
 		debugCollisionBox.setSize(sf::Vector2f(getCollisionBox().width, getCollisionBox().height));
 		debugCollisionBox.setPosition(sf::Vector2f(getCollisionBox().left, getCollisionBox().top));
 	}
@@ -135,7 +135,7 @@ void Player::update(float dt)
 		bulletManager.update(dt);
 
 		//Simple ladder check that prevents impossible scenarios
-		if (!isLadderAvailable)
+		if (!isLadderAvailable && !isOnGround)
 		{
 			isOnLadder = false;
 			changePlayerMode(1);
@@ -167,8 +167,6 @@ void Player::update(float dt)
 		hasCollidedHorizontally = false;
 		hasCollidedWithLadder = false;
 	}
-	std::cout << topTargetname << " |||| " << rightTargetname << " |||| " << bottomTargetname << " |||| " <<
-		leftTargetname << " |||| " << middleTargetname << " |||| " << isOnGround << std::endl;
 }
 
 void Player::collisionResponse(GameObject* collider)
@@ -186,8 +184,9 @@ void Player::collisionResponse(GameObject* collider)
 			//Bottom hit
 			if (dy < 0)
 			{
-				//Need this line to prevent standing on the very edge
-				if (std::abs(dx) < collider->getSize().x / 2 + getCollisionBox().width / 2)
+				//Need this line to prevent colliding with the very edge and only allow a bottom collision if it
+				//the tile we bunk our head into
+				if (std::abs(dx) < collider->getSize().x / 2 + getCollisionBox().width / 2 && topTargetname == "worldSolid")
 				{
 					stepVelocity.y = 0;
 					isJumping = false;
@@ -329,9 +328,7 @@ void Player::collisionResponse(GameObject* collider)
 			//If he is on a ladder, center the player pos at the center of the ladder tile and adjust hitbox, size and stuff
 			isCollidingRight = false;
 			isCollidingLeft = false;
-			isShooting = false;
 			//If he is on a ladder, he is defo not on ground
-			isOnGround = false;
 			changePlayerMode(3);
 			setPosition(collider->getPosition().x - (getCollisionBox().left - getPosition().x), getPosition().y);
 
@@ -368,45 +365,59 @@ void Player::changePlayerMode(unsigned mode)
 	//For instance, when it slides the hitbox is to be of only 1 tile vertically and more than 2 tiles horizontally
 	switch (mode)
 	{
+		//On Ground
 	case 0:
+		setCollisionBox(sf::FloatRect(15, 5, 45, 70));
 		if (!isShooting)
 		{
+			setOrigin(0, 0);
 			setSize(sf::Vector2f(75, 75));
-			setCollisionBox(sf::FloatRect(15, 5, 45, 70));
 		}
 		else
 		{
-			setSize(sf::Vector2f(97, 75));
-			if(isFacingRight)
-				setCollisionBox(sf::FloatRect(15, 5, 45, 70));
+			if (isFacingRight)
+				setOrigin(-10, 0);
 			else
-				setCollisionBox(sf::FloatRect(35, 5, 45, 70));
+				setOrigin(30, 0);
+			setSize(sf::Vector2f(97, 75));
 		}
 		break;
+		//In air / Jumping
 	case 1:
+		setCollisionBox(sf::FloatRect(15, 5, 45, 70));
 		if (!isShooting)
 		{
+			setOrigin(0, 0);
 			setSize(sf::Vector2f(78, 90));
-			setCollisionBox(sf::FloatRect(17, 5, 44, 70));
 		}
 		else
 		{
-			setSize(sf::Vector2f(84, 90));
-			setCollisionBox(sf::FloatRect(20, 5, 44, 70));
+			if (isFacingRight)
+				setOrigin(0, 0);
+			else
+				setOrigin(12, 0);
+			setSize(sf::Vector2f(90, 90));
 		}
 		break;
+		//Sliding
 	case 2:
 		//Unused yet
 		break;
+		//On Ladder
 	case 3:
+		setCollisionBox(sf::FloatRect(7, 5, 45, 70));
 		if (!isShooting)
 		{
-			setSize(sf::Vector2f(65, 90));
-			setCollisionBox(sf::FloatRect(10, 5, 45, 70));
+			setOrigin(0, 0);
+			setSize(sf::Vector2f(60, 90));
 		}
 		else
 		{
-			//TODO
+			if (isFacingRight)
+				setOrigin(0, 0);
+			else
+				setOrigin(30, 0);
+			setSize(sf::Vector2f(90, 90));
 		}
 		break;
 	default:
@@ -503,6 +514,8 @@ void Player::checkLadderInputs()
 			isOnLadder = true;
 			//The player will be on the ladder, therefore must NOT be jumping (makes you fly otherwise)
 			isJumping = false;
+			//We are now climbing, prevent or cancel any shooting
+			isShooting = false;
 		}
 	}
 	//After OR: allows the user to climb down a ladder from the top of it
@@ -518,6 +531,8 @@ void Player::checkLadderInputs()
 				isOnLadder = true;
 			//The player will be on the ladder, therefore must NOT be jumping (makes you fly otherwise)
 			isJumping = false;
+			//We are now climbing, prevent or cancel any shooting
+			isShooting = false;
 		}
 	}
 	else
