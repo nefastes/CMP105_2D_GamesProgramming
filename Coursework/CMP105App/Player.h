@@ -105,7 +105,7 @@ private:
 	//Break down of collision
 	void worldCollisions(GameObject* collider);
 	void ladderCollisions(GameObject* collider);
-	void spikeCollisions();
+	void spikeCollisions(GameObject* collider);
 	void doorCollisions(GameObject* collider);
 };
 

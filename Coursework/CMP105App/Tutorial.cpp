@@ -223,10 +223,23 @@ void Tutorial::render()
 	tileManager.render();
 	
 	//Draw hints
-	window->draw(hintMove);
-	window->draw(hintJump);
-	window->draw(hintClimb);
-	window->draw(hintSpike);
+	switch (currentMap)
+	{
+	case 0:
+		window->draw(hintMove);
+		window->draw(hintJump);
+		window->draw(hintClimb);
+		window->draw(hintSpike);
+		break;
+	case 1:
+		break;
+	case 2:
+		break;
+	case 4:
+		break;
+	default:
+		break;
+	}
 
 	//Draw any potential bullet
 	player.renderBullets(window);
@@ -329,6 +342,12 @@ void Tutorial::restartLevel()
 	isReadyBlinking = false;
 	readyBlinkCount = 0;
 
+	//Reset the map
+	currentMap = 0;
+	tileManager.setCurrentMap(0);
+	tileManager.createMap(Maps::TUTORIAL, currentMap);
+	tileManager.buildCreatedMap(sf::Vector2f(0, 0));
+
 	//Reset origin to default and the player position
 	player.resetSettings();
 	player.setPosition(checkpoint);
@@ -339,7 +358,7 @@ void Tutorial::restartLevel()
 	deathParticleManager.killAllParticles();
 
 	//Reset the camera as an INTEGER (otherwise we will have dead pixels, lines)
-	camera.setCenter((int)window->getSize().x / 2, camera.getCenter().y);
+	camera.setCenter((int)window->getSize().x / 2, (int)window->getSize().y / 2);
 	//Set the window view
 	window->setView(camera);
 

@@ -198,7 +198,7 @@ void Player::collisionResponse(GameObject* collider)
 
 	//Spike response
 	else if (collider->getTargetname() == "spike")
-		spikeCollisions();
+		spikeCollisions(collider);
 }
 
 void Player::worldCollisions(GameObject* collider)
@@ -382,11 +382,15 @@ void Player::ladderCollisions(GameObject* collider)
 	}
 }
 
-void Player::spikeCollisions()
+void Player::spikeCollisions(GameObject* collider)
 {
-	//Kill the player
-	health = 0;
-	setAlive(false);
+	//only kill the player if 1/4 of the sprite size box is touching it
+	if (getPosition().y + 3 * getSize().y / 4 > collider->getPosition().y)
+	{
+		//Kill the player
+		health = 0;
+		setAlive(false);
+	}
 }
 
 void Player::doorCollisions(GameObject* collider)

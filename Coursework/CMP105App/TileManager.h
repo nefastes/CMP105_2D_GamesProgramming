@@ -46,6 +46,7 @@ public:
 	void setDebugRef(DebugUi* dui) { debugUi = dui; };
 	sf::Vector2u getMapSize() { return mapSize; };
 	unsigned getCurrentMap() { return mapTracker; };
+	void setCurrentMap(unsigned m) { mapTracker = m; };
 	sf::Vector2f getMapPosition() { return tileMap.getPosition(); };
 	bool isTransitionning() { return transitionning; };
 	void setTransitionning(bool t) { transitionning = t; };
