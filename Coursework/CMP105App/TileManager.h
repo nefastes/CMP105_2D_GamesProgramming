@@ -31,6 +31,10 @@ private:
 	//Map trackers, tack which map is supposed to be drawn
 	unsigned mapTracker;
 
+	//Transition tracker, to enable a transition in the level and what kind of transition it is (vertical upwards, etc.)
+	bool transitionning;
+	unsigned transitionType;
+
 public:
 	TileManager();
 	~TileManager();
@@ -43,5 +47,8 @@ public:
 	sf::Vector2u getMapSize() { return mapSize; };
 	unsigned getCurrentMap() { return mapTracker; };
 	sf::Vector2f getMapPosition() { return tileMap.getPosition(); };
+	bool isTransitionning() { return transitionning; };
+	void setTransitionning(bool t) { transitionning = t; };
+	unsigned getTransitionType() { return transitionType; };
 };
 

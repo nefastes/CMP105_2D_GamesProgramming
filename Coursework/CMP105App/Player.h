@@ -87,7 +87,7 @@ public:
 	void renderBullets(sf::RenderWindow* window);
 	void killAllBullets() { bulletManager.killAllBullets(); };
 	void resetSettings();	//Called by the level when the player dies
-	bool getLadderTracker() { return isLadderAvailable; };
+	bool getLadderTracker() { return isOnLadder; };
 
 private:
 	//Other functions for the player specifically

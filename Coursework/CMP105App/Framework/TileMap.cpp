@@ -4,6 +4,7 @@
 TileMap::TileMap()
 {
 	position = sf::Vector2f(0, 0);
+	secondLevel = true;		//Set it to true as it will be inversed to false to build the first map
 }
 
 TileMap::~TileMap()
@@ -11,11 +12,28 @@ TileMap::~TileMap()
 }
 
 // Uses window pointer to render level/section. Tile by Tile.
-void TileMap::render(sf::RenderWindow* window)
+void TileMap::render(sf::RenderWindow* window, bool both)
 {
-	for (int i = 0; i < (int)level.size(); i++)
+	if (!both)
 	{
-		window->draw(level[i]);
+		if (!secondLevel)
+		{
+			for (int i = 0; i < (int)level.size(); i++)
+				window->draw(level[i]);
+		}
+		else
+		{
+			for (int i = 0; i < (int)nextLevel.size(); i++)
+				window->draw(nextLevel[i]);
+		}
+	}
+	else
+	{
+		for (int i = 0; i < (int)level.size(); i++)
+			window->draw(level[i]);
+
+		for (int i = 0; i < (int)nextLevel.size(); i++)
+			window->draw(nextLevel[i]);
 	}
 }
 
@@ -51,13 +69,24 @@ void TileMap::buildLevel()
 			x = i % mapSize.x;
 			y = (int)floor(i / mapSize.x);
 			tileSet[tileMap[i]].setPosition(position.x + (x * tileSize.x), position.y + (y * tileSize.y));
-			level.push_back(tileSet[tileMap[i]]);
-			level[i].setTexture(&texture);
+			if (!secondLevel)
+			{
+				level.push_back(tileSet[tileMap[i]]);
+				level[i].setTexture(&texture);
+			}
+			else
+			{
+				nextLevel.push_back(tileSet[tileMap[i]]);
+				nextLevel[i].setTexture(&texture);
+			}
 		}
 	}
 }
 
 void TileMap::resetLevel()
 {
-	level.clear();
+	if(!secondLevel)
+		level.clear();
+	else
+		nextLevel.clear();
 }

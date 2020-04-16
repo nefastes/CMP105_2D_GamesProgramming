@@ -25,19 +25,24 @@ public:
 	void resetLevel();
 
 	// Receives window handle and renders the level/tilemap
-	void render(sf::RenderWindow* window);
+	void render(sf::RenderWindow* window, bool both);
 	// Returns the built level tile map. Used for collision detection, etc, where we need access to elements of the level.
-	std::vector<GameObject>* getLevel(){ return &level; };
+	std::vector<GameObject>* getLevel() { if (!secondLevel) return &level; else return &nextLevel; };
 
 	// Set the origin position of the tilemap section. 
 	void setPosition(sf::Vector2f pos) { position = pos; };
 	// Get the origin position of the tilemap section.
 	sf::Vector2f getPosition() { return position; };
 
+	// Call this function whenever a new map is to be built, so that it builds it on the next map
+	void inverseLevel() { secondLevel = !secondLevel; };
+
 protected:
 	std::vector<GameObject> tileSet;
 	std::vector<int> tileMap;
-	std::vector<GameObject> level;
+	std::vector<GameObject> level;				//Those to levels vector will allow us to display 2 different maps at the
+	std::vector<GameObject> nextLevel;			//same time on the screen, and keep 1 load with the level tracker
+	bool secondLevel;								//false = first map , true = second map
 	sf::Texture texture;
 	sf::Vector2u mapSize;
 	sf::Vector2f position;

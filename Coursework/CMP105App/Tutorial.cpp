@@ -1,5 +1,4 @@
 #include "Tutorial.h"
-#include <iostream>
 Tutorial::Tutorial(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameState* gs, DebugUi* dui)
 {
 	//Init stuff from Main()
@@ -85,6 +84,17 @@ void Tutorial::handleInput(float dt)
 {
 	if (player.isAlive())
 		player.handleInput(dt);
+	//Debug camera (to check if maps unload correctly
+	/*
+	if (input->isKeyDown(sf::Keyboard::Right))
+		camera.move(sf::Vector2f(100, 0) * dt);
+	if (input->isKeyDown(sf::Keyboard::Left))
+		camera.move(sf::Vector2f(-100, 0) * dt);
+	if (input->isKeyDown(sf::Keyboard::Down))
+		camera.move(sf::Vector2f(0, 100) * dt);
+	if (input->isKeyDown(sf::Keyboard::Up))
+		camera.move(sf::Vector2f(0, -100) * dt);
+	*/
 }
 
 void Tutorial::update(float dt)
@@ -130,7 +140,7 @@ void Tutorial::update(float dt)
 	{
 		startLevel(dt);
 	}
-	std::cout << camera.getCenter().x << " " << camera.getCenter().y << " " << player.getPosition().x << std::endl;
+	
 	//Change the map section if needed
 	if (currentMap > tileManager.getCurrentMap())
 	{
@@ -139,7 +149,7 @@ void Tutorial::update(float dt)
 		sf::Vector2f position = sf::Vector2f((int)camera.getCenter().x + (int)camera.getSize().x / 2 - (int)tileManager.getMapSize().x * 50,
 			(int)camera.getCenter().y + (int)camera.getSize().y / 2);
 		tileManager.buildCreatedMap(position);
-		camera.move(sf::Vector2f(0, camera.getSize().y));
+		//camera.move(sf::Vector2f(0, camera.getSize().y));
 	}
 	else if (currentMap < tileManager.getCurrentMap())
 	{
@@ -148,7 +158,41 @@ void Tutorial::update(float dt)
 		sf::Vector2f position = sf::Vector2f((int)camera.getCenter().x - (int)camera.getSize().x / 2,
 			(int)camera.getCenter().y - 3 * (int)camera.getSize().y / 2);
 		tileManager.buildCreatedMap(position);
-		camera.move(sf::Vector2f(0, -camera.getSize().y));
+		//camera.move(sf::Vector2f(0, -camera.getSize().y));
+	}
+	if (tileManager.isTransitionning())
+	{
+		switch (tileManager.getTransitionType())
+		{
+		case 1:
+			if ((int)(camera.getCenter().y - camera.getSize().y / 2) > tileManager.getMapPosition().y)
+			{
+				camera.move(sf::Vector2f(0, (int)(-600 * dt)));
+				player.freezeControls(true);
+			}
+			else
+			{
+				camera.setCenter(sf::Vector2f(tileManager.getMapPosition().x + (int)camera.getSize().x / 2,
+					tileManager.getMapPosition().y + (int)camera.getSize().y / 2));
+				tileManager.setTransitionning(false);
+				player.freezeControls(false);
+			}
+			break;
+		case 2:
+			if ((int)(camera.getCenter().y - camera.getSize().y / 2) < tileManager.getMapPosition().y)
+			{
+				camera.move(sf::Vector2f(0, (int)(600 * dt)));
+				player.freezeControls(true);
+			}
+			else
+			{
+				camera.setCenter(sf::Vector2f(tileManager.getMapPosition().x + tileManager.getMapSize().x * 50 -
+					(int)camera.getSize().x / 2, tileManager.getMapPosition().y + (int)camera.getSize().y / 2));
+				tileManager.setTransitionning(false);
+				player.freezeControls(false);
+			}
+			break;
+		}
 	}
 
 	//Set the camera relatively to the player's horizontal position (megaman games do not follow the player vertically)

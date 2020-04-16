@@ -112,6 +112,14 @@ void Player::handleInput(float dt)
 		//Shooting ?
 		shoot();
 	}
+	else
+	{
+		isMoving = false;
+		isClimbing = false;
+		isClimbingDownwards = false;
+		isJumping = false;
+		isShooting = false;
+	}
 }
 
 void Player::update(float dt)
@@ -704,7 +712,7 @@ void Player::playerPhysics(float dt)
 {
 	//Physics
 	//Avoid doing more calculations when touches the ground or when the player jumps
-	if (!isOnGround && !isJumping && !isOnLadder)
+	if (!isOnGround && !isJumping && !isOnLadder && allowControls)
 	{
 		//Reset jump stats in case ?
 		allowJump = false;

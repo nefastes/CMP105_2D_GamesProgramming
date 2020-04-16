@@ -4,10 +4,14 @@ TileManager::TileManager()
 	//We start with the map 0 of a level
 	mapTracker = 0;
 
+	//We do not have a transition at the start of the level
+	transitionning = false;
+	transitionType = 0;
+
 	//Load the tile sheet
 	tileMap.loadTexture("custom_sprites/NES_Mega_Man_Tiles.PNG");
 
-	for (int i = 0; i <= 34; i++)
+	for (int i = 0; i <= 35; i++)
 	{
 		tile.setSize(sf::Vector2f(50, 50));		//We will be able to draw 14 tiles vertically and 24 tiles horizontally
 		tile.setCollisionBox(0, 0, 50, 50);
@@ -76,6 +80,8 @@ TileManager::TileManager()
 	tiles[33].setTargetName("spike");
 	tiles[34].setTextureRect(sf::IntRect(360, 172, 16, 16));			//Door
 	tiles[34].setTargetName("door");
+	tiles[35].setTextureRect(sf::IntRect(275, 189, 16, 16));			//Sky looking tile, used to trigger a transition
+	tiles[35].setTargetName("transition");								//of the screen downwards if the player falls into it
 
 	//Set the tileMap
 	tileMap.setTileSet(tiles);
@@ -90,6 +96,10 @@ void TileManager::update(float dt, Player& p)
 {
 	//Init a tracker that will determinate if the player is outside of the map
 	bool isInsideMap = false;
+	//Init a tracker that will be set to true when a potential vertical transition can be triggered
+	bool potentialVerticalTransition = false;
+	//Init a tracker that will be set to true when we collide with a door
+	bool potentialHorizontalTransition = false;
 
 	//Init vars
 	std::vector<GameObject>* world = tileMap.getLevel();
@@ -143,6 +153,12 @@ void TileManager::update(float dt, Player& p)
 		{
 			if (Collision::checkBoundingBox(&p, &(*world)[i]))
 			{
+				//If the player collides with a ladder or a transition block, we might have a transition
+				if ((*world)[i].getTargetname() == "ladder" || (*world)[i].getTargetname() == "transition")
+					potentialVerticalTransition = true;
+				else if ((*world)[i].getTargetname() == "door")
+					potentialHorizontalTransition = true;
+
 				//If they collided, trigger the response
 				p.collisionResponse(&(*world)[i]);
 				
@@ -161,24 +177,43 @@ void TileManager::update(float dt, Player& p)
 		}
 	}
 
-	//If the middle of the player is not inside the map but he is climbing a ladder, load the next screen
+	//Top transition: If the middle of the player is not inside the map but he is climbing a ladder, load the next screen
 	if (!isInsideMap && p.getLadderTracker() &&
 		p.getCollisionBox().top + p.getCollisionBox().height / 2 < window->getView().getCenter().y - window->getView().getSize().y / 2)
 	{
 		++mapTracker;
 		isInsideMap = true;
+		transitionning = true;
+		transitionType = 1;
 	}
-	else if (!isInsideMap && p.getLadderTracker() &&
+	//Bottom transition: If the middle of the player is not inside the map but he is colliding with a transition type tile
+	//(ladder, transition), load previous screen
+	else if (!isInsideMap && potentialVerticalTransition && mapTracker > 0 &&
 		p.getCollisionBox().top + p.getCollisionBox().height / 2 > window->getView().getCenter().y + window->getView().getSize().y / 2)
 	{
 		--mapTracker;
 		isInsideMap = true;
+		transitionning = true;
+		transitionType = 2;
 	}
+	//Else, if we collide with a door, open the door and load next screen
+	else if (potentialHorizontalTransition)
+	{
+		//Detect the door position
+
+
+		//Replace the door tiles with air tiles from bottom to top
+	}
+	//If not, he is not transitionning thus we reset the transition type
+	else if (!transitionning && transitionType != 0) transitionType = 0;
 }
 
 void TileManager::render()
 {
-	tileMap.render(window);
+	if(!transitionning)
+		tileMap.render(window, false);
+	else
+		tileMap.render(window, true);
 
 	//Debug tiles
 	if (debugUi->isDebugging())
@@ -260,7 +295,27 @@ void TileManager::createMap(Maps level, unsigned section)
 				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	24,	24,	24,	24,	0,	0,	0,	0,	0,	0,	0,	0,	34,
 				0,	0,	0,	0,	0,	0,	0,	24,	24,	24,	24,	22,	23,	22,	23,	24,	24,	24,	24,	24,	24,	24,	24,	24,
 				0,	0,	0,	32,	24,	24,	24,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,
-				0,	0,	0,	32,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22
+				35,	35,	35,	32,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22
+			};
+			break;
+		case 3:
+			// Map dimensions
+			mapSize = sf::Vector2u(24, 14);
+			map = {
+				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
+				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
+				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
+				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
+				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
+				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
+				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
+				24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,
+				7,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	4,	4,	4,	34,
+				7,	7,	7,	7,	7,	7,	7,	7,	7,	7,	5,	7,	7,	7,	7,	7,	7,	7,	5,	5,	5,	5,	5,	34,
+				7,	7,	7,	5,	7,	7,	1,	7,	7,	7,	7,	7,	7,	5,	7,	7,	5,	5,	5,	5,	5,	5,	5,	34,
+				24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,
+				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
+				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0
 			};
 			break;
 		}
@@ -274,6 +329,7 @@ void TileManager::createMap(Maps level, unsigned section)
 void TileManager::buildCreatedMap(sf::Vector2f position)
 {
 	//Once the map has been created/declared, set it
+	tileMap.inverseLevel();
 	tileMap.resetLevel();
 	tileMap.setTileMap(map, mapSize);
 	tileMap.setPosition(position);
