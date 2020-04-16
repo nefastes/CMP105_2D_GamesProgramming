@@ -98,49 +98,7 @@ void Tutorial::handleInput(float dt)
 }
 
 void Tutorial::update(float dt)
-{
-	//Only update the objects when necessary
-	if (player.isAlive() && playerSpawned)
-	{
-		//Update objects
-		player.update(dt);
-		tileManager.update(dt, player);
-
-		//Reset the time tracker (will not be 0 after spawn)
-		if (timePassedTracker != 0)
-			timePassedTracker = 0;
-	}
-	//If the player dies, do the following
-	else if (playerSpawned)
-	{
-		//Player dead, stop all musics
-		audio->stopAllMusic();
-
-		//Update time tracker
-		timePassedTracker += dt;
-
-		if (!deathParticleManager.haveParticlesSpawned())
-		{
-			if (timePassedTracker > .5f)
-			{
-				deathParticleManager.spawnParticles(player.getPosition() + player.getSize() / 2.f);
-				audio->playSoundbyName("death");
-				timePassedTracker = 0;
-			}
-		}
-		else
-		{
-			deathParticleManager.update(dt);
-			if (timePassedTracker > 4.f)
-				restartLevel();
-		}
-	}
-	//If both checks failed, it means we are currently spawning the player
-	else
-	{
-		startLevel(dt);
-	}
-	
+{	
 	//Change the map section if needed
 	if (currentMap > tileManager.getCurrentMap())
 	{
@@ -204,6 +162,49 @@ void Tutorial::update(float dt)
 		camera.setCenter(sf::Vector2f((int)(player.getCollisionBox().left + player.getCollisionBox().width / 2), camera.getCenter().y));
 	//Set the window view
 	window->setView(camera);
+
+	//Only update the objects when necessary
+	//AND most importanly, update them AFTER the view has been updated since they might base calculation on viewPos
+	if (player.isAlive() && playerSpawned)
+	{
+		//Update objects
+		player.update(dt);
+		tileManager.update(dt, player);
+
+		//Reset the time tracker (will not be 0 after spawn)
+		if (timePassedTracker != 0)
+			timePassedTracker = 0;
+	}
+	//If the player dies, do the following
+	else if (playerSpawned)
+	{
+		//Player dead, stop all musics
+		audio->stopAllMusic();
+
+		//Update time tracker
+		timePassedTracker += dt;
+
+		if (!deathParticleManager.haveParticlesSpawned())
+		{
+			if (timePassedTracker > .5f)
+			{
+				deathParticleManager.spawnParticles(player.getPosition() + player.getSize() / 2.f);
+				audio->playSoundbyName("death");
+				timePassedTracker = 0;
+			}
+		}
+		else
+		{
+			deathParticleManager.update(dt);
+			if (timePassedTracker > 4.f)
+				restartLevel();
+		}
+	}
+	//If both checks failed, it means we are currently spawning the player
+	else
+	{
+		startLevel(dt);
+	}
 
 	//Update debug infos
 	if (debugUi->isDebugging())

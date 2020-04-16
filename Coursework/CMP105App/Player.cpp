@@ -757,9 +757,9 @@ void Player::playerPhysics(float dt)
 void Player::updateHealth()
 {
 	//Set the position of the health bar relatively to the view
-	sf::Vector2f topLeft = sf::Vector2f(window->getView().getCenter() - window->getView().getSize() / 2.f);
+	sf::Vector2i topLeft = sf::Vector2i(window->getView().getCenter() - window->getView().getSize() / 2.f);
 	for(int i = 0; i < 5; ++i)
-		healthBlocks[i].setPosition(topLeft.x + healthBlocks[i].getSize().x, topLeft.y + (5 - i) * healthBlocks[i].getSize().y);		//Set the healthbar vertically
+		healthBlocks[i].setPosition(topLeft.x + 2 * healthBlocks[i].getSize().x, topLeft.y + (5 - i) * healthBlocks[i].getSize().y);		//Set the healthbar vertically
 
 	//Determine the last block to display full health and which amount of health it should display
 	//For instance: with health = 50, the last two blocks are still full health and the middle block has half
