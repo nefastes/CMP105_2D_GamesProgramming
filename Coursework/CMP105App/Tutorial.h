@@ -55,6 +55,7 @@ private:
 	//Trackers
 	float timePassedTracker;
 	bool playerSpawned;
+	unsigned currentMap;			//Tracks which map of the level is to be loaded
 
 public:
 	Tutorial(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameState* gs, DebugUi* dui);

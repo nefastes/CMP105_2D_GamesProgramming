@@ -1,4 +1,5 @@
 #include "Tutorial.h"
+#include <iostream>
 Tutorial::Tutorial(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameState* gs, DebugUi* dui)
 {
 	//Init stuff from Main()
@@ -8,11 +9,15 @@ Tutorial::Tutorial(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameSta
 	gameState = gs;
 	debugUi = dui;
 
+	//Pass the window to the tile manager
+	tileManager.setWindow(window);
+
 	//Send debug infos to tile manager
 	tileManager.setDebugRef(debugUi);
 
 	//Create the map
-	tileManager.createMap(Maps::TUTORIAL);
+	tileManager.createMap(Maps::TUTORIAL, 0);
+	tileManager.buildCreatedMap(sf::Vector2f(0, 0));
 
 	//Init checkpoints positions
 	checkpoint = sf::Vector2f(100, -100);
@@ -68,6 +73,7 @@ Tutorial::Tutorial(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameSta
 	//Init trackers
 	timePassedTracker = 0;
 	playerSpawned = false;
+	currentMap = 0;
 }
 
 Tutorial::~Tutorial()
@@ -124,11 +130,33 @@ void Tutorial::update(float dt)
 	{
 		startLevel(dt);
 	}
+	std::cout << camera.getCenter().x << " " << camera.getCenter().y << " " << player.getPosition().x << std::endl;
+	//Change the map section if needed
+	if (currentMap > tileManager.getCurrentMap())
+	{
+		currentMap = tileManager.getCurrentMap();
+		tileManager.createMap(Maps::TUTORIAL, currentMap);
+		sf::Vector2f position = sf::Vector2f((int)camera.getCenter().x + (int)camera.getSize().x / 2 - (int)tileManager.getMapSize().x * 50,
+			(int)camera.getCenter().y + (int)camera.getSize().y / 2);
+		tileManager.buildCreatedMap(position);
+		camera.move(sf::Vector2f(0, camera.getSize().y));
+	}
+	else if (currentMap < tileManager.getCurrentMap())
+	{
+		currentMap = tileManager.getCurrentMap();
+		tileManager.createMap(Maps::TUTORIAL, currentMap);
+		sf::Vector2f position = sf::Vector2f((int)camera.getCenter().x - (int)camera.getSize().x / 2,
+			(int)camera.getCenter().y - 3 * (int)camera.getSize().y / 2);
+		tileManager.buildCreatedMap(position);
+		camera.move(sf::Vector2f(0, -camera.getSize().y));
+	}
 
 	//Set the camera relatively to the player's horizontal position (megaman games do not follow the player vertically)
 	//as an INTEGER (otherwise we will have dead pixels, lines). The 50 is because of the tile size which is 50
-	if (player.getCollisionBox().left + player.getCollisionBox().width / 2 >= 0 + camera.getSize().x / 2 &&
-		player.getCollisionBox().left + player.getCollisionBox().width / 2 <= tileManager.getMapSize().x * 50 - camera.getSize().x / 2)
+	if (player.getCollisionBox().left + player.getCollisionBox().width / 2 >=
+			tileManager.getMapPosition().x + camera.getSize().x / 2 &&
+		player.getCollisionBox().left + player.getCollisionBox().width / 2 <=
+			tileManager.getMapPosition().x + tileManager.getMapSize().x * 50 - camera.getSize().x / 2)
 		camera.setCenter(sf::Vector2f((int)(player.getCollisionBox().left + player.getCollisionBox().width / 2), camera.getCenter().y));
 	//Set the window view
 	window->setView(camera);
@@ -148,7 +176,7 @@ void Tutorial::render()
 	beginDraw();
 
 	//Draw everything to the screen
-	tileManager.render(window);
+	tileManager.render();
 	
 	//Draw hints
 	window->draw(hintMove);

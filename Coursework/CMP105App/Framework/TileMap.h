@@ -21,6 +21,8 @@ public:
 	void setTileMap(std::vector<int> tm, sf::Vector2u mapDimensions);
 	// Once provided with the map and tile set, builds the level, creating an array of tile sprites positioned based on the map. Ready to render.
 	void buildLevel();
+	// To load another map, we need the reset the level vector
+	void resetLevel();
 
 	// Receives window handle and renders the level/tilemap
 	void render(sf::RenderWindow* window);
@@ -29,6 +31,8 @@ public:
 
 	// Set the origin position of the tilemap section. 
 	void setPosition(sf::Vector2f pos) { position = pos; };
+	// Get the origin position of the tilemap section.
+	sf::Vector2f getPosition() { return position; };
 
 protected:
 	std::vector<GameObject> tileSet;

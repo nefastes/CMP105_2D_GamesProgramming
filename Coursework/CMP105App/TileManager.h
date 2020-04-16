@@ -22,16 +22,26 @@ private:
 	sf::Vector2u mapSize;				//Map dimensions
 	std::vector<int> map;				//the tile map
 
+	//Window ref
+	sf::RenderWindow* window;
+
 	//Debug tracker acces
 	DebugUi* debugUi;
+
+	//Map trackers, tack which map is supposed to be drawn
+	unsigned mapTracker;
 
 public:
 	TileManager();
 	~TileManager();
 	void update(float dt, Player& p);
-	void render(sf::RenderWindow* window);
-	void createMap(Maps mapMode);
+	void render();
+	void createMap(Maps level, unsigned section);
+	void buildCreatedMap(sf::Vector2f position);
+	void setWindow(sf::RenderWindow* hwnd) { window = hwnd; };
 	void setDebugRef(DebugUi* dui) { debugUi = dui; };
 	sf::Vector2u getMapSize() { return mapSize; };
+	unsigned getCurrentMap() { return mapTracker; };
+	sf::Vector2f getMapPosition() { return tileMap.getPosition(); };
 };
 

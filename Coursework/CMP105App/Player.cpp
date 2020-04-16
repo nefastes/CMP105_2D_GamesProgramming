@@ -67,6 +67,13 @@ Player::Player()
 	isFinishingClimb = false;
 	isOnLadder = false;
 
+	//Init targetnames detections to nothing
+	leftTargetname = "";
+	topTargetname = "";
+	rightTargetname = "";
+	bottomTargetname = "";
+	middleTargetname = "";
+
 	//Weapon tracker
 	isShooting = false;
 	shootTimeTracker = 0;
@@ -94,7 +101,7 @@ void Player::handleInput(float dt)
 	timePassedTracker += dt;
 
 	//Only allow movement when the player is alive
-	if (isAlive())
+	if (isAlive() && allowControls)
 	{
 		//Move horizontally
 		moveH(dt);
@@ -167,52 +174,162 @@ void Player::update(float dt)
 		hasCollidedHorizontally = false;
 		hasCollidedWithLadder = false;
 	}
+	//std::cout << leftTargetname << " " << topTargetname << " " << rightTargetname << " " <<
+		//bottomTargetname << " " << middleTargetname << " " << std::endl;
 }
 
 void Player::collisionResponse(GameObject* collider)
+{
+	//World response
+	if (collider->getTargetname() == "worldSolid")
+		worldCollisions(collider);
+
+	//Ladder response
+	else if (collider->getTargetname() == "ladder")
+		ladderCollisions(collider);
+
+	//Spike response
+	else if (collider->getTargetname() == "spike")
+		spikeCollisions();
+}
+
+void Player::worldCollisions(GameObject* collider)
 {
 	//Deltas from the center of the collision box of the tile to the center of the collisionbox of the player
 	float dx = (collider->getPosition().x + collider->getSize().x / 2) - (getCollisionBox().left + getCollisionBox().width / 2);
 	float dy = (collider->getPosition().y + collider->getSize().y / 2) - (getCollisionBox().top + getCollisionBox().height / 2);
 
-
-	//Y axis hit
-	if (collider->getTargetname() == "worldSolid")
+	if (std::abs(dx) <= std::abs(dy))
 	{
-		if (std::abs(dx) <= std::abs(dy))
+		//Bottom hit
+		if (dy < 0)
 		{
-			//Bottom hit
-			if (dy < 0)
+			//Need this line to prevent colliding with the very edge and only allow a bottom collision if it
+			//the tile we bunk our head into
+			if (std::abs(dx) < collider->getSize().x / 2 + getCollisionBox().width / 2 && topTargetname == "worldSolid")
 			{
-				//Need this line to prevent colliding with the very edge and only allow a bottom collision if it
-				//the tile we bunk our head into
-				if (std::abs(dx) < collider->getSize().x / 2 + getCollisionBox().width / 2 && topTargetname == "worldSolid")
-				{
-					stepVelocity.y = 0;
-					isJumping = false;
-					allowJump = false;
-				}
+				stepVelocity.y = 0;
+				isJumping = false;
+				allowJump = false;
 			}
-			//Top hit
+		}
+		//Top hit
+		else
+		{
+			//Need this line to prevent standing on the very edge and allow a vertical collision
+			//We also check if the player jumps so that we prevent having a landing while the player is going upwards
+			//(was happening if you would jump next to a wall)
+			if (std::abs(dx) < collider->getSize().x / 2 + getCollisionBox().width / 2 && !isJumping)
+			{
+				//If he just landed play the sound and update the ground tracker
+				if (!isOnGround)
+				{
+					audio->playSoundbyName("land");
+					isOnGround = true;
+				}
+				hasCollidedVertically = true;		//We have collided vertically, note that we only set it to true for top collisions
+				isCollidingRight = false;
+				isCollidingLeft = false;
+				stepVelocity.y = 0;
+				isOnLadder = false;					//If he touches the ground on a descent, he is not on a ladder anymore
+				changePlayerMode(0);				//He is now on ground, so we change the mode back to normal (0)
+				//Set pos in reguard of the hitbox, the top of the hitbox is lower than the top of the player sprite (thus higher in coord since y
+				//increases downwards), which is why we subtract it by the player's sprite y position to get the delta (we could use std::abs but lazy)
+				//This will set the bottom of the hitbox just on top of the ground contact
+				setPosition(sf::Vector2f(getPosition().x, collider->getPosition().y -
+					getCollisionBox().height - (getCollisionBox().top - getPosition().y)));
+			}
+		}
+	}
+	//X axis hit
+	else
+	{
+		//We have collided horizontally
+		hasCollidedHorizontally = true;
+
+		//If he is currently on ground, we have to make sure the player mode is correctly adapted
+		if (isOnGround)
+			changePlayerMode(0);
+
+		//Only do a response for horizontal collisions if the player is not on a ladder
+		//We also check if the player is further away inside than just touching the wall to avoid more calculations and bugs
+		if (!isOnLadder && std::abs(dx) < collider->getSize().x / 2 + getCollisionBox().width / 2)
+		{
+			//Right side hit
+			if (dx < 0)
+			{
+				isCollidingRight = true;
+				isCollidingLeft = false;
+				//Set the position in reguard of the hitbox placement, makes it independent of the player's size
+				setPosition(sf::Vector2f(collider->getPosition().x + collider->getSize().x -
+					(getCollisionBox().left - getPosition().x), getPosition().y));
+			}
+			//Left side hit
 			else
 			{
-				//Need this line to prevent standing on the very edge and allow a vertical collision
-				//We also check if the player jumps so that we prevent having a landing while the player is going upwards
-				//(was happening if you would jump next to a wall)
-				if (std::abs(dx) < collider->getSize().x / 2 + getCollisionBox().width / 2 && !isJumping)
+				isCollidingRight = false;
+				isCollidingLeft = true;
+				//Set the position in reguard of the hitbox placement, makes it independent of the player's size
+				setPosition(sf::Vector2f(collider->getPosition().x - getCollisionBox().width -
+					(getCollisionBox().left - getPosition().x), getPosition().y));
+			}
+		}
+	}
+}
+
+void Player::ladderCollisions(GameObject* collider)
+{
+	//Deltas from the center of the collision box of the tile to the center of the collisionbox of the player
+	float dx = (collider->getPosition().x + collider->getSize().x / 2) - (getCollisionBox().left + getCollisionBox().width / 2);
+	float dy = (collider->getPosition().y + collider->getSize().y / 2) - (getCollisionBox().top + getCollisionBox().height / 2);
+
+	//We have collided with a ladder
+	hasCollidedWithLadder = true;
+
+	//Enables ladder physics, climbing on a ladder, if at least 3/4th of the player colbox touches the ladder tile
+	if (getCollisionBox().left + 3 * getCollisionBox().width / 4 >= collider->getPosition().x && (middleTargetname == "ladder" || bottomTargetname == "ladder"))
+		isLadderAvailable = true;
+	else
+		isLadderAvailable = false;
+
+	if (!isOnLadder)
+	{
+		//Vertical hit
+		if (std::abs(dx) <= std::abs(dy))
+		{
+			if (dy >= 0)
+			{
+				//If the player is on top of the ladder and begin descend, we do the reverse of the climb finish
+				//Which is put the player position down to half of it's hitbox height and align horizontally with the ladder tile to center it
+				//This should only happen on the last tile of the ladder which is why we check for a "world" tile on top of it
+				if (isClimbingDownwards && isLadderAvailable && bottomTargetname == "ladder" && middleTargetname == "world")
 				{
-					//If he just landed play the sound and update the ground tracker
+					//He is no on the ladder, adjust falgs
+					isOnGround = false;
+					isFinishingClimb = true;
+					isOnLadder = true;
+					changePlayerMode(3);
+					//And adjust the postion to make it more realistic
+					setPosition(sf::Vector2f(collider->getPosition().x - (getCollisionBox().left - getPosition().x),
+						collider->getPosition().y - 3 * getCollisionBox().height / 4));
+				}
+
+				//The player stands on top of the ladder tile (only on the last one, which means that
+				//The bottom tagetname MUST be a ladder and the middle targetname MUST be world otherwise it
+				//means that he is anywhere else but on top of it
+				else if (bottomTargetname == "ladder" && middleTargetname == "world")
+				{
+					hasCollidedVertically = true;		//We have collided vertically, note that we only set it to true for top collisions
 					if (!isOnGround)
 					{
 						audio->playSoundbyName("land");
 						isOnGround = true;
 					}
-					hasCollidedVertically = true;		//We have collided vertically, note that we only set it to true for top collisions
 					isCollidingRight = false;
 					isCollidingLeft = false;
 					stepVelocity.y = 0;
 					isOnLadder = false;					//If he touches the ground on a descent, he is not on a ladder anymore
-					changePlayerMode(0);				//He is now on ground, so we change the mode back to normal (0)
+					changePlayerMode(0);				//He is now on ground and not shooting, so we change the mode back to normal (0)
 					//Set pos in reguard of the hitbox, the top of the hitbox is lower than the top of the player sprite (thus higher in coord since y
 					//increases downwards), which is why we subtract it by the player's sprite y position to get the delta (we could use std::abs but lazy)
 					//This will set the bottom of the hitbox just on top of the ground contact
@@ -221,141 +338,52 @@ void Player::collisionResponse(GameObject* collider)
 				}
 			}
 		}
-		//X axis hit
-		else
-		{
-			//We have collided horizontally
-			hasCollidedHorizontally = true;
-
-			//If he is currently on ground, we have to make sure the player mode is correctly adapted
-			if(isOnGround)
-				changePlayerMode(0);
-
-			//Only do a response for horizontal collisions if the player is not on a ladder
-			//We also check if the player is further away inside than just touching the wall to avoid more calculations and bugs
-			if (!isOnLadder && std::abs(dx) < collider->getSize().x / 2 + getCollisionBox().width / 2)
-			{
-				//Right side hit
-				if (dx < 0)
-				{
-					isCollidingRight = true;
-					isCollidingLeft = false;
-					//Set the position in reguard of the hitbox placement, makes it independent of the player's size
-					setPosition(sf::Vector2f(collider->getPosition().x + collider->getSize().x -
-						(getCollisionBox().left - getPosition().x), getPosition().y));
-				}
-				//Left side hit
-				else
-				{
-					isCollidingRight = false;
-					isCollidingLeft = true;
-					//Set the position in reguard of the hitbox placement, makes it independent of the player's size
-					setPosition(sf::Vector2f(collider->getPosition().x - getCollisionBox().width -
-						(getCollisionBox().left - getPosition().x), getPosition().y));
-				}
-			}
-		}
 	}
-	//Ladder response
-	else if (collider->getTargetname() == "ladder")
+	else
 	{
-		//We have collided with a ladder
-		hasCollidedWithLadder = true;
-
-		//Enables ladder physics, climbing on a ladder, if at least 3/4th of the player colbox touches the ladder tile
-		if (getCollisionBox().left + 3 * getCollisionBox().width / 4 >= collider->getPosition().x && (middleTargetname == "ladder" || bottomTargetname == "ladder"))
-			isLadderAvailable = true;
+		//Determine if he is about to finish climbing, so we can change the sprite to the finish climb
+		//And activate checks to finish the climb once he reached a certain position
+		//If the middle targetname is world, it means his feet are at the last tile of the ladder
+		if (middleTargetname == "world")
+			isFinishingClimb = true;
 		else
-			isLadderAvailable = false;
+			isFinishingClimb = false;
 
-		if (!isOnLadder)
+		//If he is on a ladder, center the player pos at the center of the ladder tile and adjust hitbox, size and stuff
+		isCollidingRight = false;
+		isCollidingLeft = false;
+		//If he is on a ladder, he is defo not on ground
+		changePlayerMode(3);
+		setPosition(collider->getPosition().x - (getCollisionBox().left - getPosition().x), getPosition().y);
+
+		//Finish the climb if the player is on the last tile before the end of the tile to make it more accurate
+		if (getCollisionBox().top + 3 * getCollisionBox().height / 4 < collider->getPosition().y &&
+			isLadderAvailable && isFinishingClimb && !isClimbingDownwards)
 		{
-			//Vertical hit
-			if (std::abs(dx) <= std::abs(dy))
-			{
-				if (dy >= 0)
-				{
-					//If the player is on top of the ladder and begin descend, we do the reverse of the climb finish
-					//Which is put the player position down to half of it's hitbox height and align horizontally with the ladder tile to center it
-					//This should only happen on the last tile of the ladder which is why we check for a "world" tile on top of it
-					if (isClimbingDownwards && isLadderAvailable && bottomTargetname == "ladder" && middleTargetname == "world")
-					{
-						//He is no on the ladder, adjust falgs
-						isOnGround = false;
-						isFinishingClimb = true;
-						isOnLadder = true;
-						changePlayerMode(3);
-						//And adjust the postion to make it more realistic
-						setPosition(sf::Vector2f(collider->getPosition().x - (getCollisionBox().left - getPosition().x),
-							collider->getPosition().y - 3 * getCollisionBox().height / 4));
-					}
-
-					//The player stands on top of the ladder tile (only on the last one, which means that
-					//The bottom tagetname MUST be a ladder and the middle targetname MUST be world otherwise it
-					//means that he is anywhere else but on top of it
-					else if(bottomTargetname == "ladder" && middleTargetname == "world")
-					{
-						hasCollidedVertically = true;		//We have collided vertically, note that we only set it to true for top collisions
-						if (!isOnGround)
-						{
-							audio->playSoundbyName("land");
-							isOnGround = true;
-						}
-						isCollidingRight = false;
-						isCollidingLeft = false;
-						stepVelocity.y = 0;
-						isOnLadder = false;					//If he touches the ground on a descent, he is not on a ladder anymore
-						changePlayerMode(0);				//He is now on ground and not shooting, so we change the mode back to normal (0)
-						//Set pos in reguard of the hitbox, the top of the hitbox is lower than the top of the player sprite (thus higher in coord since y
-						//increases downwards), which is why we subtract it by the player's sprite y position to get the delta (we could use std::abs but lazy)
-						//This will set the bottom of the hitbox just on top of the ground contact
-						setPosition(sf::Vector2f(getPosition().x, collider->getPosition().y -
-							getCollisionBox().height - (getCollisionBox().top - getPosition().y)));
-					}
-				}
-			}
-		}
-		else
-		{
-			//Determine if he is about to finish climbing, so we can change the sprite to the finish climb
-			//And activate checks to finish the climb once he reached a certain position
-			//If the top targetname is world, it means he is at the last tile of the ladder
-			if (middleTargetname == "world")
-				isFinishingClimb = true;
-			else
-				isFinishingClimb = false;
-
-			//If he is on a ladder, center the player pos at the center of the ladder tile and adjust hitbox, size and stuff
-			isCollidingRight = false;
-			isCollidingLeft = false;
-			//If he is on a ladder, he is defo not on ground
-			changePlayerMode(3);
-			setPosition(collider->getPosition().x - (getCollisionBox().left - getPosition().x), getPosition().y);
-
-			//Finish the climb if the player is on the last tile before the end of the tile to make it more accurate
-			if (getCollisionBox().top + 3 * getCollisionBox().height / 4 < collider->getPosition().y &&
-				isLadderAvailable && isFinishingClimb && !isClimbingDownwards)
-			{
-				hasCollidedVertically = true;		//We have collided vertically, note that we only set it to true for top collisions
-				isOnGround = true;
-				stepVelocity.y = 0;
-				isOnLadder = false;					//If he is on top, he is not on a ladder anymore
-				isFinishingClimb = false;			//The climb has just been finished
-				isClimbing = false;					//He is not climbing anymore
-				isLadderAvailable = true;			//We are now on top of the last ladder tile, the ladder is still available
-				changePlayerMode(0);				//He is now on ground and not shooting, so we change the mode back to normal (0)
-				setPosition(sf::Vector2f(getPosition().x, collider->getPosition().y -
-					getCollisionBox().height - (getCollisionBox().top - getPosition().y)));
-			}
+			hasCollidedVertically = true;		//We have collided vertically, note that we only set it to true for top collisions
+			isOnGround = true;
+			stepVelocity.y = 0;
+			isOnLadder = false;					//If he is on top, he is not on a ladder anymore
+			isFinishingClimb = false;			//The climb has just been finished
+			isClimbing = false;					//He is not climbing anymore
+			isLadderAvailable = true;			//We are now on top of the last ladder tile, the ladder is still available
+			changePlayerMode(0);				//He is now on ground and not shooting, so we change the mode back to normal (0)
+			setPosition(sf::Vector2f(getPosition().x, collider->getPosition().y -
+				getCollisionBox().height - (getCollisionBox().top - getPosition().y)));
 		}
 	}
-	//Spike response
-	else if (collider->getTargetname() == "spike")
-	{
-		//Kill the player
-		health = 0;
-		setAlive(false);
-	}
+}
+
+void Player::spikeCollisions()
+{
+	//Kill the player
+	health = 0;
+	setAlive(false);
+}
+
+void Player::doorCollisions(GameObject* collider)
+{
+
 }
 
 
@@ -548,7 +576,7 @@ void Player::checkLadderInputs()
 
 void Player::shoot()
 {
-	if (input->isMouseLDown())
+	if (input->isKeyDown(sf::Keyboard::Enter) ||input->isMouseLDown())
 	{
 		isShooting = true;
 		shootTimeTracker = 0;

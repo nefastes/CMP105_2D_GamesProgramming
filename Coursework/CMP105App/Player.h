@@ -87,6 +87,7 @@ public:
 	void renderBullets(sf::RenderWindow* window);
 	void killAllBullets() { bulletManager.killAllBullets(); };
 	void resetSettings();	//Called by the level when the player dies
+	bool getLadderTracker() { return isLadderAvailable; };
 
 private:
 	//Other functions for the player specifically
@@ -101,5 +102,10 @@ private:
 	void playerPhysics(float dt);
 	void updateHealth();
 	void playerShoot();
+	//Break down of collision
+	void worldCollisions(GameObject* collider);
+	void ladderCollisions(GameObject* collider);
+	void spikeCollisions();
+	void doorCollisions(GameObject* collider);
 };
 
