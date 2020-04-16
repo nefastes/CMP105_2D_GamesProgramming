@@ -8,6 +8,13 @@ TileManager::TileManager()
 	transitionning = false;
 	transitionType = 0;
 
+	//Other trackers
+	timeTracker = 0;
+
+	//Pointers so that Visual Studio is happy
+	window = nullptr;
+	debugUi = nullptr;
+
 	//Load the tile sheet
 	tileMap.loadTexture("custom_sprites/NES_Mega_Man_Tiles.PNG");
 
@@ -199,10 +206,65 @@ void TileManager::update(float dt, Player& p)
 	//Else, if we collide with a door, open the door and load next screen
 	else if (potentialHorizontalTransition)
 	{
-		//Detect the door position
+		//Increase the time tracker
+		timeTracker += dt;
 
-
-		//Replace the door tiles with air tiles from bottom to top
+		//There are only two openable doors in each level, just need to know which
+		//TODO: add switch Maps::TUTORIAL
+		//In the tutorial level, doors are available in the map 2 and 3
+		switch (mapTracker)
+		{
+		case 2:
+			p.freezeControls(true);
+			//The door tiles in this room are located in positions 215, 239 and 263
+			//Replace each tile with air 1 by one
+			if (timeTracker >= .5f)
+			{
+				(*world)[263].setTextureRect(sf::IntRect(275, 189, 16, 16));
+				if (timeTracker >= .75f)
+				{
+					(*world)[239].setTextureRect(sf::IntRect(275, 189, 16, 16));
+					if (timeTracker >= 1.f)
+					{
+						(*world)[215].setTextureRect(sf::IntRect(275, 189, 16, 16));
+						if (timeTracker >= 1.25f)
+						{
+							(*world)[191].setTextureRect(sf::IntRect(275, 189, 16, 16));
+							++mapTracker;
+							transitionning = true;
+							transitionType = 3;
+							timeTracker = 0;
+						}
+					}
+				}
+			}
+			break;
+		case 3:
+			p.freezeControls(true);
+			//The door tiles in this room are located in positions 191, 215, 239 and 263
+			//Replace each tile with air 1 by one
+			if (timeTracker >= .5f)
+			{
+				(*world)[263].setTextureRect(sf::IntRect(394, 172, 16, 16));
+				if (timeTracker >= .75f)
+				{
+					(*world)[239].setTextureRect(sf::IntRect(394, 172, 16, 16));
+					if (timeTracker >= 1.f)
+					{
+						(*world)[215].setTextureRect(sf::IntRect(394, 172, 16, 16));
+						if (timeTracker >= 1.25f)
+						{
+							(*world)[191].setTextureRect(sf::IntRect(377, 172, 16, 16));
+							++mapTracker;
+							transitionning = true;
+							transitionType = 3;
+							timeTracker = 0;
+						}
+					}
+				}
+			}
+			break;
+		}
 	}
 	//If not, he is not transitionning thus we reset the transition type
 	else if (!transitionning && transitionType != 0) transitionType = 0;
@@ -289,7 +351,7 @@ void TileManager::createMap(Maps level, unsigned section)
 				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	26,	27,
 				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	26,	27,
 				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	26,	27,
-				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	26,	27,
+				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	34,
 				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	34,
 				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	34,
 				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	24,	24,	24,	24,	0,	0,	0,	0,	0,	0,	0,	0,	34,
@@ -308,14 +370,34 @@ void TileManager::createMap(Maps level, unsigned section)
 				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
 				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
 				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
-				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
 				24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,
-				7,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	4,	4,	4,	34,
-				7,	7,	7,	7,	7,	7,	7,	7,	7,	7,	5,	7,	7,	7,	7,	7,	7,	7,	5,	5,	5,	5,	5,	34,
-				7,	7,	7,	5,	7,	7,	1,	7,	7,	7,	7,	7,	7,	5,	7,	7,	5,	5,	5,	5,	5,	5,	5,	34,
+				6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	4,	4,	4,	34,
+				7,	7,	7,	7,	7,	5,	7,	7,	7,	7,	5,	7,	7,	7,	7,	7,	7,	7,	5,	5,	5,	5,	5,	34,
+				5,	7,	7,	7,	7,	7,	7,	7,	7,	7,	5,	7,	7,	7,	7,	7,	5,	5,	5,	5,	5,	5,	5,	34,
+				7,	7,	7,	5,	7,	7,	1,	7,	7,	7,	7,	7,	7,	7,	5,	5,	5,	5,	5,	5,	5,	5,	5,	34,
 				24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,
 				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
 				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0
+			};
+			break;
+		case 4:
+			// Map dimensions
+			mapSize = sf::Vector2u(24, 14);
+			map = {
+				23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,
+				23,	22,	23,	4,	4,	4,	4,	4,	4,	4,	4,	4,	4,	4,	4,	4,	4,	4,	4,	4,	4,	22,	23,	22,
+				23,	22,	4,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	4,	23,	22,
+				23,	4,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	4,	22,
+				23,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	22,
+				23,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	22,
+				23,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	22,
+				4,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	22,
+				5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	22,
+				5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	22,
+				5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	22,
+				24,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	5,	22,
+				23,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	22,
+				23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22
 			};
 			break;
 		}

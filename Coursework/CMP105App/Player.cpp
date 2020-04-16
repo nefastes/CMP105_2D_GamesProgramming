@@ -114,7 +114,7 @@ void Player::handleInput(float dt)
 	}
 	else
 	{
-		isMoving = false;
+		//isMoving = false;
 		isClimbing = false;
 		isClimbingDownwards = false;
 		isJumping = false;

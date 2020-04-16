@@ -35,6 +35,9 @@ private:
 	bool transitionning;
 	unsigned transitionType;
 
+	//Time tracker used to open doors only
+	float timeTracker;
+
 public:
 	TileManager();
 	~TileManager();

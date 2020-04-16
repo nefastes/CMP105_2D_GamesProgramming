@@ -107,16 +107,24 @@ void Tutorial::update(float dt)
 		sf::Vector2f position = sf::Vector2f((int)camera.getCenter().x + (int)camera.getSize().x / 2 - (int)tileManager.getMapSize().x * 50,
 			(int)camera.getCenter().y + (int)camera.getSize().y / 2);
 		tileManager.buildCreatedMap(position);
-		//camera.move(sf::Vector2f(0, camera.getSize().y));
 	}
 	else if (currentMap < tileManager.getCurrentMap())
 	{
 		currentMap = tileManager.getCurrentMap();
-		tileManager.createMap(Maps::TUTORIAL, currentMap);
-		sf::Vector2f position = sf::Vector2f((int)camera.getCenter().x - (int)camera.getSize().x / 2,
-			(int)camera.getCenter().y - 3 * (int)camera.getSize().y / 2);
-		tileManager.buildCreatedMap(position);
-		//camera.move(sf::Vector2f(0, -camera.getSize().y));
+		if (tileManager.getTransitionType() != 3)
+		{
+			tileManager.createMap(Maps::TUTORIAL, currentMap);
+			sf::Vector2f position = sf::Vector2f((int)camera.getCenter().x - (int)camera.getSize().x / 2,
+				(int)camera.getCenter().y - 3 * (int)camera.getSize().y / 2);
+			tileManager.buildCreatedMap(position);
+		}
+		else
+		{
+			tileManager.createMap(Maps::TUTORIAL, currentMap);
+			sf::Vector2f position = sf::Vector2f(tileManager.getMapPosition().x + tileManager.getMapSize().x * 50,
+				tileManager.getMapPosition().y);
+			tileManager.buildCreatedMap(position);
+		}
 	}
 	if (tileManager.isTransitionning())
 	{
@@ -146,6 +154,20 @@ void Tutorial::update(float dt)
 			{
 				camera.setCenter(sf::Vector2f(tileManager.getMapPosition().x + tileManager.getMapSize().x * 50 -
 					(int)camera.getSize().x / 2, tileManager.getMapPosition().y + (int)camera.getSize().y / 2));
+				tileManager.setTransitionning(false);
+				player.freezeControls(false);
+			}
+			break;
+		case 3:
+			if ((int)(camera.getCenter().x - camera.getSize().x / 2) < tileManager.getMapPosition().x)
+			{
+				camera.move(sf::Vector2f((int)(600 * dt), 0));
+				player.move(sf::Vector2f(50 * dt, 0));
+			}
+			else
+			{
+				camera.setCenter(sf::Vector2f(tileManager.getMapPosition().x + (int)camera.getSize().x / 2,
+					tileManager.getMapPosition().y + (int)camera.getSize().y / 2));
 				tileManager.setTransitionning(false);
 				player.freezeControls(false);
 			}
