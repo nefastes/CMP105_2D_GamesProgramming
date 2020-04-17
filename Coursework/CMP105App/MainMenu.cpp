@@ -76,6 +76,7 @@ MainMenu::MainMenu(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameSta
 	audio->addSound("sfx/Megaman_1_Pause.ogg", "pause");
 	audio->addSound("sfx/Megaman_1_Player_Damage.ogg", "damage");
 	audio->addSound("sfx/Megaman_1_Shoot.ogg", "shoot");
+	audio->addSound("sfx/Megaman_1_Door.ogg", "door");
 
 	//Init trackers
 	selectionTracker = 0;

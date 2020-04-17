@@ -35,6 +35,8 @@ private:
 	bool hasCollidedVertically;
 	bool hasCollidedHorizontally;
 	bool hasCollidedWithLadder;
+	//Tracker to prevent those upper trackers to be reset when we are in a transition
+	bool isTransitionning;
 
 	//Player health (must be int (short cause it's not gonna go over 100 and under -100, saves space)
 	//cause it can go negative if he is low on health and takes damage)
@@ -88,6 +90,7 @@ public:
 	void killAllBullets() { bulletManager.killAllBullets(); };
 	void resetSettings();	//Called by the level when the player dies
 	bool getLadderTracker() { return isOnLadder; };
+	void setTransitionning(bool t) { isTransitionning = t; };
 
 private:
 	//Other functions for the player specifically

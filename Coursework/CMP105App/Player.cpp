@@ -47,6 +47,7 @@ Player::Player()
 	hasCollidedVertically - false;
 	hasCollidedHorizontally = false;
 	hasCollidedWithLadder = false;
+	isTransitionning = false;
 
 	//Init health
 	health = 100;
@@ -177,10 +178,13 @@ void Player::update(float dt)
 		//Calculate physics
 		playerPhysics(dt);
 
-		//Reset collision trackers
-		hasCollidedVertically = false;
-		hasCollidedHorizontally = false;
-		hasCollidedWithLadder = false;
+		//Reset collision trackers if we are not in a transition
+		if (!isTransitionning)
+		{
+			hasCollidedVertically = false;
+			hasCollidedHorizontally = false;
+			hasCollidedWithLadder = false;
+		}
 	}
 	//std::cout << leftTargetname << " " << topTargetname << " " << rightTargetname << " " <<
 		//bottomTargetname << " " << middleTargetname << " " << std::endl;

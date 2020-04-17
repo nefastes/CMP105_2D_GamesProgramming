@@ -7,6 +7,8 @@ TileManager::TileManager()
 	//We do not have a transition at the start of the level
 	transitionning = false;
 	transitionType = 0;
+	doorTracker = 0;
+	doorClosing = false;
 
 	//Other trackers
 	timeTracker = 0;
@@ -14,11 +16,12 @@ TileManager::TileManager()
 	//Pointers so that Visual Studio is happy
 	window = nullptr;
 	debugUi = nullptr;
+	audio = nullptr;
 
 	//Load the tile sheet
 	tileMap.loadTexture("custom_sprites/NES_Mega_Man_Tiles.PNG");
 
-	for (int i = 0; i <= 35; i++)
+	for (int i = 0; i <= 37; i++)
 	{
 		tile.setSize(sf::Vector2f(50, 50));		//We will be able to draw 14 tiles vertically and 24 tiles horizontally
 		tile.setCollisionBox(0, 0, 50, 50);
@@ -85,10 +88,16 @@ TileManager::TileManager()
 	tiles[32].setTargetName("ladder");
 	tiles[33].setTextureRect(sf::IntRect(309, 189, 16, 16));			//Spike
 	tiles[33].setTargetName("spike");
-	tiles[34].setTextureRect(sf::IntRect(360, 172, 16, 16));			//Door
+	tiles[34].setTextureRect(sf::IntRect(360, 172, 16, 16));			//Door tile, triggers an opening door
 	tiles[34].setTargetName("door");
-	tiles[35].setTextureRect(sf::IntRect(275, 189, 16, 16));			//Sky looking tile, used to trigger a transition
-	tiles[35].setTargetName("transition");								//of the screen downwards if the player falls into it
+	tiles[35].setTextureRect(sf::IntRect(360, 172, 16, 16));			//Door tile, normal solid tile
+	tiles[35].setTargetName("worldSolid");
+	tiles[36].setTextureRect(sf::IntRect(275, 189, 16, 16));			//Sky looking tile, used to trigger a transition
+	tiles[36].setTargetName("transition");								//of the screen downwards if the player falls into it
+
+	//Void tile (nothingness)
+	tiles[37].setTextureRect(sf::IntRect(103, 121, 16, 16));
+	tiles[37].setTargetName("none");
 
 	//Set the tileMap
 	tileMap.setTileSet(tiles);
@@ -209,61 +218,33 @@ void TileManager::update(float dt, Player& p)
 		//Increase the time tracker
 		timeTracker += dt;
 
+		//horizontal transition, in both cases we freeze the player
+		p.freezeControls(true);
+		p.setTransitionning(true);
+
 		//There are only two openable doors in each level, just need to know which
 		//TODO: add switch Maps::TUTORIAL
 		//In the tutorial level, doors are available in the map 2 and 3
-		switch (mapTracker)
+		if (timeTracker >= .1f && !doorClosing)
 		{
-		case 2:
-			p.freezeControls(true);
-			//The door tiles in this room are located in positions 215, 239 and 263
-			//Replace each tile with air 1 by one
-			if (timeTracker >= .5f)
+			switch (mapTracker)
 			{
-				(*world)[263].setTextureRect(sf::IntRect(275, 189, 16, 16));
-				if (timeTracker >= .75f)
-				{
-					(*world)[239].setTextureRect(sf::IntRect(275, 189, 16, 16));
-					if (timeTracker >= 1.f)
-					{
-						(*world)[215].setTextureRect(sf::IntRect(275, 189, 16, 16));
-						if (timeTracker >= 1.25f)
-						{
-							(*world)[191].setTextureRect(sf::IntRect(275, 189, 16, 16));
-							++mapTracker;
-							transitionning = true;
-							transitionType = 3;
-							timeTracker = 0;
-						}
-					}
-				}
+			case 2:
+				openDoor(191, false);
+				break;
+			case 3:
+				openDoor(191, true);
+				break;
 			}
-			break;
-		case 3:
-			p.freezeControls(true);
-			//The door tiles in this room are located in positions 191, 215, 239 and 263
-			//Replace each tile with air 1 by one
-			if (timeTracker >= .5f)
-			{
-				(*world)[263].setTextureRect(sf::IntRect(394, 172, 16, 16));
-				if (timeTracker >= .75f)
-				{
-					(*world)[239].setTextureRect(sf::IntRect(394, 172, 16, 16));
-					if (timeTracker >= 1.f)
-					{
-						(*world)[215].setTextureRect(sf::IntRect(394, 172, 16, 16));
-						if (timeTracker >= 1.25f)
-						{
-							(*world)[191].setTextureRect(sf::IntRect(377, 172, 16, 16));
-							++mapTracker;
-							transitionning = true;
-							transitionType = 3;
-							timeTracker = 0;
-						}
-					}
-				}
-			}
-			break;
+		}
+	}
+	else if (doorClosing)
+	{
+		//Close the door from tile i = 168, when it is finished re-enable player controls
+		if (closeDoor(168))
+		{
+			p.freezeControls(false);
+			p.setTransitionning(false);
 		}
 	}
 	//If not, he is not transitionning thus we reset the transition type
@@ -357,27 +338,27 @@ void TileManager::createMap(Maps level, unsigned section)
 				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	24,	24,	24,	24,	0,	0,	0,	0,	0,	0,	0,	0,	34,
 				0,	0,	0,	0,	0,	0,	0,	24,	24,	24,	24,	22,	23,	22,	23,	24,	24,	24,	24,	24,	24,	24,	24,	24,
 				0,	0,	0,	32,	24,	24,	24,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,
-				35,	35,	35,	32,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22
+				36,	36,	36,	32,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22,	23,	22
 			};
 			break;
 		case 3:
 			// Map dimensions
 			mapSize = sf::Vector2u(24, 14);
 			map = {
-				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
-				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
-				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
-				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
-				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
-				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
+				37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,
+				37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,
+				37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,
+				37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,
+				37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,
+				37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,
 				24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,
 				6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	6,	4,	4,	4,	34,
 				7,	7,	7,	7,	7,	5,	7,	7,	7,	7,	5,	7,	7,	7,	7,	7,	7,	7,	5,	5,	5,	5,	5,	34,
 				5,	7,	7,	7,	7,	7,	7,	7,	7,	7,	5,	7,	7,	7,	7,	7,	5,	5,	5,	5,	5,	5,	5,	34,
 				7,	7,	7,	5,	7,	7,	1,	7,	7,	7,	7,	7,	7,	7,	5,	5,	5,	5,	5,	5,	5,	5,	5,	34,
 				24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,	24,
-				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,
-				0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0
+				37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,
+				37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37,	37
 			};
 			break;
 		case 4:
@@ -416,4 +397,130 @@ void TileManager::buildCreatedMap(sf::Vector2f position)
 	tileMap.setTileMap(map, mapSize);
 	tileMap.setPosition(position);
 	tileMap.buildLevel();
+}
+
+void TileManager::openDoor(unsigned topTile, bool inside)
+{
+	//Get the level
+	std::vector<GameObject>* world = tileMap.getLevel();
+
+	//The door tiles in this room are located in positions 191, 215, 239 and 263
+	//Replace each tile with air 1 by one
+	switch (doorTracker)
+	{
+	case 0:
+		if (audio->getSound("door")->getStatus() == sf::SoundSource::Stopped)
+		{
+			if(inside)
+				(*world)[topTile + 72].setTextureRect(sf::IntRect(394, 172, 16, 16));
+			else
+				(*world)[topTile + 72].setTextureRect(sf::IntRect(275, 189, 16, 16));
+			audio->playSoundbyName("door");
+			++doorTracker;
+		}
+		break;
+	case 1:
+		if (audio->getSound("door")->getStatus() == sf::SoundSource::Stopped)
+		{
+			if(inside)
+				(*world)[topTile + 48].setTextureRect(sf::IntRect(394, 172, 16, 16));
+			else
+				(*world)[topTile + 48].setTextureRect(sf::IntRect(275, 189, 16, 16));
+			audio->playSoundbyName("door");
+			++doorTracker;
+		}
+		break;
+	case 2:
+		if (audio->getSound("door")->getStatus() == sf::SoundSource::Stopped)
+		{
+			if(inside)
+				(*world)[topTile + 24].setTextureRect(sf::IntRect(394, 172, 16, 16));
+			else
+				(*world)[topTile + 24].setTextureRect(sf::IntRect(275, 189, 16, 16));
+			audio->playSoundbyName("door");
+			++doorTracker;
+		}
+		break;
+	case 3:
+		if (audio->getSound("door")->getStatus() == sf::SoundSource::Stopped)
+		{
+			if(inside)
+				(*world)[topTile].setTextureRect(sf::IntRect(377, 172, 16, 16));
+			else
+				(*world)[topTile].setTextureRect(sf::IntRect(275, 189, 16, 16));
+			audio->playSoundbyName("door");
+			++doorTracker;
+		}
+		break;
+	default:
+		if (audio->getSound("door")->getStatus() == sf::SoundSource::Stopped)
+		{
+			++mapTracker;
+			transitionning = true;
+			transitionType = 3;
+			timeTracker = 0;
+		}
+		break;
+	}
+}
+
+bool TileManager::closeDoor(unsigned topTile)
+{
+
+	//Get the level
+	std::vector<GameObject>* world = tileMap.getLevel();
+
+	//
+	switch (doorTracker)
+	{
+	case 1:
+		if (audio->getSound("door")->getStatus() == sf::SoundSource::Stopped)
+		{
+			(*world)[topTile + 72].setTextureRect(sf::IntRect(360, 172, 16, 16));
+			(*world)[topTile + 72].setCollider(true);
+			(*world)[topTile + 72].setTargetName("worldSolid");
+			audio->playSoundbyName("door");
+			--doorTracker;
+		}
+		break;
+	case 2:
+		if (audio->getSound("door")->getStatus() == sf::SoundSource::Stopped)
+		{
+			(*world)[topTile + 48].setTextureRect(sf::IntRect(360, 172, 16, 16));
+			(*world)[topTile + 48].setCollider(true);
+			(*world)[topTile + 48].setTargetName("worldSolid");
+			audio->playSoundbyName("door");
+			--doorTracker;
+		}
+		break;
+	case 3:
+		if (audio->getSound("door")->getStatus() == sf::SoundSource::Stopped)
+		{
+			(*world)[topTile + 24].setTextureRect(sf::IntRect(360, 172, 16, 16));
+			(*world)[topTile + 24].setCollider(true);
+			(*world)[topTile + 24].setTargetName("worldSolid");
+			audio->playSoundbyName("door");
+			--doorTracker;
+		}
+		break;
+	case 4:
+		if (audio->getSound("door")->getStatus() == sf::SoundSource::Stopped)
+		{
+			(*world)[topTile].setTextureRect(sf::IntRect(360, 172, 16, 16));
+			(*world)[topTile].setCollider(true);
+			(*world)[topTile].setTargetName("worldSolid");
+			audio->playSoundbyName("door");
+			--doorTracker;
+		}
+		break;
+	case 0:
+		if (audio->getSound("door")->getStatus() == sf::SoundSource::Stopped)
+		{
+			transitionning = false;
+			doorClosing = false;
+			return true;
+		}
+		break;
+	}
+	return false;
 }

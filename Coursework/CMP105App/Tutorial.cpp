@@ -11,8 +11,9 @@ Tutorial::Tutorial(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameSta
 	//Pass the window to the tile manager
 	tileManager.setWindow(window);
 
-	//Send debug infos to tile manager
+	//Send debug infos and audio to tile manager
 	tileManager.setDebugRef(debugUi);
+	tileManager.setAudio(audio);
 
 	//Create the map
 	tileManager.createMap(Maps::TUTORIAL, 0);
@@ -162,14 +163,13 @@ void Tutorial::update(float dt)
 			if ((int)(camera.getCenter().x - camera.getSize().x / 2) < tileManager.getMapPosition().x)
 			{
 				camera.move(sf::Vector2f((int)(600 * dt), 0));
-				player.move(sf::Vector2f(50 * dt, 0));
+				player.move(sf::Vector2f(75 * dt, 0));
 			}
 			else
 			{
 				camera.setCenter(sf::Vector2f(tileManager.getMapPosition().x + (int)camera.getSize().x / 2,
 					tileManager.getMapPosition().y + (int)camera.getSize().y / 2));
-				tileManager.setTransitionning(false);
-				player.freezeControls(false);
+				tileManager.setCloseDoor(true);
 			}
 			break;
 		}
