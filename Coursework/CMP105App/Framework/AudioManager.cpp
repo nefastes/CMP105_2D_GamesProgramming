@@ -44,6 +44,23 @@ void AudioManager::stopAllSounds()
 	}
 }
 
+void AudioManager::pauseAllSounds()
+{
+	for (unsigned i = 0; i < sounds.size(); i++)
+	{
+		//pause() pause all PLAYING sounds
+		sounds[i].sound.pause();
+	}
+}
+
+void AudioManager::resumeAllSounds()
+{
+	for (unsigned i = 0; i < sounds.size(); i++)
+	{
+		if(sounds[i].sound.getStatus() == sf::SoundSource::Paused) sounds[i].sound.play();
+	}
+}
+
 sf::Sound* AudioManager::getSound(std::string lname)
 {
 	for (int i = 0; i < sounds.size(); i++)
@@ -88,6 +105,16 @@ void AudioManager::playMusicbyName(std::string lname)
 void AudioManager::stopAllMusic()
 {
 	music.stop();
+}
+
+void AudioManager::pauseAllMusic()
+{
+	music.pause();
+}
+
+void AudioManager::resumeAllMusic()
+{
+	music.play();
 }
 
 // Returns pointer to music object.

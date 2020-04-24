@@ -9,6 +9,7 @@
 #include "DebugUi.h"
 #include "TileManager.h"
 #include "DeathParticleManager.h"
+#include "PauseHud.h"
 
 class Tutorial
 {
@@ -33,6 +34,9 @@ private:
 	int readyBlinkCount;
 	bool isReadyBlinking;
 
+	//Create a text to display the score
+	sf::Text scoreText;
+
 	//Hints
 	sf::Texture moveTex;
 	sf::Texture jumpTex;
@@ -52,6 +56,9 @@ private:
 	//Create the window camera
 	sf::View camera;
 
+	//Create a pause object
+	PauseHud pauseUi;
+
 	//Trackers
 	float timePassedTracker;
 	bool playerSpawned;
@@ -63,6 +70,7 @@ public:
 	void handleInput(float dt);
 	void update(float dt);
 	void render();
+	void handlePause(float dt);
 
 private:
 	// Default functions for rendering to the screen.

@@ -30,8 +30,7 @@ Player::Player()
 
 	//Physics
 	sScale = 100.f;
-	gravity = sf::Vector2f(0, 9.8 * sScale);
-	stepVelocity = sf::Vector2f(0, 0);
+	gravity = 9.8 * sScale;
 
 	//Player trackers
 	allowControls = true;
@@ -222,7 +221,7 @@ void Player::worldCollisions(GameObject* collider)
 			//the tile we bunk our head into
 			if (std::abs(dx) < collider->getSize().x / 2 + getCollisionBox().width / 2 && topTargetname == "worldSolid")
 			{
-				stepVelocity.y = 0;
+				velocity.y = 0;
 				isJumping = false;
 				allowJump = false;
 			}
@@ -242,7 +241,7 @@ void Player::worldCollisions(GameObject* collider)
 					isOnGround = true;
 				}
 				hasCollidedVertically = true;		//We have collided vertically, note that we only set it to true for top collisions
-				stepVelocity.y = 0;
+				velocity.y = 0;
 				isOnLadder = false;					//If he touches the ground on a descent, he is not on a ladder anymore
 				changePlayerMode(0);				//He is now on ground, so we change the mode back to normal (0)
 				//Set pos in reguard of the hitbox, the top of the hitbox is lower than the top of the player sprite (thus higher in coord since y
@@ -337,7 +336,7 @@ void Player::ladderCollisions(GameObject* collider)
 						audio->playSoundbyName("land");
 						isOnGround = true;
 					}
-					stepVelocity.y = 0;
+					velocity.y = 0;
 					isOnLadder = false;					//If he touches the ground on a descent, he is not on a ladder anymore
 					changePlayerMode(0);				//He is now on ground and not shooting, so we change the mode back to normal (0)
 					//Set pos in reguard of the hitbox, the top of the hitbox is lower than the top of the player sprite (thus higher in coord since y
@@ -369,7 +368,7 @@ void Player::ladderCollisions(GameObject* collider)
 		{
 			hasCollidedVertically = true;		//We have collided vertically, note that we only set it to true for top collisions
 			isOnGround = true;
-			stepVelocity.y = 0;
+			velocity.y = 0;
 			isOnLadder = false;					//If he is on top, he is not on a ladder anymore
 			isFinishingClimb = false;			//The climb has just been finished
 			isClimbing = false;					//He is not climbing anymore
@@ -533,7 +532,7 @@ void Player::playerJump(float dt)
 			isClimbing = false;
 			isClimbingDownwards = false;
 			isOnGround = false;
-			stepVelocity.y = 0;
+			velocity.y = 0;
 			changePlayerMode(1);
 		}
 	}
@@ -721,8 +720,8 @@ void Player::playerPhysics(float dt)
 		allowJump = false;
 
 		//Apply gravity
-		sf::Vector2f pos = stepVelocity * dt + 0.5f * gravity * dt;
-		stepVelocity += gravity * dt;
+		sf::Vector2f pos = sf::Vector2f(0, velocity.y) * dt + 0.5f * sf::Vector2f(0, gravity) * dt;
+		velocity.y += gravity * dt;
 		setPosition(getPosition() + pos);
 	}
 	if (isJumping && allowJump)
@@ -730,9 +729,9 @@ void Player::playerPhysics(float dt)
 		//Set the velocity to 600 upwards until it is no longer allowed to jump (after .2 second)
 		if (jumpKeyPressTracker < .2f)
 		{
-			stepVelocity.y = -600.f;
+			velocity.y = -600.f;
 			//Set the position relative to this jump vel
-			setPosition(getPosition() + stepVelocity * dt);
+			setPosition(getPosition() + sf::Vector2f(0, velocity.y) * dt);
 		}
 		else
 		{

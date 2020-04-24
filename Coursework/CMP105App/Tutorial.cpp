@@ -49,6 +49,13 @@ Tutorial::Tutorial(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameSta
 	readyBlinkCount = 0;
 	isReadyBlinking = false;
 
+	//Init score text
+	scoreText.setFont(font);
+	scoreText.setFillColor(sf::Color::White);
+	scoreText.setCharacterSize(24);
+	scoreText.setOutlineColor(sf::Color::Black);
+	scoreText.setOutlineThickness(1);
+
 	//Init hints textures
 	moveTex.loadFromFile("custom_sprites/Move.PNG");
 	jumpTex.loadFromFile("custom_sprites/Jump.PNG");
@@ -70,6 +77,9 @@ Tutorial::Tutorial(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameSta
 	//Init camera
 	camera = window->getView();
 
+	//Init the pause hud
+	pauseUi.sendPointers(window, input, gameState, audio);
+
 	//Init trackers
 	timePassedTracker = 0;
 	playerSpawned = false;
@@ -83,8 +93,24 @@ Tutorial::~Tutorial()
 
 void Tutorial::handleInput(float dt)
 {
+	//Update the time tracker ONCE here
+	timePassedTracker += dt;
+
+	//Player control
 	if (player.isAlive())
 		player.handleInput(dt);
+
+	//Pause control
+	if ((input->isKeyDown(sf::Keyboard::Tab) || input->isKeyDown(sf::Keyboard::Escape)) && timePassedTracker >= .2f && player.isAlive())
+	{
+		gameState->setCurrentState(State::PAUSE);
+		audio->pauseAllMusic();
+		audio->pauseAllSounds();
+		audio->playSoundbyName("pause");
+		timePassedTracker = 0;
+		pauseUi.updatePosition();
+	}
+
 	//Debug camera (to check if maps unload correctly
 	/*
 	if (input->isKeyDown(sf::Keyboard::Right))
@@ -192,19 +218,12 @@ void Tutorial::update(float dt)
 		//Update objects
 		player.update(dt);
 		tileManager.update(dt, player);
-
-		//Reset the time tracker (will not be 0 after spawn)
-		if (timePassedTracker != 0)
-			timePassedTracker = 0;
 	}
 	//If the player dies, do the following
 	else if (playerSpawned)
 	{
 		//Player dead, stop all musics
 		audio->stopAllMusic();
-
-		//Update time tracker
-		timePassedTracker += dt;
 
 		if (!deathParticleManager.haveParticlesSpawned())
 		{
@@ -227,6 +246,11 @@ void Tutorial::update(float dt)
 	{
 		startLevel(dt);
 	}
+
+	//Update the score
+	scoreText.setString(std::to_string(gameState->getGlobalScore()));
+	scoreText.setOrigin(scoreText.getGlobalBounds().width / 2.f, scoreText.getGlobalBounds().height / 2.f);
+	scoreText.setPosition(window->getView().getCenter().x, window->getView().getCenter().y - 9 * window->getView().getSize().y / 20.f);
 
 	//Update debug infos
 	if (debugUi->isDebugging())
@@ -280,6 +304,11 @@ void Tutorial::render()
 	if (!isReadyBlinking)
 		window->draw(readyText);
 
+	window->draw(scoreText);
+
+	//Render the pause hud
+	if(gameState->getCurrentState() == State::PAUSE) pauseUi.render();
+
 	//Draw debug infos
 	if (debugUi->isDebugging())
 	{
@@ -315,9 +344,6 @@ void Tutorial::startLevel(float dt)
 
 	if (readyBlinkCount < 4)
 	{
-		//update time tracker
-		timePassedTracker += dt;
-
 		if (timePassedTracker >= .4f)
 		{
 			if (!isReadyBlinking)
@@ -352,6 +378,7 @@ void Tutorial::startLevel(float dt)
 				player.setHealth(100);
 				player.setAlive(true);
 				playerSpawned = true;
+				timePassedTracker = 0;
 			}
 		}
 	}
@@ -376,6 +403,7 @@ void Tutorial::restartLevel()
 	player.setPosition(checkpoint);
 	player.setTextureRect(sf::IntRect(484, 0, 9, 32));
 	player.resetTeleportAnim();
+	player.setAlive(false);
 
 	//Kill death particles
 	deathParticleManager.killAllParticles();
@@ -393,4 +421,13 @@ void Tutorial::restartLevel()
 
 	//Kill all remaining alive bullets
 	player.killAllBullets();
+}
+
+void Tutorial::handlePause(float dt)
+{
+	//Handle selection inputs
+	pauseUi.handleInput(dt);
+
+	//If the game state change to MENU, we need to reset the level
+	if(gameState->getCurrentState() == State::MENU) restartLevel();
 }

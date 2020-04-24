@@ -68,8 +68,7 @@ private:
 
 	//Physics stuff
 	float sScale;
-	sf::Vector2f gravity;
-	sf::Vector2f stepVelocity;
+	float gravity;
 
 public:
 	Player();

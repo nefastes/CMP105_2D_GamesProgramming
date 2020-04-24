@@ -21,6 +21,10 @@ public:
 	void playSoundbyName(std::string lname);
 	// Stops playing all sounds (multiple sfx's can be played simultaneously
 	void stopAllSounds();
+	// Pause all playing sounds
+	void pauseAllSounds();
+	// Resume playing all sounds
+	void resumeAllSounds();
 	// Returns the sound object (based on key string). Can be useful for tracking play state, looping, volume etc.
 	sf::Sound* getSound(std::string lname);
 	//Set the volume for all added sounds
@@ -32,6 +36,10 @@ public:
 	void playMusicbyName(std::string lname);
 	// Stop music.
 	void stopAllMusic();
+	// Pause music
+	void pauseAllMusic();
+	//Resume music
+	void resumeAllMusic();
 	// Return pointer to music object. Useful for controlling looping, play state, volume etc.
 	sf::Music* getMusic();
 
