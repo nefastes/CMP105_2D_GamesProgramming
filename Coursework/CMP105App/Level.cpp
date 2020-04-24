@@ -28,7 +28,7 @@ Level::Level(sf::RenderWindow* hwnd, Input* in)
 	frontground.setPosition(-500, 0);
 	
 	//Boss init
-	bossTex.loadFromFile("custom_sprites/Boss_Phase_1.png");
+	bossTex.loadFromFile("custom_sprites/BossPhase 1.png");
 	boss.setTexture(&bossTex);
 	boss.setSize(sf::Vector2f(192, 192));
 	boss.setOrigin(sf::Vector2f(boss.getSize().x / 2, boss.getSize().y / 2));

@@ -13,6 +13,16 @@ private:
 	sf::RectangleShape bossImages[6];
 	sf::Font font;
 	sf::Text bossNames[6];
+	sf::RectangleShape blueLine;
+	sf::Text bossName;
+	sf::Text clearPointsText;
+	unsigned clearPoints;
+
+	//Boss objects
+	sf::Texture scimanTex;
+	GameObject sciman;
+	Animation scimanIdle;
+	bool bossLanded;
 
 public:
 	StageMenu(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameState* gs, DebugUi* dui);
@@ -24,7 +34,8 @@ public:
 private:
 	void changeBoxHighlight();
 	void changeBoxSelection();
-	void selectStage();
+	void selectStage(float dt);
+	void selectBoss(float dt, GameObject* boss);
 	void setButtonsToWhite() override;
 };
 

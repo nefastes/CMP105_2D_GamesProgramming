@@ -44,7 +44,7 @@ Player::Player()
 	isFacingRight = false;
 
 	//Collision trackers
-	hasCollidedVertically - false;
+	hasCollidedVertically = false;
 	hasCollidedHorizontally = false;
 	hasCollidedWithLadder = false;
 	isTransitionning = false;
@@ -158,14 +158,18 @@ void Player::update(float dt)
 		}
 
 		//Re-enable physics according to the collision trackers
-		if (!hasCollidedVertically && !hasCollidedHorizontally && !hasCollidedWithLadder ||
-			!hasCollidedVertically && hasCollidedWithLadder && middleTargetname != "world")
+		if (!hasCollidedVertically && !hasCollidedHorizontally)
 		{
 			//If all fails, the player is in the air not touching anything or just touching the body of a ladder
 			//Need this to re-enable controls and physics in air
 			isCollidingLeft = false;
 			isCollidingRight = false;
 			isOnGround = false;
+		}
+		if (!hasCollidedHorizontally)
+		{
+			isCollidingLeft = false;
+			isCollidingRight = false;
 		}
 		if (hasCollidedHorizontally && !hasCollidedVertically)
 			isOnGround = false;
@@ -186,8 +190,6 @@ void Player::update(float dt)
 			hasCollidedWithLadder = false;
 		}
 	}
-	//std::cout << leftTargetname << " " << topTargetname << " " << rightTargetname << " " <<
-		//bottomTargetname << " " << middleTargetname << " " << std::endl;
 }
 
 void Player::collisionResponse(GameObject* collider)
@@ -240,8 +242,6 @@ void Player::worldCollisions(GameObject* collider)
 					isOnGround = true;
 				}
 				hasCollidedVertically = true;		//We have collided vertically, note that we only set it to true for top collisions
-				isCollidingRight = false;
-				isCollidingLeft = false;
 				stepVelocity.y = 0;
 				isOnLadder = false;					//If he touches the ground on a descent, he is not on a ladder anymore
 				changePlayerMode(0);				//He is now on ground, so we change the mode back to normal (0)
@@ -337,8 +337,6 @@ void Player::ladderCollisions(GameObject* collider)
 						audio->playSoundbyName("land");
 						isOnGround = true;
 					}
-					isCollidingRight = false;
-					isCollidingLeft = false;
 					stepVelocity.y = 0;
 					isOnLadder = false;					//If he touches the ground on a descent, he is not on a ladder anymore
 					changePlayerMode(0);				//He is now on ground and not shooting, so we change the mode back to normal (0)
@@ -362,9 +360,6 @@ void Player::ladderCollisions(GameObject* collider)
 			isFinishingClimb = false;
 
 		//If he is on a ladder, center the player pos at the center of the ladder tile and adjust hitbox, size and stuff
-		isCollidingRight = false;
-		isCollidingLeft = false;
-		//If he is on a ladder, he is defo not on ground
 		changePlayerMode(3);
 		setPosition(collider->getPosition().x - (getCollisionBox().left - getPosition().x), getPosition().y);
 

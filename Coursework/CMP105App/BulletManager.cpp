@@ -11,8 +11,12 @@ BulletManager::BulletManager()
 		bullets[i].setAlive(false);
 		bullets[i].setTexture(&bulletTex);
 		bullets[i].setSize(sf::Vector2f(32, 32));
+		bullets[i].setCollisionBox(sf::FloatRect(0, 0, 32, 32));
 		bullets[i].setOrigin(sf::Vector2f(16, 16));
 	}
+
+	//Pointers
+	audio = nullptr;
 }
 
 BulletManager::~BulletManager()

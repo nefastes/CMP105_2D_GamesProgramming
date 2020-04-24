@@ -18,6 +18,10 @@ StageMenu::StageMenu(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameS
 	background.setTextureRect(sf::IntRect(0, 0, window->getSize().x /2 - 25, window->getSize().y / 2));
 	background.setSize(sf::Vector2f(window->getSize().x, window->getSize().y));
 	background.setPosition(0, 0);
+	blueLine.setSize(sf::Vector2f(window->getSize().x, window->getSize().y / 2.f));
+	blueLine.setOrigin(blueLine.getSize() / 2.f);
+	blueLine.setPosition(window->getSize().x / 2.f, window->getSize().y / 2.f);
+	blueLine.setFillColor(sf::Color::Blue);
 
 	//Init Selection Boxes (1 is highlighted by default)
 	for (unsigned i = 0; i < 6; ++i)
@@ -61,6 +65,29 @@ StageMenu::StageMenu(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameS
 	bossNames[0].setFillColor(sf::Color::Yellow);
 	bossNames[1].setString("SCIMAN");
 
+	//Init the selected boss texts
+	bossName.setString("");
+	clearPointsText.setString("CLEAR POINTS:\n0");
+	initText(bossName, font);
+	initText(clearPointsText, font);
+	bossName.setPosition(window->getSize().x / 6.f, window->getSize().y / 2.f);
+	clearPointsText.setPosition(3 * window->getSize().x / 4.f, window->getSize().y / 2.f);
+	clearPoints = 0;
+	bossLanded = false;
+
+	//Init bosses
+	scimanTex.loadFromFile("custom_sprites/Sciman.PNG");
+	sciman.setTexture(&scimanTex);
+	sciman.setTextureRect(sf::IntRect(0, 32, 32, 32));
+	sciman.setVelocity(sf::Vector2f(0, -200));
+	sciman.setSize(sf::Vector2f(128, 128));
+	sciman.setOrigin(sciman.getSize() / 2.f);
+	sciman.setPosition(selectionBoxes[1].getPosition());
+	scimanIdle.addFrame(sf::IntRect(0, 0, 32, 32));
+	scimanIdle.addFrame(sf::IntRect(32, 0, 32, 32));
+	scimanIdle.setLooping(true);
+	scimanIdle.setFrameSpeed(1.f / 6.f);
+
 	//Init trackers
 	selectionTracker = 0;
 	prevSelection = selectionTracker;
@@ -81,8 +108,6 @@ void StageMenu::handleInput(float dt)
 	//Change selection tracker
 	if (!selected)
 		changeBoxSelection();
-	else
-		timePassedTracker = 0;
 
 	//Make a selection
 	if (timePassedTracker > .2f && !selected && selectionTracker == 1)
@@ -115,7 +140,11 @@ void StageMenu::update(float dt)
 	if (!selected)
 		changeBoxHighlight();
 	else
-		selectStage();
+	{
+		selectStage(dt);
+		if (audio->getMusic()->getStatus() == sf::SoundSource::Stopped)
+			gameState->setCurrentState(State::LEVEL);
+	}
 
 	//Debug infos update
 	if (debugUi->isDebugging())
@@ -128,11 +157,21 @@ void StageMenu::render()
 
 	//Draw everything
 	window->draw(background);
-	for (unsigned i = 0; i < 6; ++i)
+	for (unsigned i = 0; i < 6 && !selected; ++i)
 	{
 		window->draw(bossImages[i]);
 		window->draw(selectionBoxes[i]);
 		window->draw(bossNames[i]);
+	}
+	if (selected)
+	{
+		window->draw(blueLine);
+		if (bossLanded)
+		{
+			window->draw(bossName);
+			window->draw(clearPointsText);
+		}
+		window->draw(sciman);
 	}
 
 	//Debug infos update
@@ -186,9 +225,53 @@ void StageMenu::changeBoxSelection()
 	}
 }
 
-void StageMenu::selectStage()
+void StageMenu::selectStage(float dt)
 {
+	switch (selectionTracker)
+	{
+	case 0:																					break;
+	case 1:			selectBoss(dt, &sciman);			bossName.setString("SCIMAN");		break;
+	case 2:																					break;
+	case 3:																					break;
+	case 4:																					break;
+	case 5:																					break;
+	default:																				break;
+	}
 
+	if (bossLanded)
+	{
+		//Update clear points
+		if (clearPoints < 2500 && timePassedTracker >= .05f)
+		{
+			audio->playSoundbyName("points");
+			clearPoints += 50;
+			timePassedTracker = 0;
+		}
+		clearPointsText.setString("CLEAR POINTS:\n" + std::to_string(clearPoints));
+
+		//Animate the boss
+		switch (selectionTracker)
+		{
+		case 0:																										break;
+		case 1:			scimanIdle.animate(dt);		sciman.setTextureRect(scimanIdle.getCurrentFrame());			break;
+		case 2:																										break;
+		case 3:																										break;
+		case 4:																										break;
+		case 5:																										break;
+		default:																									break;
+		}
+	}
+}
+
+void StageMenu::selectBoss(float dt, GameObject* boss)
+{
+	//Move the boss to the correct location
+	if (boss->getPosition().y < window->getSize().y / 2.f || boss->getVelocity().y < 0)
+	{
+		boss->move(sf::Vector2f(window->getSize().x / 3 - boss->getPosition().x, sciman.getVelocity().y) * dt);
+		boss->setVelocity(sciman.getVelocity().x, sciman.getVelocity().y + 980 * dt);
+	}
+	else bossLanded = true;
 }
 
 void StageMenu::setButtonsToWhite()
