@@ -5,6 +5,7 @@
 #include "Framework/AudioManager.h"
 #include "Player.h"
 #include "DebugUi.h"
+#include "Item.h"
 
 //Enum to know with map (stage) we want to create
 enum class Maps { TUTORIAL, SCIMAN };
@@ -49,6 +50,7 @@ private:
 public:
 	TileManager();
 	~TileManager();
+	void checkItemCollision(Item& item);
 	void update(float dt, Player& p);
 	void render();
 	void createMap(Maps level, unsigned section);

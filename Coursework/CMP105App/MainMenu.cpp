@@ -72,12 +72,16 @@ MainMenu::MainMenu(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameSta
 	audio->addSound("sfx/Megaman_1_Press.ogg", "press");
 	audio->addSound("sfx/Megaman_1_Change_Selection.ogg", "changeSelection");
 	audio->addSound("sfx/Megaman_1_Land.ogg", "land");
+	audio->addSound("sfx/Megaman_1_Teleport_Land.ogg", "tpLand");
 	audio->addSound("sfx/Megaman_1_Death.ogg", "death");
 	audio->addSound("sfx/Megaman_1_Pause.ogg", "pause");
 	audio->addSound("sfx/Megaman_1_Player_Damage.ogg", "damage");
 	audio->addSound("sfx/Megaman_1_Shoot.ogg", "shoot");
 	audio->addSound("sfx/Megaman_1_Door.ogg", "door");
 	audio->addSound("sfx/Megaman_1_Points.ogg", "points");
+	audio->addSound("sfx/Megaman_1_Points2.ogg", "points2");
+	audio->addSound("sfx/Megaman_1_Life.ogg", "life");
+	audio->addSound("sfx/Megaman_1_Health.ogg", "health");
 
 	//Init trackers
 	selectionTracker = 0;

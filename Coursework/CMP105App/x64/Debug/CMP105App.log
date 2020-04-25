@@ -1,54 +1,149 @@
-﻿  Tutorial.cpp
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(48,69): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(48,69): warning C4244:         with
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(48,69): warning C4244:         [
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(48,69): warning C4244:             T=unsigned int
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(48,69): warning C4244:         ]
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(48,44): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(48,44): warning C4244:         with
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(48,44): warning C4244:         [
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(48,44): warning C4244:             T=unsigned int
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(48,44): warning C4244:         ]
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(135,30): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(135,30): warning C4244:         with
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(135,30): warning C4244:         [
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(135,30): warning C4244:             T=float
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(135,30): warning C4244:         ]
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(134,96): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(134,96): warning C4244:         with
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(134,96): warning C4244:         [
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(134,96): warning C4244:             T=float
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(134,96): warning C4244:         ]
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(145,31): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(145,31): warning C4244:         with
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(145,31): warning C4244:         [
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(145,31): warning C4244:             T=float
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(145,31): warning C4244:         ]
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(144,67): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(144,67): warning C4244:         with
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(144,67): warning C4244:         [
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(144,67): warning C4244:             T=float
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(144,67): warning C4244:         ]
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(163,44): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(163,44): warning C4244:         with
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(163,44): warning C4244:         [
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(163,44): warning C4244:             T=float
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(163,44): warning C4244:         ]
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(177,43): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(177,43): warning C4244:         with
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(177,43): warning C4244:         [
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(177,43): warning C4244:             T=float
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(177,43): warning C4244:         ]
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(191,40): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(191,40): warning C4244:         with
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(191,40): warning C4244:         [
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(191,40): warning C4244:             T=float
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(191,40): warning C4244:         ]
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(210,69): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(210,69): warning C4244:         with
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(210,69): warning C4244:         [
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(210,69): warning C4244:             T=float
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(210,69): warning C4244:         ]
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(412,74): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(412,44): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+﻿  ItemManager.cpp
+  Main.cpp
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Main.cpp(31,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  MainMenu.cpp
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Main.cpp(113,35): warning C4244: 'argument': conversion from 'float' to 'unsigned int', possible loss of data
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(30,46): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(30,46): warning C4244:         with
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(30,46): warning C4244:         [
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(30,46): warning C4244:             T=unsigned int
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(30,46): warning C4244:         ]
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(31,76): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(31,76): warning C4244:         with
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(31,76): warning C4244:         [
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(31,76): warning C4244:             T=unsigned int
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(31,76): warning C4244:         ]
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(31,47): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(31,47): warning C4244:         with
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(31,47): warning C4244:         [
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(31,47): warning C4244:             T=unsigned int
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(31,47): warning C4244:         ]
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(32,47): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(32,47): warning C4244:         with
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(32,47): warning C4244:         [
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(32,47): warning C4244:             T=unsigned int
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(32,47): warning C4244:         ]
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(33,45): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(33,45): warning C4244:         with
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(33,45): warning C4244:         [
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(33,45): warning C4244:             T=unsigned int
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(33,45): warning C4244:         ]
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(39,70): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(39,70): warning C4244:         with
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(39,70): warning C4244:         [
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(39,70): warning C4244:             T=unsigned int
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(39,70): warning C4244:         ]
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(39,45): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(39,45): warning C4244:         with
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(39,45): warning C4244:         [
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(39,45): warning C4244:             T=unsigned int
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(39,45): warning C4244:         ]
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(60,75): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(60,75): warning C4244:         with
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(60,75): warning C4244:         [
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(60,75): warning C4244:             T=unsigned int
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(60,75): warning C4244:         ]
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(60,75): warning C4244:         and
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(60,75): warning C4244:         [
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(60,75): warning C4244:             T=float
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(60,75): warning C4244:         ]
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(60,54): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(60,54): warning C4244:         with
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(60,54): warning C4244:         [
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(60,54): warning C4244:             T=unsigned int
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(60,54): warning C4244:         ]
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(60,54): warning C4244:         and
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(60,54): warning C4244:         [
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(60,54): warning C4244:             T=float
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(60,54): warning C4244:         ]
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(63,75): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(63,75): warning C4244:         with
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(63,75): warning C4244:         [
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(63,75): warning C4244:             T=unsigned int
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(63,75): warning C4244:         ]
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(63,75): warning C4244:         and
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(63,75): warning C4244:         [
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(63,75): warning C4244:             T=float
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(63,75): warning C4244:         ]
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(63,54): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(63,54): warning C4244:         with
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(63,54): warning C4244:         [
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(63,54): warning C4244:             T=unsigned int
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(63,54): warning C4244:         ]
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(63,54): warning C4244:         and
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(63,54): warning C4244:         [
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(63,54): warning C4244:             T=float
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(63,54): warning C4244:         ]
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(64,58): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(64,58): warning C4244:         with
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(64,58): warning C4244:         [
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(64,58): warning C4244:             T=unsigned int
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(64,58): warning C4244:         ]
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(64,58): warning C4244:         and
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(64,58): warning C4244:         [
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(64,58): warning C4244:             T=float
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(64,58): warning C4244:         ]
+  Tutorial.cpp
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(123,59): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(123,59): warning C4244:         with
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(123,59): warning C4244:         [
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(123,59): warning C4244:             T=unsigned int
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(123,59): warning C4244:         ]
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(123,59): warning C4244:         and
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(123,59): warning C4244:         [
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(123,59): warning C4244:             T=float
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\MainMenu.cpp(123,59): warning C4244:         ]
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(49,69): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(49,69): warning C4244:         with
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(49,69): warning C4244:         [
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(49,69): warning C4244:             T=unsigned int
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(49,69): warning C4244:         ]
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(49,44): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(49,44): warning C4244:         with
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(49,44): warning C4244:         [
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(49,44): warning C4244:             T=unsigned int
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(49,44): warning C4244:         ]
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(136,30): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(136,30): warning C4244:         with
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(136,30): warning C4244:         [
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(136,30): warning C4244:             T=float
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(136,30): warning C4244:         ]
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(135,96): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(135,96): warning C4244:         with
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(135,96): warning C4244:         [
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(135,96): warning C4244:             T=float
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(135,96): warning C4244:         ]
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(148,31): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(148,31): warning C4244:         with
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(148,31): warning C4244:         [
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(148,31): warning C4244:             T=float
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(148,31): warning C4244:         ]
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(147,54): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(147,54): warning C4244:         with
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(147,54): warning C4244:         [
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(147,54): warning C4244:             T=float
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(147,54): warning C4244:         ]
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(167,44): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(167,44): warning C4244:         with
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(167,44): warning C4244:         [
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(167,44): warning C4244:             T=float
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(167,44): warning C4244:         ]
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(181,43): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(181,43): warning C4244:         with
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(181,43): warning C4244:         [
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(181,43): warning C4244:             T=float
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(181,43): warning C4244:         ]
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(195,40): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(195,40): warning C4244:         with
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(195,40): warning C4244:         [
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(195,40): warning C4244:             T=float
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(195,40): warning C4244:         ]
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(214,69): warning C4244: 'argument': conversion from 'int' to 'T', possible loss of data
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(214,69): warning C4244:         with
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(214,69): warning C4244:         [
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(214,69): warning C4244:             T=float
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(214,69): warning C4244:         ]
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(436,74): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  Generating Code...
+C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\Tutorial.cpp(436,44): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
   CMP105App.vcxproj -> C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\x64\Debug\CMP105App.exe

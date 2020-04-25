@@ -8,10 +8,11 @@ Tutorial::Tutorial(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameSta
 	gameState = gs;
 	debugUi = dui;
 
-	//Pass the window to the tile manager
-	tileManager.setWindow(window);
+	//Pass pointers to the itemManager
+	itemManager.sendPointers(gameState, audio, &tileManager);
 
-	//Send debug infos and audio to tile manager
+	//Pass pointers to the tile manager
+	tileManager.setWindow(window);
 	tileManager.setDebugRef(debugUi);
 	tileManager.setAudio(audio);
 
@@ -134,24 +135,27 @@ void Tutorial::update(float dt)
 		sf::Vector2f position = sf::Vector2f((int)camera.getCenter().x + (int)camera.getSize().x / 2 - (int)tileManager.getMapSize().x * 50,
 			(int)camera.getCenter().y + (int)camera.getSize().y / 2);
 		tileManager.buildCreatedMap(position);
+		spawnItemsInRoom(position);
 	}
 	else if (currentMap < tileManager.getCurrentMap())
 	{
 		currentMap = tileManager.getCurrentMap();
+		sf::Vector2f position;
 		if (tileManager.getTransitionType() != 3)
 		{
 			tileManager.createMap(Maps::TUTORIAL, currentMap);
-			sf::Vector2f position = sf::Vector2f((int)camera.getCenter().x - (int)camera.getSize().x / 2,
+			position = sf::Vector2f((int)camera.getCenter().x - (int)camera.getSize().x / 2,
 				(int)camera.getCenter().y - 3 * (int)camera.getSize().y / 2);
 			tileManager.buildCreatedMap(position);
 		}
 		else
 		{
 			tileManager.createMap(Maps::TUTORIAL, currentMap);
-			sf::Vector2f position = sf::Vector2f(tileManager.getMapPosition().x + tileManager.getMapSize().x * 50,
+			position = sf::Vector2f(tileManager.getMapPosition().x + tileManager.getMapSize().x * 50,
 				tileManager.getMapPosition().y);
 			tileManager.buildCreatedMap(position);
 		}
+		spawnItemsInRoom(position);
 	}
 	if (tileManager.isTransitionning())
 	{
@@ -218,6 +222,9 @@ void Tutorial::update(float dt)
 		//Update objects
 		player.update(dt);
 		tileManager.update(dt, player);
+
+		//Reset the time tracker
+		timePassedTracker = 0;
 	}
 	//If the player dies, do the following
 	else if (playerSpawned)
@@ -238,7 +245,19 @@ void Tutorial::update(float dt)
 		{
 			deathParticleManager.update(dt);
 			if (timePassedTracker > 4.f)
-				restartLevel();
+			{
+				if (gameState->getGlobalLives() > 0)
+				{
+					gameState->subGlobalLives(1);
+					restartLevel();
+				}
+				else
+				{
+					//TODO: reset all lives, score, etc. GAME OVER, CONTINUE menu ?
+					restartLevel();
+					gameState->setCurrentState(State::MENU);
+				}
+			}
 		}
 	}
 	//If both checks failed, it means we are currently spawning the player
@@ -252,12 +271,16 @@ void Tutorial::update(float dt)
 	scoreText.setOrigin(scoreText.getGlobalBounds().width / 2.f, scoreText.getGlobalBounds().height / 2.f);
 	scoreText.setPosition(window->getView().getCenter().x, window->getView().getCenter().y - 9 * window->getView().getSize().y / 20.f);
 
+	//Update items
+	itemManager.update(dt, player);
+
 	//Update debug infos
 	if (debugUi->isDebugging())
 	{
 		debugUi->updateDebugUi();
 		debugUi->updateUiPos(sf::Vector2f(camera.getCenter() - camera.getSize() / 2.f));
 		player.setDebugging(true);
+		itemManager.setDebugging(true);
 	}
 }
 
@@ -268,6 +291,7 @@ void Tutorial::render()
 
 	//Draw everything to the screen
 	tileManager.render();
+	itemManager.renderItems(window);
 	
 	//Draw hints
 	switch (currentMap)
@@ -373,9 +397,9 @@ void Tutorial::startLevel(float dt)
 		{
 			if (player.isTeleportAnimFinished(dt))
 			{
-				audio->playSoundbyName("land");
+				audio->playSoundbyName("tpLand");
 				player.setTextureRect(sf::IntRect(0, 8, 24, 24));
-				player.setHealth(100);
+				player.setHealth(25);
 				player.setAlive(true);
 				playerSpawned = true;
 				timePassedTracker = 0;
@@ -430,4 +454,33 @@ void Tutorial::handlePause(float dt)
 
 	//If the game state change to MENU, we need to reset the level
 	if(gameState->getCurrentState() == State::MENU) restartLevel();
+}
+
+void Tutorial::spawnItemsInRoom(sf::Vector2f position)
+{
+	//Spawn items corresponding to the current map section
+	itemManager.killAllItems();
+	if (currentMap == 1)
+	{
+		//This section also has items
+		itemManager.spawnItem(position + sf::Vector2f(6 * 50, 7 * 50), 0);
+		itemManager.spawnItem(position + sf::Vector2f(9 * 50, 3 * 50), 1);
+		itemManager.spawnItem(position + sf::Vector2f(15 * 50, 3 * 50), 2);
+		itemManager.spawnItem(position + sf::Vector2f(18 * 50, 7 * 50), 3);
+	}
+	else if (currentMap == 3)
+	{
+		itemManager.spawnItem(position + sf::Vector2f(4 * 50, 10 * 50), 0);
+		itemManager.spawnItem(position + sf::Vector2f(6 * 50, 10 * 50), 0);
+		itemManager.spawnItem(position + sf::Vector2f(8 * 50, 10 * 50), 0);
+		itemManager.spawnItem(position + sf::Vector2f(10 * 50, 10 * 50), 0);
+		itemManager.spawnItem(position + sf::Vector2f(12 * 50, 10 * 50), 0);
+		itemManager.spawnItem(position + sf::Vector2f(14 * 50, 10 * 50), 0);
+		itemManager.spawnItem(position + sf::Vector2f(16 * 50, 10 * 50), 0);
+		itemManager.spawnItem(position + sf::Vector2f(18 * 50, 10 * 50), 0);
+	}
+	else if (currentMap == 4)
+	{
+		itemManager.spawnItem(position + sf::Vector2f(11 * 50, 2 * 50), 4);
+	}
 }

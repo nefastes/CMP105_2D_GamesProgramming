@@ -18,6 +18,7 @@ TileManager::TileManager()
 	debugUi = nullptr;
 	audio = nullptr;
 
+
 	//Load the tile sheet
 	tileMap.loadTexture("custom_sprites/NES_Mega_Man_Tiles.PNG");
 
@@ -106,6 +107,22 @@ TileManager::TileManager()
 TileManager::~TileManager()
 {
 
+}
+
+void TileManager::checkItemCollision(Item& item)
+{
+	std::vector<GameObject>* world = tileMap.getLevel();
+	for (unsigned i = 0; i < (*world).size(); ++i)
+	{
+		if ((*world)[i].isCollider())
+		{
+			if (Collision::checkBoundingBox(&item, &(*world)[i]))
+			{
+				item.setPosition(item.getPosition().x, (*world)[i].getPosition().y - item.getCollisionBox().height);
+				item.setGrounded(true);
+			}
+		}
+	}
 }
 
 void TileManager::update(float dt, Player& p)

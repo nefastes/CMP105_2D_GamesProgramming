@@ -41,6 +41,8 @@ private:
 	//Player health (must be int (short cause it's not gonna go over 100 and under -100, saves space)
 	//cause it can go negative if he is low on health and takes damage)
 	short int health;
+	short int tempHealth;					//Will be used when the player gains healths
+	bool isGainingHealth;
 	sf::Texture healthTex;
 	sf::RectangleShape healthBlocks[5];		//Will make the health bar sprite
 
@@ -83,6 +85,7 @@ public:
 	bool isTeleportAnimFinished(float dt) { teleportation.animate(dt); setTextureRect(teleportation.getCurrentFrame());  return !teleportation.getPlaying(); };
 	void resetTeleportAnim() { teleportation.setPlaying(true); };
 	void setHealth(short int h) { health = h; };
+	void addHealth(short int h);
 	void drawHealth(sf::RenderWindow* window);
 	void resetHealthPos(sf::Vector2f pos);
 	void renderBullets(sf::RenderWindow* window);

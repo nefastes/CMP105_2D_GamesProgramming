@@ -16,6 +16,42 @@
     <Filter Include="Framework">
       <UniqueIdentifier>{f2badd73-2c61-4d1a-996c-51af9b66bfe4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Items">
+      <UniqueIdentifier>{f3389ba5-b3c7-497f-86aa-9d49dd5741ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Menus">
+      <UniqueIdentifier>{5bebe4e9-5a92-4468-b591-ab8f9d331832}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\HUDS">
+      <UniqueIdentifier>{dd4f0a58-b2cd-410e-9dd0-6d20ebdd1c72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Player">
+      <UniqueIdentifier>{2d98f51a-ec65-43a9-9d00-6f84729cfcbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Levels">
+      <UniqueIdentifier>{2b86c64a-a3f3-408a-a37a-74d5f8835441}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\z_Unused">
+      <UniqueIdentifier>{efaf6763-38a3-4031-9b78-5a1c351a728b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Items">
+      <UniqueIdentifier>{99aea561-c62c-497a-acfe-f394958bb128}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Menus">
+      <UniqueIdentifier>{936cd614-5ea8-4882-b20e-0ff9df9a28b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\HUDS">
+      <UniqueIdentifier>{b4976700-603e-44cd-8eb8-1c9577f15ecd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Levels">
+      <UniqueIdentifier>{9e61c9d7-cbe2-47c6-9443-9efaf19b3a06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\z_Unsused">
+      <UniqueIdentifier>{db2188d7-45b5-43df-847f-ca7da1ef61a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Player">
+      <UniqueIdentifier>{43dbc0f7-5573-46c2-b9c5-e4959c79be27}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -39,9 +75,6 @@
     <ClCompile Include="Framework\Vector.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Level.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Framework\AudioManager.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
@@ -54,59 +87,65 @@
     <ClCompile Include="Framework\GameObject.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Background.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\z_Unsused</Filter>
     </ClCompile>
     <ClCompile Include="Boss.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DialogBox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MainMenu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="OptionMenu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DebugUi.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="IntroCinematic.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FrontGround.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="StageMenu.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Tutorial.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TileManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DeathParticleManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DeathParticle.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\z_Unsused</Filter>
     </ClCompile>
     <ClCompile Include="Bullet.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Player</Filter>
     </ClCompile>
     <ClCompile Include="BulletManager.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathParticle.cpp">
+      <Filter>Source Files\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathParticleManager.cpp">
+      <Filter>Source Files\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugUi.cpp">
+      <Filter>Source Files\HUDS</Filter>
+    </ClCompile>
+    <ClCompile Include="DialogBox.cpp">
+      <Filter>Source Files\HUDS</Filter>
+    </ClCompile>
+    <ClCompile Include="FrontGround.cpp">
+      <Filter>Source Files\z_Unsused</Filter>
+    </ClCompile>
+    <ClCompile Include="IntroCinematic.cpp">
+      <Filter>Source Files\Menus</Filter>
     </ClCompile>
     <ClCompile Include="ItemManager.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="Level.cpp">
+      <Filter>Source Files\Levels</Filter>
+    </ClCompile>
+    <ClCompile Include="MainMenu.cpp">
+      <Filter>Source Files\Menus</Filter>
+    </ClCompile>
+    <ClCompile Include="OptionMenu.cpp">
+      <Filter>Source Files\Menus</Filter>
     </ClCompile>
     <ClCompile Include="PauseHud.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\HUDS</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Source Files\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="StageMenu.cpp">
+      <Filter>Source Files\Menus</Filter>
+    </ClCompile>
+    <ClCompile Include="TileManager.cpp">
+      <Filter>Source Files\Levels</Filter>
+    </ClCompile>
+    <ClCompile Include="Tutorial.cpp">
+      <Filter>Source Files\Levels</Filter>
+    </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>Source Files\Items</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -136,9 +175,6 @@
     <ClInclude Include="Framework\Vector.h">
       <Filter>Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Level.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Framework\AudioManager.h">
       <Filter>Framework</Filter>
     </ClInclude>
@@ -151,59 +187,65 @@
     <ClInclude Include="Framework\GameObject.h">
       <Filter>Framework</Filter>
     </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Background.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Boss.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DialogBox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MainMenu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="OptionMenu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DebugUi.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IntroCinematic.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FrontGround.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="StageMenu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Tutorial.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TileManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DeathParticleManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DeathParticle.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="ItemManager.h">
+      <Filter>Header Files\Items</Filter>
     </ClInclude>
     <ClInclude Include="Bullet.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Player</Filter>
     </ClInclude>
     <ClInclude Include="BulletManager.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Player</Filter>
     </ClInclude>
-    <ClInclude Include="ItemManager.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="DeathParticle.h">
+      <Filter>Header Files\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathParticleManager.h">
+      <Filter>Header Files\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugUi.h">
+      <Filter>Header Files\HUDS</Filter>
+    </ClInclude>
+    <ClInclude Include="DialogBox.h">
+      <Filter>Header Files\HUDS</Filter>
+    </ClInclude>
+    <ClInclude Include="Level.h">
+      <Filter>Header Files\Levels</Filter>
+    </ClInclude>
+    <ClInclude Include="MainMenu.h">
+      <Filter>Header Files\Menus</Filter>
+    </ClInclude>
+    <ClInclude Include="OptionMenu.h">
+      <Filter>Header Files\Menus</Filter>
+    </ClInclude>
+    <ClInclude Include="IntroCinematic.h">
+      <Filter>Header Files\Menus</Filter>
     </ClInclude>
     <ClInclude Include="PauseHud.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\HUDS</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Header Files\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="StageMenu.h">
+      <Filter>Header Files\Menus</Filter>
+    </ClInclude>
+    <ClInclude Include="TileManager.h">
+      <Filter>Header Files\Levels</Filter>
+    </ClInclude>
+    <ClInclude Include="Tutorial.h">
+      <Filter>Header Files\Levels</Filter>
+    </ClInclude>
+    <ClInclude Include="Background.h">
+      <Filter>Header Files\z_Unused</Filter>
+    </ClInclude>
+    <ClInclude Include="Boss.h">
+      <Filter>Header Files\z_Unused</Filter>
+    </ClInclude>
+    <ClInclude Include="FrontGround.h">
+      <Filter>Header Files\z_Unused</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.h">
+      <Filter>Header Files\Items</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

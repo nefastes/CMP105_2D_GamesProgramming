@@ -177,6 +177,7 @@
     <ClCompile Include="Framework\Vector.cpp" />
     <ClCompile Include="FrontGround.cpp" />
     <ClCompile Include="IntroCinematic.cpp" />
+    <ClCompile Include="Item.cpp" />
     <ClCompile Include="ItemManager.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -213,6 +214,7 @@
     <ClInclude Include="Framework\Vector.h" />
     <ClInclude Include="FrontGround.h" />
     <ClInclude Include="IntroCinematic.h" />
+    <ClInclude Include="Item.h" />
     <ClInclude Include="ItemManager.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="MainMenu.h" />

@@ -10,6 +10,7 @@
 #include "TileManager.h"
 #include "DeathParticleManager.h"
 #include "PauseHud.h"
+#include "ItemManager.h"
 
 class Tutorial
 {
@@ -23,6 +24,9 @@ private:
 
 	//Create the tileManager object
 	TileManager tileManager;
+
+	//Create an itemManager object
+	ItemManager itemManager;
 
 	//Create the player object
 	sf::Texture playerTex;
@@ -80,5 +84,8 @@ private:
 	//Level handling functions
 	void startLevel(float dt);
 	void restartLevel();
+
+	//Item handle
+	void spawnItemsInRoom(sf::Vector2f position);
 };
 

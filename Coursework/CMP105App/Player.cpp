@@ -43,13 +43,15 @@ Player::Player()
 	isFacingRight = false;
 
 	//Collision trackers
-	hasCollidedVertically = false;
+	hasCollidedVertically = true;	//He will spawn on ground
 	hasCollidedHorizontally = false;
 	hasCollidedWithLadder = false;
 	isTransitionning = false;
 
 	//Init health
 	health = 100;
+	tempHealth = 0;
+	isGainingHealth = false;
 	setAlive(true);
 	healthTex.loadFromFile("custom_sprites/NES _Mega_Man_Life.PNG");
 	for (unsigned i = 0; i < 5; ++i)
@@ -754,6 +756,25 @@ void Player::playerPhysics(float dt)
 
 void Player::updateHealth()
 {
+	//Check if we are regenerating health
+	if (isGainingHealth && health < tempHealth && timePassedTracker >= .05f)
+	{
+		health += 5;						//Increment health by 5 (he can only gain up to 25 or 50 health)
+		timePassedTracker = 0;				//Reset time tracker to get ready for the next gain
+		audio->playSoundbyName("health");	//Sound effect
+		freezeControls(true);				//Will stuck the player in place, just like in the original game
+		isMoving = false;					//Will disable a moving animation
+		if (health >= tempHealth)
+		{
+			//Just to make sure we do not exceed to desired amount
+			health = tempHealth;
+			//Reset trackers, re-enable controls
+			tempHealth = 0;
+			isGainingHealth = false;
+			freezeControls(false);
+		}
+	}
+
 	//Set the position of the health bar relatively to the view
 	sf::Vector2i topLeft = sf::Vector2i(window->getView().getCenter() - window->getView().getSize() / 2.f);
 	for(int i = 0; i < 5; ++i)
@@ -798,6 +819,18 @@ void Player::resetHealthPos(sf::Vector2f pos)
 	//Used to put it all off screen
 	for(unsigned i = 0; i < 5; ++i)
 		healthBlocks[i].setPosition(pos);
+}
+
+void Player::addHealth(short int h)
+{
+	//Change the health and store old one so we can animate gaining health inside updateHealth()
+	//Only allow to change the health if it is not already full
+	if (health < 100)
+	{
+		if (health > 100 - h) tempHealth = 100;
+		else tempHealth = health + h;
+		isGainingHealth = true;
+	}
 }
 
 void Player::playerShoot()
