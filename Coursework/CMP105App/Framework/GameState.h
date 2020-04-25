@@ -32,6 +32,10 @@ public:
 	void subGlobalLives(unsigned l);
 	// Return the number of lives
 	unsigned getGlobalLives();
+	// Set the status of the level
+	void setLevelFinished(bool finish);
+	// Get the status of the level
+	bool isLevelFinished();
 
 protected:
 	//States
@@ -41,4 +45,7 @@ protected:
 	//We will also use this class to store things we want to have shared across all levels, such as the number of lives, score, etc.
 	unsigned globalScore;
 	unsigned globalLives;
+
+	//Tracker to see if we finished a level, will be set to true by the win item
+	bool levelFinished;
 };

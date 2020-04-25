@@ -87,7 +87,7 @@ void ItemManager::update(float dt, Player& p)
 			case 1:		p.addHealth(25);					items[i].setAlive(false);												break;
 			case 2:		p.addHealth(50);					items[i].setAlive(false);												break;
 			case 3:		gameState->addGlobalLives(1);		items[i].setAlive(false);		audio->playSoundbyName("life");			break;
-			case 4:		items[i].setAlive(false); break;//TODO: make win here
+			case 4:		gameState->setLevelFinished(true);	items[i].setAlive(false);												break;
 			default:	std::cout << "Error: Collided with an item that doesnt exist !" << std::endl;								break;
 			}
 		}

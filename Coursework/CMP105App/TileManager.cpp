@@ -237,6 +237,7 @@ void TileManager::update(float dt, Player& p)
 
 		//horizontal transition, in both cases we freeze the player
 		p.freezeControls(true);
+		p.setMoving(false);
 		p.setTransitionning(true);
 
 		//There are only two openable doors in each level, just need to know which
@@ -483,11 +484,10 @@ void TileManager::openDoor(unsigned topTile, bool inside)
 
 bool TileManager::closeDoor(unsigned topTile)
 {
-
 	//Get the level
 	std::vector<GameObject>* world = tileMap.getLevel();
 
-	//
+	//Close the doore
 	switch (doorTracker)
 	{
 	case 1:

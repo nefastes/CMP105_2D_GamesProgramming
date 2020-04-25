@@ -93,6 +93,7 @@ public:
 	void resetSettings();	//Called by the level when the player dies
 	bool getLadderTracker() { return isOnLadder; };
 	void setTransitionning(bool t) { isTransitionning = t; };
+	void setMoving(bool mov) { isMoving = mov; };
 
 private:
 	//Other functions for the player specifically

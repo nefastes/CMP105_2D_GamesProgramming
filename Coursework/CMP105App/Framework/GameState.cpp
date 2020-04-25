@@ -3,6 +3,7 @@ GameState::GameState()
 {
 	globalLives = 2;		//Start with 3 lives
 	globalScore = 0;		//Start with a score of 0
+	levelFinished = false;
 }
 
 GameState::~GameState()
@@ -57,4 +58,14 @@ void GameState::subGlobalLives(unsigned l)
 unsigned GameState::getGlobalLives()
 {
 	return globalLives;
+}
+
+void GameState::setLevelFinished(bool finished)
+{
+	levelFinished = finished;
+}
+
+bool GameState::isLevelFinished()
+{
+	return levelFinished;
 }

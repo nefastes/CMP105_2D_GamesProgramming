@@ -79,13 +79,10 @@ void PauseHud::handleInput(float dt)
 		selectionTracker = 1;
 		audio->playSoundbyName("changeSelection");
 	}
-	if ((input->isKeyDown(sf::Keyboard::Tab) || input->isKeyDown(sf::Keyboard::Escape)) && timePassedTracker >= .5f)
-		goto resu;
 	if ((input->isKeyDown(sf::Keyboard::Enter) || input->isMouseLDown()) && timePassedTracker >= .2f)
 	{
 		if (selectionTracker == 0)
 		{
-resu:
 			audio->resumeAllMusic();
 			audio->resumeAllSounds();
 			audio->playSoundbyName("pause");

@@ -58,22 +58,54 @@ Tutorial::Tutorial(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameSta
 	scoreText.setOutlineThickness(1);
 
 	//Init hints textures
-	moveTex.loadFromFile("custom_sprites/Move.PNG");
-	jumpTex.loadFromFile("custom_sprites/Jump.PNG");
-	climbTex.loadFromFile("custom_sprites/Climb.PNG");
-	spikeTex.loadFromFile("custom_sprites/Spikes.PNG");
-	hintMove.setTexture(&moveTex);
-	hintMove.setSize(sf::Vector2f(200, 100));
-	hintMove.setPosition(100, 400);
-	hintJump.setTexture(&jumpTex);
-	hintJump.setSize(sf::Vector2f(200, 100));
-	hintJump.setPosition(825, 525);
-	hintClimb.setTexture(&climbTex);
-	hintClimb.setSize(sf::Vector2f(200, 100));
-	hintClimb.setPosition(700, 100);
-	hintSpike.setTexture(&spikeTex);
-	hintSpike.setSize(sf::Vector2f(200, 100));
-	hintSpike.setPosition(1325, 400);
+	hintTex[0].loadFromFile("custom_sprites/Move.PNG");
+	hintTex[1].loadFromFile("custom_sprites/Jump.PNG");
+	hintTex[2].loadFromFile("custom_sprites/Climb.PNG");
+	hintTex[3].loadFromFile("custom_sprites/Spikes.PNG");
+	hintTex[4].loadFromFile("custom_sprites/Up.PNG");
+	hintTex[5].loadFromFile("custom_sprites/Points.PNG");
+	hintTex[6].loadFromFile("custom_sprites/25Health.PNG");
+	hintTex[7].loadFromFile("custom_sprites/50Health.PNG");
+	hintTex[8].loadFromFile("custom_sprites/Health.PNG");
+	hintTex[9].loadFromFile("custom_sprites/Door.PNG");
+	hintTex[10].loadFromFile("custom_sprites/Score.PNG");
+	hintTex[11].loadFromFile("custom_sprites/Shoot.PNG");
+	hintTex[12].loadFromFile("custom_sprites/Win.PNG");
+	hintTex[13].loadFromFile("custom_sprites/Pause.PNG");
+
+	//Init hints
+	hints[0].setTexture(&hintTex[0]);
+	hints[0].setSize(sf::Vector2f(200, 100));
+	hints[0].setPosition(100, 400);
+	hints[1].setTexture(&hintTex[1]);
+	hints[1].setSize(sf::Vector2f(200, 100));
+	hints[1].setPosition(825, 525);
+	hints[2].setTexture(&hintTex[2]);
+	hints[2].setSize(sf::Vector2f(200, 100));
+	hints[2].setPosition(700, 100);
+	hints[3].setTexture(&hintTex[3]);
+	hints[3].setSize(sf::Vector2f(200, 100));
+	hints[3].setPosition(1325, 400);
+	hints[4].setTexture(&hintTex[4]);
+	hints[4].setSize(sf::Vector2f(200, 100));
+	hints[5].setTexture(&hintTex[5]);
+	hints[5].setSize(sf::Vector2f(200, 100));
+	hints[6].setTexture(&hintTex[6]);
+	hints[6].setSize(sf::Vector2f(200, 100));
+	hints[7].setTexture(&hintTex[7]);
+	hints[7].setSize(sf::Vector2f(200, 100));
+	hints[8].setTexture(&hintTex[8]);
+	hints[8].setSize(sf::Vector2f(200, 100));
+	hints[9].setTexture(&hintTex[9]);
+	hints[9].setSize(sf::Vector2f(200, 100));
+	hints[10].setTexture(&hintTex[10]);
+	hints[10].setSize(sf::Vector2f(200, 100));
+	hints[11].setTexture(&hintTex[11]);
+	hints[11].setSize(sf::Vector2f(200, 100));
+	hints[12].setTexture(&hintTex[12]);
+	hints[12].setSize(sf::Vector2f(200, 100));
+	hints[13].setTexture(&hintTex[13]);
+	hints[13].setSize(sf::Vector2f(200, 100));
 
 	//Init camera
 	camera = window->getView();
@@ -102,7 +134,7 @@ void Tutorial::handleInput(float dt)
 		player.handleInput(dt);
 
 	//Pause control
-	if ((input->isKeyDown(sf::Keyboard::Tab) || input->isKeyDown(sf::Keyboard::Escape)) && timePassedTracker >= .2f && player.isAlive())
+	if ((input->isKeyDown(sf::Keyboard::Tab) || input->isKeyDown(sf::Keyboard::Escape)) && player.isAlive())
 	{
 		gameState->setCurrentState(State::PAUSE);
 		audio->pauseAllMusic();
@@ -162,12 +194,10 @@ void Tutorial::update(float dt)
 		switch (tileManager.getTransitionType())
 		{
 		case 1:
-			if ((int)(camera.getCenter().y - camera.getSize().y / 2) > tileManager.getMapPosition().y)
-			{
-				camera.move(sf::Vector2f(0, (int)(-600 * dt)));
-				player.freezeControls(true);
-			}
-			else
+			//Transition upwards
+			camera.move(sf::Vector2f(0, (int)(-600 * dt)));
+			player.freezeControls(true);
+			if ((int)(camera.getCenter().y - camera.getSize().y / 2) < tileManager.getMapPosition().y)
 			{
 				camera.setCenter(sf::Vector2f(tileManager.getMapPosition().x + (int)camera.getSize().x / 2,
 					tileManager.getMapPosition().y + (int)camera.getSize().y / 2));
@@ -176,12 +206,10 @@ void Tutorial::update(float dt)
 			}
 			break;
 		case 2:
-			if ((int)(camera.getCenter().y - camera.getSize().y / 2) < tileManager.getMapPosition().y)
-			{
-				camera.move(sf::Vector2f(0, (int)(600 * dt)));
-				player.freezeControls(true);
-			}
-			else
+			//Transition downwards
+			camera.move(sf::Vector2f(0, (int)(600 * dt)));
+			player.freezeControls(true);
+			if ((int)(camera.getCenter().y - camera.getSize().y / 2) > tileManager.getMapPosition().y)
 			{
 				camera.setCenter(sf::Vector2f(tileManager.getMapPosition().x + tileManager.getMapSize().x * 50 -
 					(int)camera.getSize().x / 2, tileManager.getMapPosition().y + (int)camera.getSize().y / 2));
@@ -190,17 +218,20 @@ void Tutorial::update(float dt)
 			}
 			break;
 		case 3:
-			if ((int)(camera.getCenter().x - camera.getSize().x / 2) < tileManager.getMapPosition().x)
-			{
-				camera.move(sf::Vector2f((int)(600 * dt), 0));
-				player.move(sf::Vector2f(75 * dt, 0));
-			}
-			else
+			//Transition left to right
+			if ((int)(camera.getCenter().x - camera.getSize().x / 2) > tileManager.getMapPosition().x)
 			{
 				camera.setCenter(sf::Vector2f(tileManager.getMapPosition().x + (int)camera.getSize().x / 2,
 					tileManager.getMapPosition().y + (int)camera.getSize().y / 2));
 				tileManager.setCloseDoor(true);
 			}
+			else if ((int)(camera.getCenter().x - camera.getSize().x / 2) < tileManager.getMapPosition().x)
+			{
+				camera.move(sf::Vector2f((int)(600 * dt), 0));
+				player.move(sf::Vector2f(75 * dt, 0));
+				player.setMoving(true);
+			}
+			else player.setMoving(false);
 			break;
 		}
 	}
@@ -215,6 +246,7 @@ void Tutorial::update(float dt)
 	//Set the window view
 	window->setView(camera);
 
+	
 	//Only update the objects when necessary
 	//AND most importanly, update them AFTER the view has been updated since they might base calculation on viewPos
 	if (player.isAlive() && playerSpawned)
@@ -266,6 +298,14 @@ void Tutorial::update(float dt)
 		startLevel(dt);
 	}
 
+	//Check if the level has been finished (if the win item has been collected)
+	if (gameState->isLevelFinished())
+	{
+		audio->stopAllMusic();
+		player.freezeControls(true);
+		player.setMoving(false);
+	}
+
 	//Update the score
 	scoreText.setString(std::to_string(gameState->getGlobalScore()));
 	scoreText.setOrigin(scoreText.getGlobalBounds().width / 2.f, scoreText.getGlobalBounds().height / 2.f);
@@ -291,26 +331,40 @@ void Tutorial::render()
 
 	//Draw everything to the screen
 	tileManager.render();
-	itemManager.renderItems(window);
 	
 	//Draw hints
 	switch (currentMap)
 	{
 	case 0:
-		window->draw(hintMove);
-		window->draw(hintJump);
-		window->draw(hintClimb);
-		window->draw(hintSpike);
+		window->draw(hints[0]);
+		window->draw(hints[1]);
+		window->draw(hints[2]);
+		window->draw(hints[3]);
 		break;
 	case 1:
+		window->draw(hints[4]);
+		window->draw(hints[5]);
+		window->draw(hints[6]);
+		window->draw(hints[7]);
 		break;
 	case 2:
+		window->draw(hints[8]);
+		window->draw(hints[9]);
+		break;
+	case 3:
+		window->draw(hints[10]);
 		break;
 	case 4:
+		window->draw(hints[11]);
+		window->draw(hints[12]);
+		window->draw(hints[13]);
 		break;
 	default:
 		break;
 	}
+
+	//Draw any item
+	itemManager.renderItems(window);
 
 	//Draw any potential bullet
 	player.renderBullets(window);
@@ -458,29 +512,50 @@ void Tutorial::handlePause(float dt)
 
 void Tutorial::spawnItemsInRoom(sf::Vector2f position)
 {
-	//Spawn items corresponding to the current map section
+	//Spawn items & hints corresponding to the current map section
 	itemManager.killAllItems();
-	if (currentMap == 1)
+	if (currentMap == 0)
+	{
+		hints[0].setPosition(position + sf::Vector2f(2 * 50, 8 * 50));
+		hints[1].setPosition(position + sf::Vector2f(16.5f * 50, 10.5f * 50));
+		hints[2].setPosition(position + sf::Vector2f(14 * 50, 2 * 50));
+		hints[3].setPosition(position + sf::Vector2f(26.5f * 50, 8 * 50));
+
+	}
+	else if (currentMap == 1)
 	{
 		//This section also has items
 		itemManager.spawnItem(position + sf::Vector2f(6 * 50, 7 * 50), 0);
 		itemManager.spawnItem(position + sf::Vector2f(9 * 50, 3 * 50), 1);
 		itemManager.spawnItem(position + sf::Vector2f(15 * 50, 3 * 50), 2);
 		itemManager.spawnItem(position + sf::Vector2f(18 * 50, 7 * 50), 3);
+
+		hints[4].setPosition(position + sf::Vector2f(16 * 50, 5.5f * 50));
+		hints[5].setPosition(position + sf::Vector2f(5 * 50, 5.5f * 50));
+		hints[6].setPosition(position + sf::Vector2f(8 * 50, 1.5f * 50));
+		hints[7].setPosition(position + sf::Vector2f(13 * 50, 1.5f * 50));
+
+	}
+	else if (currentMap == 2)
+	{
+		hints[8].setPosition(position + sf::Vector2f(3 * 50, 1.5f * 50));
+		hints[9].setPosition(position + sf::Vector2f(18* 50, 8 * 50));
 	}
 	else if (currentMap == 3)
 	{
 		itemManager.spawnItem(position + sf::Vector2f(4 * 50, 10 * 50), 0);
-		itemManager.spawnItem(position + sf::Vector2f(6 * 50, 10 * 50), 0);
 		itemManager.spawnItem(position + sf::Vector2f(8 * 50, 10 * 50), 0);
-		itemManager.spawnItem(position + sf::Vector2f(10 * 50, 10 * 50), 0);
 		itemManager.spawnItem(position + sf::Vector2f(12 * 50, 10 * 50), 0);
-		itemManager.spawnItem(position + sf::Vector2f(14 * 50, 10 * 50), 0);
 		itemManager.spawnItem(position + sf::Vector2f(16 * 50, 10 * 50), 0);
-		itemManager.spawnItem(position + sf::Vector2f(18 * 50, 10 * 50), 0);
+		itemManager.spawnItem(position + sf::Vector2f(20 * 50, 10 * 50), 0);
+
+		hints[10].setPosition(position + sf::Vector2f(10 * 50, 1 * 50));
 	}
-	else if (currentMap == 4)
+	else
 	{
 		itemManager.spawnItem(position + sf::Vector2f(11 * 50, 2 * 50), 4);
+		hints[11].setPosition(position + sf::Vector2f(3 * 50, 8 * 50));
+		hints[12].setPosition(position + sf::Vector2f(17 * 50, 8 * 50));
+		hints[13].setPosition(position + sf::Vector2f(10 * 50, 4 * 50));
 	}
 }
