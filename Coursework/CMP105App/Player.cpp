@@ -385,17 +385,12 @@ void Player::ladderCollisions(GameObject* collider)
 void Player::spikeCollisions(GameObject* collider)
 {
 	//only kill the player if 1/4 of the sprite size box is touching it
-	if (getPosition().y + 3 * getSize().y / 4 > collider->getPosition().y)
+	if (getPosition().y + 3 * getSize().y / 4 > collider->getPosition().y && !isOnLadder)
 	{
 		//Kill the player
 		health = 0;
 		setAlive(false);
 	}
-}
-
-void Player::doorCollisions(GameObject* collider)
-{
-
 }
 
 

@@ -13,14 +13,15 @@ Level::Level()
 	currentLevel = Maps::TUTORIAL;
 
 	//Init spawnpoint position
-	spawnPoint = sf::Vector2f(100, -100);
+	spawnPoint = sf::Vector2f(2, 12);
+	spawnMap = 0;
 
 	//Init player
 	playerTex.loadFromFile("custom_sprites/NES _Mega_Man.PNG");
 	player.setTexture(&playerTex);
 	player.setTextureRect(sf::IntRect(484, 0, 9, 32));
 	player.setSize(sf::Vector2f(75, 75));
-	player.setPosition(spawnPoint);
+	player.setPosition(sf::Vector2f(spawnPoint.x * 50, -100));
 	player.setVelocity(sf::Vector2f(200, 0));
 	player.setCollisionBox(sf::FloatRect(15, 5, 45, 70));
 	player.setCollisionBoxColor(sf::Color::Red);
@@ -193,10 +194,11 @@ void Level::updateLevel(float dt)
 
 	//Set the camera relatively to the player's horizontal position (megaman games do not follow the player vertically)
 	//as an INTEGER (otherwise we will have dead pixels, lines). The 50 is because of the tile size which is 50
-	if (player.getCollisionBox().left + player.getCollisionBox().width / 2 >=
+	//We also do not want the view to change in a transition, so check for that as well
+	if ((player.getCollisionBox().left + player.getCollisionBox().width / 2 >=
 		tileManager.getMapPosition().x + camera.getSize().x / 2 &&
 		player.getCollisionBox().left + player.getCollisionBox().width / 2 <=
-		tileManager.getMapPosition().x + tileManager.getMapSize().x * 50 - camera.getSize().x / 2)
+		tileManager.getMapPosition().x + tileManager.getMapSize().x * 50 - camera.getSize().x / 2) && !tileManager.isTransitionning())
 		camera.setCenter(sf::Vector2f((int)(player.getCollisionBox().left + player.getCollisionBox().width / 2), camera.getCenter().y));
 	//Set the window view
 	window->setView(camera);
@@ -418,8 +420,8 @@ void Level::startLevel(float dt)
 		//Make ready text invisible
 		isReadyBlinking = true;
 
-		//Move the player down until it reaches the ground (ground is at map line 13, so 12 lines of tiles of height 50)
-		if (player.getPosition().y <= 12.f * 50.f - player.getCollisionBox().height)
+		//Move the player down until it reaches the spawnPoint
+		if (player.getPosition().y <= spawnPoint.y * 50.f - player.getCollisionBox().height)
 			player.move(sf::Vector2f(0, 1000.f) * dt);
 		else
 		{
@@ -445,14 +447,14 @@ void Level::resetLevel()
 	readyBlinkCount = 0;
 
 	//Reset the map
-	currentMap = 0;
-	tileManager.setCurrentMap(0);
+	currentMap = spawnMap;
+	tileManager.setCurrentMap(spawnMap);
 	tileManager.createMap(currentLevel, currentMap);
 	tileManager.buildCreatedMap(sf::Vector2f(0, 0));
 
 	//Reset origin to default and the player position
 	player.resetSettings();
-	player.setPosition(spawnPoint);
+	player.setPosition(sf::Vector2f(spawnPoint.x * 50, -100));
 	player.setTextureRect(sf::IntRect(484, 0, 9, 32));
 	player.resetTeleportAnim();
 	player.setAlive(false);

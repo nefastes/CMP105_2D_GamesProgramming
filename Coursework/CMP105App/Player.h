@@ -112,6 +112,5 @@ private:
 	void worldCollisions(GameObject* collider);
 	void ladderCollisions(GameObject* collider);
 	void spikeCollisions(GameObject* collider);
-	void doorCollisions(GameObject* collider);
 };
 

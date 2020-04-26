@@ -28,7 +28,12 @@ void Sciman::update(float dt)
 	updateLevel(dt);
 
 	//Add any level specific updates here
-
+	//Update the spawnpoint if progress has been made
+	if (currentMap == 4)
+	{
+		spawnPoint = sf::Vector2f(19, 7);
+		spawnMap = currentMap;
+	}
 }
 
 void Sciman::render()

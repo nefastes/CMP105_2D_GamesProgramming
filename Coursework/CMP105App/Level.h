@@ -33,8 +33,15 @@ protected:
 	void handleLevelPause(float dt);
 	virtual void spawnItemsInRoom(sf::Vector2f position);
 
+	//Spawn position
+	sf::Vector2f spawnPoint;
+	unsigned spawnMap;
+
 	//Tracks which level is the be loaded
 	Maps currentLevel;
+
+	//Tracks which map of the level is to be loaded
+	unsigned currentMap;
 
 private:
 	// Default variables for level class.
@@ -63,9 +70,6 @@ private:
 	Player player;
 	sf::Texture playerTex;
 
-	//Spawn position
-	sf::Vector2f spawnPoint;
-
 	//Ready message
 	sf::Font font;
 	sf::Text readyText;
@@ -80,5 +84,4 @@ private:
 	//Trackers
 	float timePassedTracker;
 	bool playerSpawned;
-	unsigned currentMap;			//Tracks which map of the level is to be loaded
 };
