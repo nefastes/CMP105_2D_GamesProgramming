@@ -893,4 +893,9 @@ void Player::resetSettings()
 	//Reset rng
 	rng = 0;
 	isRngSet = false;
+	//Collision trackers
+	hasCollidedVertically = true;	//He will spawn on ground
+	hasCollidedHorizontally = false;
+	hasCollidedWithLadder = false;
+	isTransitionning = false;
 }

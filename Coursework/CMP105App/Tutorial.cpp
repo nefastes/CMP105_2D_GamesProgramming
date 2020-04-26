@@ -21,7 +21,7 @@ Tutorial::Tutorial(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameSta
 	tileManager.buildCreatedMap(sf::Vector2f(0, 0));
 
 	//Init checkpoints positions
-	checkpoint = sf::Vector2f(100, -100);
+	spawnPoint = sf::Vector2f(100, -100);
 
 	//Init player
 	playerTex.loadFromFile("custom_sprites/NES _Mega_Man.PNG");
@@ -31,7 +31,7 @@ Tutorial::Tutorial(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameSta
 	player.setInput(input);
 	player.setWindow(window);
 	player.setAudio(audio);
-	player.setPosition(checkpoint);
+	player.setPosition(spawnPoint);
 	player.setVelocity(sf::Vector2f(200, 0));
 	player.setCollisionBox(sf::FloatRect(15, 5, 45, 70));
 	player.setCollisionBoxColor(sf::Color::Red);
@@ -56,6 +56,7 @@ Tutorial::Tutorial(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameSta
 	scoreText.setCharacterSize(24);
 	scoreText.setOutlineColor(sf::Color::Black);
 	scoreText.setOutlineThickness(1);
+	counter = 0;
 
 	//Init hints textures
 	hintTex[0].loadFromFile("custom_sprites/Move.PNG");
@@ -134,7 +135,7 @@ void Tutorial::handleInput(float dt)
 		player.handleInput(dt);
 
 	//Pause control
-	if ((input->isKeyDown(sf::Keyboard::Tab) || input->isKeyDown(sf::Keyboard::Escape)) && player.isAlive())
+	if ((input->isKeyDown(sf::Keyboard::Tab) || input->isKeyDown(sf::Keyboard::Escape)) && player.isAlive() && !gameState->isLevelFinished())
 	{
 		gameState->setCurrentState(State::PAUSE);
 		audio->pauseAllMusic();
@@ -145,7 +146,6 @@ void Tutorial::handleInput(float dt)
 	}
 
 	//Debug camera (to check if maps unload correctly
-	/*
 	if (input->isKeyDown(sf::Keyboard::Right))
 		camera.move(sf::Vector2f(100, 0) * dt);
 	if (input->isKeyDown(sf::Keyboard::Left))
@@ -154,7 +154,6 @@ void Tutorial::handleInput(float dt)
 		camera.move(sf::Vector2f(0, 100) * dt);
 	if (input->isKeyDown(sf::Keyboard::Up))
 		camera.move(sf::Vector2f(0, -100) * dt);
-	*/
 }
 
 void Tutorial::update(float dt)
@@ -219,11 +218,12 @@ void Tutorial::update(float dt)
 			break;
 		case 3:
 			//Transition left to right
-			if ((int)(camera.getCenter().x - camera.getSize().x / 2) > tileManager.getMapPosition().x)
+			if ((int)(camera.getCenter().x - camera.getSize().x / 2) >= tileManager.getMapPosition().x)
 			{
 				camera.setCenter(sf::Vector2f(tileManager.getMapPosition().x + (int)camera.getSize().x / 2,
 					tileManager.getMapPosition().y + (int)camera.getSize().y / 2));
 				tileManager.setCloseDoor(true);
+				player.setMoving(false);
 			}
 			else if ((int)(camera.getCenter().x - camera.getSize().x / 2) < tileManager.getMapPosition().x)
 			{
@@ -231,7 +231,6 @@ void Tutorial::update(float dt)
 				player.move(sf::Vector2f(75 * dt, 0));
 				player.setMoving(true);
 			}
-			else player.setMoving(false);
 			break;
 		}
 	}
@@ -255,8 +254,10 @@ void Tutorial::update(float dt)
 		player.update(dt);
 		tileManager.update(dt, player);
 
-		//Reset the time tracker
-		timePassedTracker = 0;
+		//Reset the time tracker to 0 if the level is not finished, as we do not use it otherwise
+		//If we dont do this the death animation will trigger to soon, as the tracker will be in the range of seconds
+		if (!gameState->isLevelFinished())
+			timePassedTracker = 0;
 	}
 	//If the player dies, do the following
 	else if (playerSpawned)
@@ -301,15 +302,50 @@ void Tutorial::update(float dt)
 	//Check if the level has been finished (if the win item has been collected)
 	if (gameState->isLevelFinished())
 	{
-		audio->stopAllMusic();
 		player.freezeControls(true);
 		player.setMoving(false);
+		if (audio->getMusic()->getStatus() == sf::SoundSource::Stopped)
+		{
+			//Count clear points
+			if (timePassedTracker >= .05f && counter < 2500)
+			{
+				counter += 50;
+				scoreText.setString("CLEAR POINTS: " + std::to_string(counter));
+				scoreText.setOrigin(sf::Vector2f(scoreText.getGlobalBounds().width / 2.f, scoreText.getGlobalBounds().height / 2.f));
+				scoreText.setPosition(window->getView().getCenter());
+				audio->playSoundbyName("points");
+				timePassedTracker = 0;
+			}
+			else if (timePassedTracker >= 1.f && counter == 2500)
+			{
+				gameState->addGlobalScore(counter);
+				counter += 50;
+				timePassedTracker = 0;
+			}
+			else if (timePassedTracker >= .05f && counter > 2500 && counter < gameState->getGlobalScore())
+			{
+				counter += 50;
+				scoreText.setString("CLEAR POINTS: 2500\n\nTOTAL SCORE: " + std::to_string(counter));
+				scoreText.setOrigin(sf::Vector2f(scoreText.getGlobalBounds().width / 2.f, scoreText.getGlobalBounds().height / 2.f));
+				scoreText.setPosition(window->getView().getCenter());
+				audio->playSoundbyName("points");
+				timePassedTracker = 0;
+			}
+			else if (timePassedTracker >= 3.f && counter == gameState->getGlobalScore())
+			{
+				restartLevel();
+				gameState->setLevelFinished(false);
+				gameState->setCurrentState(State::MENU);
+			}
+		}
 	}
-
-	//Update the score
-	scoreText.setString(std::to_string(gameState->getGlobalScore()));
-	scoreText.setOrigin(scoreText.getGlobalBounds().width / 2.f, scoreText.getGlobalBounds().height / 2.f);
-	scoreText.setPosition(window->getView().getCenter().x, window->getView().getCenter().y - 9 * window->getView().getSize().y / 20.f);
+	else
+	{
+		//Update the score
+		scoreText.setString(std::to_string(gameState->getGlobalScore()));
+		scoreText.setOrigin(scoreText.getGlobalBounds().width / 2.f, scoreText.getGlobalBounds().height / 2.f);
+		scoreText.setPosition(window->getView().getCenter().x, window->getView().getCenter().y - 9 * window->getView().getSize().y / 20.f);
+	}
 
 	//Update items
 	itemManager.update(dt, player);
@@ -455,6 +491,7 @@ void Tutorial::startLevel(float dt)
 				player.setTextureRect(sf::IntRect(0, 8, 24, 24));
 				player.setHealth(25);
 				player.setAlive(true);
+				player.freezeControls(false);
 				playerSpawned = true;
 				timePassedTracker = 0;
 			}
@@ -478,7 +515,7 @@ void Tutorial::restartLevel()
 
 	//Reset origin to default and the player position
 	player.resetSettings();
-	player.setPosition(checkpoint);
+	player.setPosition(spawnPoint);
 	player.setTextureRect(sf::IntRect(484, 0, 9, 32));
 	player.resetTeleportAnim();
 	player.setAlive(false);

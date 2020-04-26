@@ -67,6 +67,7 @@ MainMenu::MainMenu(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameSta
 	audio->addMusic("sfx/Mega_Man_2_Menu.ogg", "menu");
 	audio->addMusic("sfx/Megaman_1_Stage_Select.ogg", "stageSelect");
 	audio->addMusic("sfx/Megaman_1_Stage_Start.ogg", "stageStart");
+	audio->addMusic("sfx/Megaman_1_Stage_Clear.ogg", "stageClear");
 	audio->addMusic("sfx/Megaman_1_Cut_Man_Stage.ogg", "cutMan");
 	audio->addSound("sfx/Megaman_1_Select.ogg", "select");
 	audio->addSound("sfx/Megaman_1_Press.ogg", "press");

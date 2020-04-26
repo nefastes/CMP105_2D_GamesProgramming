@@ -40,13 +40,15 @@ private:
 
 	//Create a text to display the score
 	sf::Text scoreText;
+	//Create a counter to count the score at the end of the level
+	unsigned counter;
 
 	//Hints
 	sf::Texture hintTex[14];
 	sf::RectangleShape hints[14];
 
-	//Checkpoints positions (the tutorial only has one checkpoint, but on other levels this would be an array of checkpoints)
-	sf::Vector2f checkpoint;
+	//Spawnpoints positions (the tutorial only has one checkpoint, but on other levels this would be an array of checkpoints)
+	sf::Vector2f spawnPoint;
 
 	//Init the death particles manager
 	DeathParticleManager deathParticleManager;

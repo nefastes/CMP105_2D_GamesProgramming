@@ -142,8 +142,6 @@ void StageMenu::update(float dt)
 	else
 	{
 		selectStage(dt);
-		if (audio->getMusic()->getStatus() == sf::SoundSource::Stopped)
-			gameState->setCurrentState(State::LEVEL);
 	}
 
 	//Debug infos update
@@ -240,14 +238,19 @@ void StageMenu::selectStage(float dt)
 
 	if (bossLanded)
 	{
-		//Update clear points
-		if (clearPoints < 2500 && timePassedTracker >= .05f)
+		if (audio->getMusic()->getPlayingOffset() >= sf::milliseconds(4500) || audio->getMusic()->getStatus() == sf::SoundSource::Stopped)
 		{
-			audio->playSoundbyName("points");
-			clearPoints += 50;
-			timePassedTracker = 0;
+			//Update clear points
+			if (clearPoints < 2500 && timePassedTracker >= .05f)
+			{
+				audio->playSoundbyName("points");
+				clearPoints += 50;
+				timePassedTracker = 0;
+			}
+			else if (timePassedTracker >= 2.f)
+				gameState->setCurrentState(State::LEVEL);
+			clearPointsText.setString("CLEAR POINTS:\n" + std::to_string(clearPoints));
 		}
-		clearPointsText.setString("CLEAR POINTS:\n" + std::to_string(clearPoints));
 
 		//Animate the boss
 		switch (selectionTracker)
