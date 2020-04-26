@@ -157,7 +157,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Background.cpp" />
     <ClCompile Include="Boss.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="BulletManager.cpp" />
@@ -175,7 +174,6 @@
     <ClCompile Include="Framework\SoundObject.cpp" />
     <ClCompile Include="Framework\TileMap.cpp" />
     <ClCompile Include="Framework\Vector.cpp" />
-    <ClCompile Include="FrontGround.cpp" />
     <ClCompile Include="IntroCinematic.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="ItemManager.cpp" />
@@ -185,6 +183,7 @@
     <ClCompile Include="OptionMenu.cpp" />
     <ClCompile Include="PauseHud.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Sciman.cpp" />
     <ClCompile Include="StageMenu.cpp" />
     <ClCompile Include="TileManager.cpp" />
     <ClCompile Include="Tutorial.cpp" />
@@ -194,7 +193,6 @@
     <Text Include="README.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Background.h" />
     <ClInclude Include="Boss.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="BulletManager.h" />
@@ -212,7 +210,6 @@
     <ClInclude Include="Framework\SoundObject.h" />
     <ClInclude Include="Framework\TileMap.h" />
     <ClInclude Include="Framework\Vector.h" />
-    <ClInclude Include="FrontGround.h" />
     <ClInclude Include="IntroCinematic.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="ItemManager.h" />
@@ -221,6 +218,7 @@
     <ClInclude Include="OptionMenu.h" />
     <ClInclude Include="PauseHud.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Sciman.h" />
     <ClInclude Include="StageMenu.h" />
     <ClInclude Include="TileManager.h" />
     <ClInclude Include="Tutorial.h" />

@@ -52,7 +52,6 @@ Player::Player()
 	health = 100;
 	tempHealth = 0;
 	isGainingHealth = false;
-	setAlive(true);
 	healthTex.loadFromFile("custom_sprites/NES _Mega_Man_Life.PNG");
 	for (unsigned i = 0; i < 5; ++i)
 	{
@@ -314,8 +313,9 @@ void Player::ladderCollisions(GameObject* collider)
 			{
 				//If the player is on top of the ladder and begin descend, we do the reverse of the climb finish
 				//Which is put the player position down to half of it's hitbox height and align horizontally with the ladder tile to center it
-				//This should only happen on the last tile of the ladder which is why we check for a "world" tile on top of it
-				if (isClimbingDownwards && isLadderAvailable && bottomTargetname == "ladder" && middleTargetname == "world")
+				//This should only happen on the last tile of the ladder which is why we check for a "world" or "sky" tile on top of it
+				if (isClimbingDownwards && isLadderAvailable && bottomTargetname == "ladder" &&
+					(middleTargetname == "world" || middleTargetname == "sky"))
 				{
 					//He is no on the ladder, adjust falgs
 					isOnGround = false;
@@ -330,7 +330,7 @@ void Player::ladderCollisions(GameObject* collider)
 				//The player stands on top of the ladder tile (only on the last one, which means that
 				//The bottom tagetname MUST be a ladder and the middle targetname MUST be world otherwise it
 				//means that he is anywhere else but on top of it
-				else if (bottomTargetname == "ladder" && middleTargetname == "world")
+				else if (bottomTargetname == "ladder" && (middleTargetname == "world" || middleTargetname == "sky"))
 				{
 					hasCollidedVertically = true;		//We have collided vertically, note that we only set it to true for top collisions
 					if (!isOnGround)
@@ -354,8 +354,8 @@ void Player::ladderCollisions(GameObject* collider)
 	{
 		//Determine if he is about to finish climbing, so we can change the sprite to the finish climb
 		//And activate checks to finish the climb once he reached a certain position
-		//If the middle targetname is world, it means his feet are at the last tile of the ladder
-		if (middleTargetname == "world")
+		//If the middle targetname is world or sky, it means his feet are at the last tile of the ladder
+		if (middleTargetname == "world" || middleTargetname == "sky")
 			isFinishingClimb = true;
 		else
 			isFinishingClimb = false;

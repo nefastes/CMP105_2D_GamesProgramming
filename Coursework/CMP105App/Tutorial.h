@@ -32,7 +32,7 @@ private:
 	sf::Texture playerTex;
 	Player player;
 
-	//Redy message
+	//Ready message
 	sf::Font font;
 	sf::Text readyText;
 	int readyBlinkCount;
@@ -79,7 +79,7 @@ private:
 
 	//Level handling functions
 	void startLevel(float dt);
-	void restartLevel();
+	void resetLevel();
 
 	//Item handle
 	void spawnItemsInRoom(sf::Vector2f position);

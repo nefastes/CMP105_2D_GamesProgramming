@@ -87,9 +87,6 @@
     <ClCompile Include="Framework\GameObject.cpp">
       <Filter>Framework</Filter>
     </ClCompile>
-    <ClCompile Include="Background.cpp">
-      <Filter>Source Files\z_Unsused</Filter>
-    </ClCompile>
     <ClCompile Include="Boss.cpp">
       <Filter>Source Files\z_Unsused</Filter>
     </ClCompile>
@@ -107,12 +104,6 @@
     </ClCompile>
     <ClCompile Include="DebugUi.cpp">
       <Filter>Source Files\HUDS</Filter>
-    </ClCompile>
-    <ClCompile Include="DialogBox.cpp">
-      <Filter>Source Files\HUDS</Filter>
-    </ClCompile>
-    <ClCompile Include="FrontGround.cpp">
-      <Filter>Source Files\z_Unsused</Filter>
     </ClCompile>
     <ClCompile Include="IntroCinematic.cpp">
       <Filter>Source Files\Menus</Filter>
@@ -146,6 +137,12 @@
     </ClCompile>
     <ClCompile Include="Item.cpp">
       <Filter>Source Files\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="DialogBox.cpp">
+      <Filter>Source Files\z_Unsused</Filter>
+    </ClCompile>
+    <ClCompile Include="Sciman.cpp">
+      <Filter>Source Files\Levels</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -205,9 +202,6 @@
     <ClInclude Include="DebugUi.h">
       <Filter>Header Files\HUDS</Filter>
     </ClInclude>
-    <ClInclude Include="DialogBox.h">
-      <Filter>Header Files\HUDS</Filter>
-    </ClInclude>
     <ClInclude Include="Level.h">
       <Filter>Header Files\Levels</Filter>
     </ClInclude>
@@ -235,17 +229,17 @@
     <ClInclude Include="Tutorial.h">
       <Filter>Header Files\Levels</Filter>
     </ClInclude>
-    <ClInclude Include="Background.h">
-      <Filter>Header Files\z_Unused</Filter>
-    </ClInclude>
     <ClInclude Include="Boss.h">
-      <Filter>Header Files\z_Unused</Filter>
-    </ClInclude>
-    <ClInclude Include="FrontGround.h">
       <Filter>Header Files\z_Unused</Filter>
     </ClInclude>
     <ClInclude Include="Item.h">
       <Filter>Header Files\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="DialogBox.h">
+      <Filter>Header Files\z_Unused</Filter>
+    </ClInclude>
+    <ClInclude Include="Sciman.h">
+      <Filter>Header Files\Levels</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

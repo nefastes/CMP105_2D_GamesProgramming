@@ -20,7 +20,7 @@ Tutorial::Tutorial(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameSta
 	tileManager.createMap(Maps::TUTORIAL, 0);
 	tileManager.buildCreatedMap(sf::Vector2f(0, 0));
 
-	//Init checkpoints positions
+	//Init spawnpoint position
 	spawnPoint = sf::Vector2f(100, -100);
 
 	//Init player
@@ -282,12 +282,12 @@ void Tutorial::update(float dt)
 				if (gameState->getGlobalLives() > 0)
 				{
 					gameState->subGlobalLives(1);
-					restartLevel();
+					resetLevel();
 				}
 				else
 				{
 					//TODO: reset all lives, score, etc. GAME OVER, CONTINUE menu ?
-					restartLevel();
+					resetLevel();
 					gameState->setCurrentState(State::MENU);
 				}
 			}
@@ -333,7 +333,7 @@ void Tutorial::update(float dt)
 			}
 			else if (timePassedTracker >= 3.f && counter == gameState->getGlobalScore())
 			{
-				restartLevel();
+				resetLevel();
 				gameState->setLevelFinished(false);
 				gameState->setCurrentState(State::MENU);
 			}
@@ -499,7 +499,7 @@ void Tutorial::startLevel(float dt)
 	}
 }
 
-void Tutorial::restartLevel()
+void Tutorial::resetLevel()
 {
 	//Reset all trackers
 	timePassedTracker = 0;
@@ -544,7 +544,7 @@ void Tutorial::handlePause(float dt)
 	pauseUi.handleInput(dt);
 
 	//If the game state change to MENU, we need to reset the level
-	if(gameState->getCurrentState() == State::MENU) restartLevel();
+	if(gameState->getCurrentState() == State::MENU) resetLevel();
 }
 
 void Tutorial::spawnItemsInRoom(sf::Vector2f position)

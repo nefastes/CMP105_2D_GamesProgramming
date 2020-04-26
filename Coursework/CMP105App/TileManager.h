@@ -40,6 +40,8 @@ private:
 	unsigned doorTracker;
 	//Door tracker, to be set to true when the screen transition has been made and the door must be closed
 	bool doorClosing;
+	//Will identify where the door is (which position in the tile map)
+	unsigned doorPos;
 
 	//Time tracker used to open doors only
 	float timeTracker;

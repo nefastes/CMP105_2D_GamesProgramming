@@ -1,45 +1,55 @@
 #include "Level.h"
-
-Level::Level(sf::RenderWindow* hwnd, Input* in)
+Level::Level()
 {
-	window = hwnd;
-	input = in;
+	//Init stuff from Main()
+	window = nullptr;
+	input = nullptr;
+	audio = nullptr;
+	gameState = nullptr;
+	debugUi = nullptr;
 
-	//initialise game objects
+	//By default the current level is the tutorial
+	//This needs to be changed in each level accordingly
+	currentLevel = Maps::TUTORIAL;
 
-	//Player init
-	playerTex.loadFromFile("custom_sprites/Player.png");
-	player.setInput(input);
-	player.setWindow(window);
+	//Init spawnpoint position
+	spawnPoint = sf::Vector2f(100, -100);
+
+	//Init player
+	playerTex.loadFromFile("custom_sprites/NES _Mega_Man.PNG");
 	player.setTexture(&playerTex);
-	player.setSize(sf::Vector2f(128, 128));
-	player.setOrigin(sf::Vector2f(player.getSize().x / 2, player.getSize().y / 2));
-	player.setVelocity(sf::Vector2f(200.f, 0));
+	player.setTextureRect(sf::IntRect(484, 0, 9, 32));
+	player.setSize(sf::Vector2f(75, 75));
+	player.setPosition(spawnPoint);
+	player.setVelocity(sf::Vector2f(200, 0));
+	player.setCollisionBox(sf::FloatRect(15, 5, 45, 70));
+	player.setCollisionBoxColor(sf::Color::Red);
+	player.setAlive(false);
 
-	//Backgrounds init
-	backgroundImage.loadFromFile("custom_sprites/Background.png");
-	background.setTexture(&backgroundImage);
-	background.setTextureRect(sf::IntRect(0, 0, 280, 120));
-	background.setSize(sf::Vector2f(1700, window->getSize().y));
-	background.setPosition(-500, 0);
-	frontground.setTexture(&backgroundImage);
-	frontground.setTextureRect(sf::IntRect(0, 120, 280, 120));
-	frontground.setSize(sf::Vector2f(1700, window->getSize().y));
-	frontground.setPosition(-500, 0);
-	
-	//Boss init
-	bossTex.loadFromFile("custom_sprites/BossPhase 1.png");
-	boss.setTexture(&bossTex);
-	boss.setSize(sf::Vector2f(192, 192));
-	boss.setOrigin(sf::Vector2f(boss.getSize().x / 2, boss.getSize().y / 2));
-	boss.setPosition(1050, 360);
+	//Init ready text
+	font.loadFromFile("font/PressStart2P-vaV7.ttf");
+	readyText.setFont(font);
+	readyText.setCharacterSize(24);
+	readyText.setFillColor(sf::Color::White);
+	readyText.setOutlineColor(sf::Color::Black);
+	readyText.setOutlineThickness(1);
+	readyText.setString("READY");
+	readyText.setOrigin(readyText.getGlobalBounds().width / 2, readyText.getGlobalBounds().height / 2);
+	readyBlinkCount = 0;
+	isReadyBlinking = false;
 
-	//Dialog init
-	dialogTex.loadFromFile("custom_sprites/TextBox.png");
-	dialogBox.setTexture(&dialogTex);
-	dialogBox.setSize(sf::Vector2f(window->getSize().x, window->getSize().y / 2));
-	dialogBox.setPosition(0, 0);
-	dialogBox.setInput(input);
+	//Init score text
+	scoreText.setFont(font);
+	scoreText.setFillColor(sf::Color::White);
+	scoreText.setCharacterSize(24);
+	scoreText.setOutlineColor(sf::Color::Black);
+	scoreText.setOutlineThickness(1);
+	counter = 0;
+
+	//Init trackers
+	timePassedTracker = 0;
+	playerSpawned = false;
+	currentMap = 0;
 }
 
 Level::~Level()
@@ -47,64 +57,434 @@ Level::~Level()
 
 }
 
-// handle user input
-void Level::handleInput(float dt)
+void Level::initLevel(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameState* gs, DebugUi* dui)
 {
+	//Init things from main()
+	window = hwnd;
+	input = in;
+	audio = aud;
+	gameState = gs;
+	debugUi = dui;
+
+	//Init camera
+	camera = window->getView();
+
+	//Create the map
+	tileManager.createMap(currentLevel, 0);
+	tileManager.buildCreatedMap(sf::Vector2f(0, 0));
+
+	//Pass pointers to the itemManager
+	itemManager.sendPointers(gameState, audio, &tileManager);
+
+	//Pass pointers to the tile manager
+	tileManager.setWindow(window);
+	tileManager.setDebugRef(debugUi);
+	tileManager.setAudio(audio);
+
+	//Pass pointers to the player
+	player.setInput(input);
+	player.setWindow(window);
+	player.setAudio(audio);
+
+	//Init the pause hud
+	pauseUi.sendPointers(window, input, gameState, audio);
+}
+
+// handle user input
+void Level::handleLevelInput(float dt)
+{
+	//Update the time tracker ONCE here
+	timePassedTracker += dt;
+
 	//Handle inputs of game objects
 	player.handleInput(dt);
-	dialogBox.handleInput(dt);
+
+	//Pause control
+	if ((input->isKeyDown(sf::Keyboard::Tab) || input->isKeyDown(sf::Keyboard::Escape)) && player.isAlive() && !gameState->isLevelFinished())
+	{
+		gameState->setCurrentState(State::PAUSE);
+		audio->pauseAllMusic();
+		audio->pauseAllSounds();
+		audio->playSoundbyName("pause");
+		timePassedTracker = 0;
+		pauseUi.updatePosition();
+	}
 }
 
 // Update game objects
-void Level::update(float dt)
+void Level::updateLevel(float dt)
 {
-	/*
-	//Update game objects
-	player.update(dt);
-	boss.update(dt);
-	dialogBox.update(dt);
-
-
-	//Classes updates
-	if (player.isCutsceneFinished())
+	//Change the map section if needed
+	if (currentMap > tileManager.getCurrentMap())
 	{
-		dialogBox.activateOnce();
+		currentMap = tileManager.getCurrentMap();
+		tileManager.createMap(currentLevel, currentMap);
+		sf::Vector2f position = sf::Vector2f((int)camera.getCenter().x + (int)camera.getSize().x / 2 - (int)tileManager.getMapSize().x * 50,
+			(int)camera.getCenter().y + (int)camera.getSize().y / 2);
+		tileManager.buildCreatedMap(position);
+		spawnItemsInRoom(position);
+	}
+	else if (currentMap < tileManager.getCurrentMap())
+	{
+		currentMap = tileManager.getCurrentMap();
+		sf::Vector2f position;
+		if (tileManager.getTransitionType() != 3)
+		{
+			tileManager.createMap(currentLevel, currentMap);
+			position = sf::Vector2f((int)camera.getCenter().x - (int)camera.getSize().x / 2,
+				(int)camera.getCenter().y - 3 * (int)camera.getSize().y / 2);
+			tileManager.buildCreatedMap(position);
+		}
+		else
+		{
+			tileManager.createMap(currentLevel, currentMap);
+			position = sf::Vector2f(tileManager.getMapPosition().x + tileManager.getMapSize().x * 50,
+				tileManager.getMapPosition().y);
+			tileManager.buildCreatedMap(position);
+		}
+		spawnItemsInRoom(position);
+	}
+	if (tileManager.isTransitionning())
+	{
+		switch (tileManager.getTransitionType())
+		{
+		case 1:
+			//Transition upwards
+			camera.move(sf::Vector2f(0, (int)(-600 * dt)));
+			player.freezeControls(true);
+			if ((int)(camera.getCenter().y - camera.getSize().y / 2) < tileManager.getMapPosition().y)
+			{
+				camera.setCenter(sf::Vector2f(tileManager.getMapPosition().x + (int)camera.getSize().x / 2,
+					tileManager.getMapPosition().y + (int)camera.getSize().y / 2));
+				tileManager.setTransitionning(false);
+				player.freezeControls(false);
+			}
+			break;
+		case 2:
+			//Transition downwards
+			camera.move(sf::Vector2f(0, (int)(600 * dt)));
+			player.freezeControls(true);
+			if ((int)(camera.getCenter().y - camera.getSize().y / 2) > tileManager.getMapPosition().y)
+			{
+				camera.setCenter(sf::Vector2f(tileManager.getMapPosition().x + tileManager.getMapSize().x * 50 -
+					(int)camera.getSize().x / 2, tileManager.getMapPosition().y + (int)camera.getSize().y / 2));
+				tileManager.setTransitionning(false);
+				player.freezeControls(false);
+			}
+			break;
+		case 3:
+			//Transition left to right
+			if ((int)(camera.getCenter().x - camera.getSize().x / 2) >= tileManager.getMapPosition().x)
+			{
+				camera.setCenter(sf::Vector2f(tileManager.getMapPosition().x + (int)camera.getSize().x / 2,
+					tileManager.getMapPosition().y + (int)camera.getSize().y / 2));
+				tileManager.setCloseDoor(true);
+				player.setMoving(false);
+			}
+			else if ((int)(camera.getCenter().x - camera.getSize().x / 2) < tileManager.getMapPosition().x)
+			{
+				camera.move(sf::Vector2f((int)(600 * dt), 0));
+				player.move(sf::Vector2f(75 * dt, 0));
+				player.setMoving(true);
+			}
+			break;
+		}
+	}
+
+	//Set the camera relatively to the player's horizontal position (megaman games do not follow the player vertically)
+	//as an INTEGER (otherwise we will have dead pixels, lines). The 50 is because of the tile size which is 50
+	if (player.getCollisionBox().left + player.getCollisionBox().width / 2 >=
+		tileManager.getMapPosition().x + camera.getSize().x / 2 &&
+		player.getCollisionBox().left + player.getCollisionBox().width / 2 <=
+		tileManager.getMapPosition().x + tileManager.getMapSize().x * 50 - camera.getSize().x / 2)
+		camera.setCenter(sf::Vector2f((int)(player.getCollisionBox().left + player.getCollisionBox().width / 2), camera.getCenter().y));
+	//Set the window view
+	window->setView(camera);
+
+
+	//Only update the objects when necessary
+	//AND most importanly, update them AFTER the view has been updated since they might base calculation on viewPos
+	if (player.isAlive() && playerSpawned)
+	{
+		//Update objects
+		player.update(dt);
+		tileManager.update(dt, player);
+
+		//Reset the time tracker to 0 if the level is not finished, as we do not use it otherwise
+		//If we dont do this the death animation will trigger to soon, as the tracker will be in the range of seconds
+		if (!gameState->isLevelFinished())
+			timePassedTracker = 0;
+	}
+	//If the player dies, do the following
+	else if (playerSpawned)
+	{
+		//Player dead, stop all musics
+		audio->stopAllMusic();
+
+		if (!deathParticleManager.haveParticlesSpawned())
+		{
+			if (timePassedTracker > .5f)
+			{
+				deathParticleManager.spawnParticles(player.getPosition() + player.getSize() / 2.f);
+				audio->playSoundbyName("death");
+				timePassedTracker = 0;
+			}
+		}
+		else
+		{
+			deathParticleManager.update(dt);
+			if (timePassedTracker > 4.f)
+			{
+				if (gameState->getGlobalLives() > 0)
+				{
+					gameState->subGlobalLives(1);
+					resetLevel();
+				}
+				else
+				{
+					//TODO: reset all lives, score, etc. GAME OVER, CONTINUE menu ?
+					resetLevel();
+					gameState->setCurrentState(State::MENU);
+				}
+			}
+		}
+	}
+	//If both checks failed, it means we are currently spawning the player
+	else
+	{
+		readyText.setPosition(window->getSize().x / 2, window->getSize().y / 2);
+		startLevel(dt);
+	}
+
+	//Check if the level has been finished (if the win item has been collected)
+	if (gameState->isLevelFinished())
+	{
 		player.freezeControls(true);
+		player.setMoving(false);
+		if (audio->getMusic()->getStatus() == sf::SoundSource::Stopped)
+		{
+			//Count clear points
+			if (timePassedTracker >= .05f && counter < 2500)
+			{
+				counter += 50;
+				scoreText.setString("CLEAR POINTS: " + std::to_string(counter));
+				scoreText.setOrigin(sf::Vector2f(scoreText.getGlobalBounds().width / 2.f, scoreText.getGlobalBounds().height / 2.f));
+				scoreText.setPosition(window->getView().getCenter());
+				audio->playSoundbyName("points");
+				timePassedTracker = 0;
+			}
+			else if (timePassedTracker >= 1.f && counter == 2500)
+			{
+				gameState->addGlobalScore(counter);
+				counter += 50;
+				timePassedTracker = 0;
+			}
+			else if (timePassedTracker >= .05f && counter > 2500 && counter < gameState->getGlobalScore())
+			{
+				counter += 50;
+				scoreText.setString("CLEAR POINTS: 2500\n\nTOTAL SCORE: " + std::to_string(counter));
+				scoreText.setOrigin(sf::Vector2f(scoreText.getGlobalBounds().width / 2.f, scoreText.getGlobalBounds().height / 2.f));
+				scoreText.setPosition(window->getView().getCenter());
+				audio->playSoundbyName("points");
+				timePassedTracker = 0;
+			}
+			else if (timePassedTracker >= 3.f && counter == gameState->getGlobalScore())
+			{
+				resetLevel();
+				gameState->setLevelFinished(false);
+				gameState->setCurrentState(State::STAGESELECT);
+			}
+		}
 	}
-	if (dialogBox.isFinished())
+	else
 	{
-		boss.setDialogState(true);
-		player.freezeControls(false);
+		//Update the score
+		scoreText.setString(std::to_string(gameState->getGlobalScore()));
+		scoreText.setOrigin(scoreText.getGlobalBounds().width / 2.f, scoreText.getGlobalBounds().height / 2.f);
+		scoreText.setPosition(window->getView().getCenter().x, window->getView().getCenter().y - 9 * window->getView().getSize().y / 20.f);
 	}
-	*/
+
+	//Update items
+	itemManager.update(dt, player);
+
+	//Update debug infos
+	if (debugUi->isDebugging())
+	{
+		debugUi->updateDebugUi();
+		debugUi->updateUiPos(sf::Vector2f(camera.getCenter() - camera.getSize() / 2.f));
+		player.setDebugging(true);
+		itemManager.setDebugging(true);
+	}
 }
 
 // Render level
-void Level::render()
+void Level::renderLevel()
 {
 	beginDraw();
 
-	//Draw everything to the screen
-	window->draw(background);
-	window->draw(player);
-	window->draw(boss);
-	if (dialogBox.getActivated())
+	//Draw tiles to the screen
+	tileManager.render();
+
+	//Draw any item
+	itemManager.renderItems(window);
+
+	//Draw any potential bullet
+	player.renderBullets(window);
+
+	//Draw the player if he is not dead yet (the death particle have not spawned yet)
+	if (!deathParticleManager.haveParticlesSpawned())
+		window->draw(player);
+	else
+		deathParticleManager.render(window);
+
+	//Draw level ui stuff
+	if (playerSpawned)
+		player.drawHealth(window);
+
+	if (!isReadyBlinking)
+		window->draw(readyText);
+
+	window->draw(scoreText);
+
+	//Render the pause hud
+	if (gameState->getCurrentState() == State::PAUSE) pauseUi.render();
+
+	//Draw debug infos
+	if (debugUi->isDebugging())
 	{
-		window->draw(dialogBox);
-		window->draw(dialogBox.getDialog());
+		window->draw(*debugUi->getUi());
+		window->draw(*player.getDebugObjectSize());
+		window->draw(*player.getDebugCollisionBox());
 	}
 
 	endDraw();
 }
 
-// Begins rendering to the back buffer. Background colour set to light blue.
+// Begins rendering to the back buffer. Background colour set to black.
 void Level::beginDraw()
 {
-	window->clear(sf::Color(100, 149, 237));
+	window->clear(sf::Color(1, 1, 1));
 }
 
 // Ends rendering to the back buffer, and swaps buffer to the screen.
 void Level::endDraw()
 {
 	window->display();
+}
+
+void Level::startLevel(float dt)
+{
+	//Play the music if it was stopped
+	if (audio->getMusic()->getStatus() == sf::SoundSource::Stopped)
+	{
+		switch (currentLevel)
+		{
+		case Maps::TUTORIAL:
+			audio->playMusicbyName("cutMan");
+			//The music has a small intro at the beginning, so we have to set loop points
+			audio->getMusic()->setLoopPoints(sf::Music::TimeSpan(sf::seconds(3.36f), sf::seconds(41.698f)));
+			audio->getMusic()->setLoop(true);
+			break;
+		case Maps::SCIMAN:
+			audio->playMusicbyName("elecMan");
+			//The music has a small intro at the beginning, so we have to set loop points
+			audio->getMusic()->setLoopPoints(sf::Music::TimeSpan(sf::seconds(3.76f), sf::seconds(42.097f)));
+			audio->getMusic()->setLoop(true);
+			break;
+		}
+	}
+
+	if (readyBlinkCount < 4)
+	{
+		if (timePassedTracker >= .4f)
+		{
+			if (!isReadyBlinking)
+			{
+				readyText.setFillColor(sf::Color::Transparent);
+				isReadyBlinking = true;
+				timePassedTracker = 0;
+				++readyBlinkCount;
+			}
+			else
+			{
+				readyText.setFillColor(sf::Color::White);
+				isReadyBlinking = false;
+				timePassedTracker = 0;
+			}
+		}
+	}
+	else
+	{
+		//Make ready text invisible
+		isReadyBlinking = true;
+
+		//Move the player down until it reaches the ground (ground is at map line 13, so 12 lines of tiles of height 50)
+		if (player.getPosition().y <= 12.f * 50.f - player.getCollisionBox().height)
+			player.move(sf::Vector2f(0, 1000.f) * dt);
+		else
+		{
+			if (player.isTeleportAnimFinished(dt))
+			{
+				audio->playSoundbyName("tpLand");
+				player.setTextureRect(sf::IntRect(0, 8, 24, 24));
+				player.setAlive(true);
+				player.freezeControls(false);
+				playerSpawned = true;
+				timePassedTracker = 0;
+			}
+		}
+	}
+}
+
+void Level::resetLevel()
+{
+	//Reset all trackers
+	timePassedTracker = 0;
+	playerSpawned = false;
+	isReadyBlinking = false;
+	readyBlinkCount = 0;
+
+	//Reset the map
+	currentMap = 0;
+	tileManager.setCurrentMap(0);
+	tileManager.createMap(currentLevel, currentMap);
+	tileManager.buildCreatedMap(sf::Vector2f(0, 0));
+
+	//Reset origin to default and the player position
+	player.resetSettings();
+	player.setPosition(spawnPoint);
+	player.setTextureRect(sf::IntRect(484, 0, 9, 32));
+	player.resetTeleportAnim();
+	player.setAlive(false);
+
+	//Kill death particles
+	deathParticleManager.killAllParticles();
+
+	//Reset the camera as an INTEGER (otherwise we will have dead pixels, lines)
+	camera.setCenter((int)window->getSize().x / 2, (int)window->getSize().y / 2);
+	//Set the window view
+	window->setView(camera);
+
+	//Reset the health bar off screen
+	player.resetHealthPos(sf::Vector2f(-100, -100));
+
+	//reset the ready text color
+	readyText.setFillColor(sf::Color::White);
+
+	//Kill all remaining alive bullets
+	player.killAllBullets();
+}
+
+void Level::handleLevelPause(float dt)
+{
+	//Handle selection inputs
+	pauseUi.handleInput(dt);
+
+	//If the game state change to MENU, we need to reset the level
+	if (gameState->getCurrentState() == State::MENU) resetLevel();
+}
+
+void Level::spawnItemsInRoom(sf::Vector2f position)
+{
+
 }
