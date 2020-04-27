@@ -125,6 +125,55 @@ void TileManager::checkItemCollision(Item& item)
 			{
 				item.setPosition(item.getPosition().x, (*world)[i].getPosition().y - item.getCollisionBox().height);
 				item.setGrounded(true);
+				break;
+			}
+		}
+	}
+}
+
+void TileManager::checkSuzyCollision(Suzy& suzy)
+{
+	std::vector<GameObject>* world = tileMap.getLevel();
+	for (unsigned i = 0; i < (*world).size(); ++i)
+	{
+		if ((*world)[i].isCollider() && (*world)[i].getTargetname() != "ladder")
+		{
+			if (Collision::checkBoundingBox(&suzy, &(*world)[i]))
+			{
+				float dx = (suzy.getPosition().x + suzy.getSize().x / 2.f) - ((*world)[i].getPosition().x + (*world)[i].getSize().x / 2.f);
+				float dy = (suzy.getPosition().y + suzy.getSize().y / 2.f) - ((*world)[i].getPosition().y + (*world)[i].getSize().y / 2.f);
+
+				//Vertical collision
+				//We want to make sure they are on the same tile position, otherwise it might collide with thiles on the left or right
+				if (std::abs(dx) <= std::abs(dy) && suzy.isMovingVertically() && suzy.getPosition().x == (*world)[i].getPosition().x)
+				{
+					//Top collision
+					if (dy < 0)
+						suzy.setPosition(suzy.getPosition().x, (*world)[i].getPosition().y - suzy.getSize().y);
+					//Bottom Collision
+					else
+						suzy.setPosition(suzy.getPosition().x, (*world)[i].getPosition().y + (*world)[i].getSize().y);
+
+					//Collision has been made
+					suzy.setWallState(true);
+					suzy.setVelocity(suzy.getVelocity() * -1.f);
+					break;
+				}
+				//We want to make sure they are on the same tile position, otherwise it might collide with thiles upper or below
+				else if (suzy.getPosition().y == (*world)[i].getPosition().y)
+				{
+					//Left side wall hit
+					if (dx < 0)
+						suzy.setPosition((*world)[i].getPosition().x - suzy.getSize().x, suzy.getPosition().y);
+					//Right side wall hit
+					else
+						suzy.setPosition((*world)[i].getPosition().x + (*world)[i].getSize().x, suzy.getPosition().y);
+
+					//Collision has been made
+					suzy.setWallState(true);
+					suzy.setVelocity(suzy.getVelocity() * -1.f);
+					break;
+				}
 			}
 		}
 	}

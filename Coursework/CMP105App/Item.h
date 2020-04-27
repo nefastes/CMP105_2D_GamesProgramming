@@ -11,7 +11,7 @@ public:
 	Item();
 	~Item();
 
-	void update(float dt);
+	void update(float dt) override;
 	void setId(short unsigned Id);
 	short unsigned getId();
 	void setGrounded(bool ground);

@@ -43,7 +43,16 @@ protected:
 	//Tracks which map of the level is to be loaded
 	unsigned currentMap;
 
-private:
+	//Create an itemManager object
+	ItemManager itemManager;
+
+	//Create the tileManager object
+	TileManager tileManager;
+
+	//Player stuff
+	Player player;
+	sf::Texture playerTex;
+
 	// Default variables for level class.
 	sf::RenderWindow* window;
 	Input* input;
@@ -51,24 +60,15 @@ private:
 	AudioManager* audio;
 	DebugUi* debugUi;
 
+private:
 	//Create the window camera
 	sf::View camera;
-
-	//Create the tileManager object
-	TileManager tileManager;
-
-	//Create an itemManager object
-	ItemManager itemManager;
 
 	//Init the death particles manager
 	DeathParticleManager deathParticleManager;
 
 	//Create a pause object
 	PauseHud pauseUi;
-
-	//Player stuff
-	Player player;
-	sf::Texture playerTex;
 
 	//Ready message
 	sf::Font font;

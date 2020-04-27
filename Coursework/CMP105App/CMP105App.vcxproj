@@ -164,6 +164,7 @@
     <ClCompile Include="DeathParticleManager.cpp" />
     <ClCompile Include="DebugUi.cpp" />
     <ClCompile Include="DialogBox.cpp" />
+    <ClCompile Include="EnemyManager.cpp" />
     <ClCompile Include="Framework\Animation.cpp" />
     <ClCompile Include="Framework\AudioManager.cpp" />
     <ClCompile Include="Framework\Collision.cpp" />
@@ -185,6 +186,8 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Sciman.cpp" />
     <ClCompile Include="StageMenu.cpp" />
+    <ClCompile Include="Suzy.cpp" />
+    <ClCompile Include="SuzyManager.cpp" />
     <ClCompile Include="TileManager.cpp" />
     <ClCompile Include="Tutorial.cpp" />
   </ItemGroup>
@@ -200,6 +203,7 @@
     <ClInclude Include="DeathParticleManager.h" />
     <ClInclude Include="DebugUi.h" />
     <ClInclude Include="DialogBox.h" />
+    <ClInclude Include="EnemyManager.h" />
     <ClInclude Include="Framework\Animation.h" />
     <ClInclude Include="Framework\AudioManager.h" />
     <ClInclude Include="Framework\Collision.h" />
@@ -220,6 +224,8 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Sciman.h" />
     <ClInclude Include="StageMenu.h" />
+    <ClInclude Include="Suzy.h" />
+    <ClInclude Include="SuzyManager.h" />
     <ClInclude Include="TileManager.h" />
     <ClInclude Include="Tutorial.h" />
   </ItemGroup>

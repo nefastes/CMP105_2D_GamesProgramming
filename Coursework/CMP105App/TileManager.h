@@ -6,6 +6,7 @@
 #include "Player.h"
 #include "DebugUi.h"
 #include "Item.h"
+#include "Suzy.h"
 
 //Enum to know with map (stage) we want to create
 enum class Maps { TUTORIAL, SCIMAN };
@@ -53,6 +54,7 @@ public:
 	TileManager();
 	~TileManager();
 	void checkItemCollision(Item& item);
+	void checkSuzyCollision(Suzy& suzy);
 	void update(float dt, Player& p);
 	void render();
 	void createMap(Maps level, unsigned section);

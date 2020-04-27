@@ -52,6 +52,12 @@
     <Filter Include="Source Files\Player">
       <UniqueIdentifier>{43dbc0f7-5573-46c2-b9c5-e4959c79be27}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Enemies">
+      <UniqueIdentifier>{c8103418-0e93-42b1-8903-d6ae7c8f5d8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Enemies">
+      <UniqueIdentifier>{40aa87f0-ca0a-477f-96c5-42440c004a62}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp">
@@ -143,6 +149,15 @@
     </ClCompile>
     <ClCompile Include="Sciman.cpp">
       <Filter>Source Files\Levels</Filter>
+    </ClCompile>
+    <ClCompile Include="Suzy.cpp">
+      <Filter>Source Files\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="SuzyManager.cpp">
+      <Filter>Source Files\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyManager.cpp">
+      <Filter>Source Files\Enemies</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -240,6 +255,15 @@
     </ClInclude>
     <ClInclude Include="Sciman.h">
       <Filter>Header Files\Levels</Filter>
+    </ClInclude>
+    <ClInclude Include="Suzy.h">
+      <Filter>Header Files\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="SuzyManager.h">
+      <Filter>Header Files\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyManager.h">
+      <Filter>Header Files\Enemies</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

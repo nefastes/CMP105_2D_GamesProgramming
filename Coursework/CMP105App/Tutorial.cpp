@@ -590,7 +590,7 @@ void Tutorial::spawnItemsInRoom(sf::Vector2f position)
 	}
 	else
 	{
-		itemManager.spawnItem(position + sf::Vector2f(11 * 50, 2 * 50), 4);
+		itemManager.spawnItem(position + sf::Vector2f(16 * 50, 2 * 50), 4);
 		hints[11].setPosition(position + sf::Vector2f(3 * 50, 8 * 50));
 		hints[12].setPosition(position + sf::Vector2f(17 * 50, 8 * 50));
 		hints[13].setPosition(position + sf::Vector2f(10 * 50, 4 * 50));

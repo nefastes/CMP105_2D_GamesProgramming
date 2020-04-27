@@ -275,10 +275,17 @@ void Level::updateLevel(float dt)
 				audio->playSoundbyName("points");
 				timePassedTracker = 0;
 			}
-			else if (timePassedTracker >= 1.f && counter == 2500)
+			else if (timePassedTracker >= 1.f && counter == 2500 && gameState->getGlobalScore() != 2500)
 			{
+				if (gameState->getGlobalScore() == 0)
+				{
+					scoreText.setString("CLEAR POINTS: 2500\n\nTOTAL SCORE: 2500");
+					scoreText.setOrigin(sf::Vector2f(scoreText.getGlobalBounds().width / 2.f, scoreText.getGlobalBounds().height / 2.f));
+					scoreText.setPosition(window->getView().getCenter());
+					audio->playSoundbyName("points");
+				}
+				else counter += 50;
 				gameState->addGlobalScore(counter);
-				counter += 50;
 				timePassedTracker = 0;
 			}
 			else if (timePassedTracker >= .05f && counter > 2500 && counter < gameState->getGlobalScore())
@@ -293,6 +300,7 @@ void Level::updateLevel(float dt)
 			else if (timePassedTracker >= 3.f && counter == gameState->getGlobalScore())
 			{
 				resetLevel();
+				spawnMap = 0;		//Reset the spawn location or it will remain the same
 				gameState->setLevelFinished(false);
 				gameState->setCurrentState(State::STAGESELECT);
 			}
@@ -322,8 +330,6 @@ void Level::updateLevel(float dt)
 // Render level
 void Level::renderLevel()
 {
-	beginDraw();
-
 	//Draw tiles to the screen
 	tileManager.render();
 
@@ -358,8 +364,6 @@ void Level::renderLevel()
 		window->draw(*player.getDebugObjectSize());
 		window->draw(*player.getDebugCollisionBox());
 	}
-
-	endDraw();
 }
 
 // Begins rendering to the back buffer. Background colour set to black.

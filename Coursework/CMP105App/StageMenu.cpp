@@ -155,7 +155,7 @@ void StageMenu::render()
 
 	//Draw everything
 	window->draw(background);
-	for (unsigned i = 0; i < 6 && !selected; ++i)
+	for (unsigned i = 0; i < 6 && !selected && gameState->getCurrentState() != State::LEVEL; ++i)
 	{
 		window->draw(bossImages[i]);
 		window->draw(selectionBoxes[i]);
@@ -248,7 +248,20 @@ void StageMenu::selectStage(float dt)
 				timePassedTracker = 0;
 			}
 			else if (timePassedTracker >= 2.f)
+			{
+				//Reset all trackers and change the game state
+				selectionTracker = 0;
+				prevSelection = selectionTracker;
+				timePassedTracker = 0;
+				selected = false;
+				clearPoints = 0;
+				bossLanded = false;
+				bossName.setString("");
+				clearPointsText.setString("CLEAR POINTS:\n0");
+				sciman.setPosition(selectionBoxes[1].getPosition());
+				sciman.setVelocity(sf::Vector2f(0, -200));
 				gameState->setCurrentState(State::LEVEL);
+			}
 			clearPointsText.setString("CLEAR POINTS:\n" + std::to_string(clearPoints));
 		}
 
