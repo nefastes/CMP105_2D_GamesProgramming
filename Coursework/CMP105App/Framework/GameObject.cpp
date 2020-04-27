@@ -73,5 +73,5 @@ void GameObject::updateDebugBoxes()
 	debugSize.setSize(sf::Vector2f(getSize()));
 	debugSize.setPosition(getPosition());
 	debugCollisionBox.setSize(sf::Vector2f(getCollisionBox().width, getCollisionBox().height));
-	debugCollisionBox.setPosition(getPosition());
+	debugCollisionBox.setPosition(getCollisionBox().left, getCollisionBox().top);
 }

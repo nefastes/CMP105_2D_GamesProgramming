@@ -859,6 +859,11 @@ void Player::renderBullets(sf::RenderWindow* window)
 	bulletManager.renderBullets(window);
 }
 
+std::vector<Bullet*> Player::getBullets()
+{
+	return bulletManager.getBullets();
+}
+
 void Player::resetSettings()
 {
 	//Reset the origin

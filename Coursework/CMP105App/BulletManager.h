@@ -21,5 +21,7 @@ public:
 	void killAllBullets();
 
 	void setAudio(AudioManager* aud) { audio = aud; };
+
+	std::vector<Bullet*> getBullets();
 };
 

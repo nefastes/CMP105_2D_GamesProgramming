@@ -324,6 +324,12 @@ void Level::updateLevel(float dt)
 		debugUi->updateUiPos(sf::Vector2f(camera.getCenter() - camera.getSize() / 2.f));
 		player.setDebugging(true);
 		itemManager.setDebugging(true);
+
+		//Update debug hitboxes of bullets
+		std::vector<Bullet*> temp = player.getBullets();
+		for (unsigned i = 0; i < temp.size(); ++i)
+			if(temp[i]->isAlive())
+				temp[i]->updateDebugBoxes();
 	}
 }
 
@@ -363,6 +369,12 @@ void Level::renderLevel()
 		window->draw(*debugUi->getUi());
 		window->draw(*player.getDebugObjectSize());
 		window->draw(*player.getDebugCollisionBox());
+
+		//Render debug hitboxes of bullets
+		std::vector<Bullet*> temp = player.getBullets();
+		for (unsigned i = 0; i < temp.size(); ++i)
+			if (temp[i]->isAlive())
+				window->draw(*temp[i]->getDebugCollisionBox());
 	}
 }
 

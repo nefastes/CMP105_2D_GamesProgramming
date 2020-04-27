@@ -77,7 +77,8 @@ MainMenu::MainMenu(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameSta
 	audio->addSound("sfx/Megaman_1_Teleport_Land.ogg", "tpLand");
 	audio->addSound("sfx/Megaman_1_Death.ogg", "death");
 	audio->addSound("sfx/Megaman_1_Pause.ogg", "pause");
-	audio->addSound("sfx/Megaman_1_Player_Damage.ogg", "damage");
+	audio->addSound("sfx/Megaman_1_Player_Damage.ogg", "playerDamage");
+	audio->addSound("sfx/Megaman_1_Damage.ogg", "enemyDamage");
 	audio->addSound("sfx/Megaman_1_Shoot.ogg", "shoot");
 	audio->addSound("sfx/Megaman_1_Door.ogg", "door");
 	audio->addSound("sfx/Megaman_1_Points.ogg", "points");

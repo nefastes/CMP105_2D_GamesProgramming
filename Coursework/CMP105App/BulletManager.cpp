@@ -11,8 +11,8 @@ BulletManager::BulletManager()
 		bullets[i].setAlive(false);
 		bullets[i].setTexture(&bulletTex);
 		bullets[i].setSize(sf::Vector2f(32, 32));
-		bullets[i].setCollisionBox(sf::FloatRect(0, 0, 32, 32));
 		bullets[i].setOrigin(sf::Vector2f(16, 16));
+		bullets[i].setCollisionBox(sf::FloatRect(-8, -8, 16, 16));
 	}
 
 	//Pointers
@@ -65,4 +65,12 @@ void BulletManager::killAllBullets()
 {
 	for (unsigned i = 0; i < 3; ++i)
 		bullets[i].setAlive(false);
+}
+
+std::vector<Bullet*> BulletManager::getBullets()
+{
+	std::vector<Bullet*> temp;
+	for (unsigned i = 0; i < 3; ++i)
+			temp.push_back(&bullets[i]);
+	return temp;
 }

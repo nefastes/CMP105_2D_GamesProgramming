@@ -94,6 +94,7 @@ public:
 	bool getLadderTracker() { return isOnLadder; };
 	void setTransitionning(bool t) { isTransitionning = t; };
 	void setMoving(bool mov) { isMoving = mov; };
+	std::vector<Bullet*> getBullets();
 
 private:
 	//Other functions for the player specifically
