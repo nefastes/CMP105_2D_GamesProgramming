@@ -30,6 +30,11 @@ State GameState::getPreviousState()
 	return previousState;
 }
 
+void GameState::setGlobalScore(unsigned s)
+{
+	globalScore = s;
+}
+
 void GameState::addGlobalScore(unsigned s)
 {
 	globalScore += s;
@@ -43,6 +48,11 @@ void GameState::subGlobalScore(unsigned s)
 unsigned GameState::getGlobalScore()
 {
 	return globalScore;
+}
+
+void GameState::setGlobalLives(unsigned l)
+{
+	globalLives = l;
 }
 
 void GameState::addGlobalLives(unsigned l)

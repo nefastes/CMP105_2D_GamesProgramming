@@ -260,6 +260,7 @@ void StageMenu::selectStage(float dt)
 				clearPointsText.setString("CLEAR POINTS:\n0");
 				sciman.setPosition(selectionBoxes[1].getPosition());
 				sciman.setVelocity(sf::Vector2f(0, -200));
+				sciman.setTextureRect(sf::IntRect(0, 32, 32, 32));
 				gameState->setCurrentState(State::LEVEL);
 			}
 			clearPointsText.setString("CLEAR POINTS:\n" + std::to_string(clearPoints));

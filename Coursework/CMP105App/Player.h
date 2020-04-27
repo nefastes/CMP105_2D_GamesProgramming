@@ -60,6 +60,12 @@ private:
 	bool isShooting;
 	float shootTimeTracker;
 
+	//Taking damage trackers
+	bool invicible;
+	short unsigned invicibleFrameCount;			//Will be used to track how many time to player blink while invicible
+	float invicibleTimeTracker;					//Will be used to make the player blink every .2s
+	bool isKnockedBack;
+
 	//General trackers
 	float timePassedTracker;
 	float jumpKeyPressTracker;
@@ -95,6 +101,7 @@ public:
 	void setTransitionning(bool t) { isTransitionning = t; };
 	void setMoving(bool mov) { isMoving = mov; };
 	std::vector<Bullet*> getBullets();
+	void damage(short int amount);
 
 private:
 	//Other functions for the player specifically

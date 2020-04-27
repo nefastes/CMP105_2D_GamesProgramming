@@ -79,6 +79,11 @@ Player::Player()
 	isShooting = false;
 	shootTimeTracker = 0;
 
+	//Taking damage trackers
+	invicible = false;
+	invicibleTimeTracker = 0;
+	isKnockedBack = false;
+
 	//General trackers
 	timePassedTracker = 0;
 	jumpKeyPressTracker = 0;
@@ -102,7 +107,7 @@ void Player::handleInput(float dt)
 	timePassedTracker += dt;
 
 	//Only allow movement when the player is alive
-	if (isAlive() && allowControls)
+	if (isAlive() && allowControls && !isKnockedBack)
 	{
 		//Move horizontally
 		moveH(dt);
@@ -188,6 +193,27 @@ void Player::update(float dt)
 			hasCollidedVertically = false;
 			hasCollidedHorizontally = false;
 			hasCollidedWithLadder = false;
+		}
+
+		//Check for a knock back, and disable it after .5s
+		if (isKnockedBack)
+		{
+			if (timePassedTracker >= .5f)
+			{
+				isKnockedBack = false;
+				timePassedTracker = 0;
+			}
+		}
+
+		//Check if he is invicible, and disable it after 4 seconds
+		if (invicible)
+		{
+			//Wait 2 seconds (1 frame count = .4s)
+			if (invicibleFrameCount >= 5)
+			{
+				invicible = false;
+				invicibleFrameCount = 0;
+			}
 		}
 	}
 }
@@ -314,7 +340,7 @@ void Player::ladderCollisions(GameObject* collider)
 				//If the player is on top of the ladder and begin descend, we do the reverse of the climb finish
 				//Which is put the player position down to half of it's hitbox height and align horizontally with the ladder tile to center it
 				//This should only happen on the last tile of the ladder which is why we check for a "world" or "sky" tile on top of it
-				if (isClimbingDownwards && isLadderAvailable && bottomTargetname == "ladder" &&
+				if (isClimbing && isClimbingDownwards && isLadderAvailable && bottomTargetname == "ladder" &&
 					(middleTargetname == "world" || middleTargetname == "sky"))
 				{
 					//He is no on the ladder, adjust falgs
@@ -396,6 +422,17 @@ void Player::spikeCollisions(GameObject* collider)
 
 void Player::changePlayerMode(unsigned mode)
 {
+	//If there is a konck back, we cant change the player mode until the knock back is finished no matter what
+	if (isKnockedBack)
+	{
+		if (isFacingRight)
+			setOrigin(0, 0);
+		else
+			setOrigin(12, 0);
+		setSize(sf::Vector2f(90, 90));
+		return;
+	}
+
 	//Since not all megaman sprite rects are the same size, we have to change the player size and hitbox accordingly
 	//For instance, when it slides the hitbox is to be of only 1 tile vertically and more than 2 tiles horizontally
 	switch (mode)
@@ -598,7 +635,9 @@ void Player::shoot()
 void Player::animations(float dt)
 {
 	//Update the shoot anim time tracker
-	shootTimeTracker += dt;
+	if(isShooting) shootTimeTracker += dt;
+	//Update the invicible time tracker
+	if(invicible) invicibleTimeTracker += dt;
 	//If the player has not clicked after 1 second, reset the shooting tracker
 	if (shootTimeTracker >= 1.f)
 	{
@@ -606,7 +645,39 @@ void Player::animations(float dt)
 	}
 
 	//Animation
-	if (isMoving && isOnGround && !isShooting)
+	if (isKnockedBack)
+	{
+		if (isFacingRight)
+		{
+			if (invicibleTimeTracker >= .1f)
+			{
+				setTextureRect(sf::IntRect(546, 4, 24, 24));
+				if(invicibleTimeTracker >= .2f)
+					invicibleTimeTracker = 0;
+			}
+			else setTextureRect(sf::IntRect(285, 0, -26, 28));
+		}
+		else
+		{
+			if (invicibleTimeTracker >= .1f)
+			{
+				setTextureRect(sf::IntRect(546, 4, 24, 24));
+				if (invicibleTimeTracker >= .2f)
+					invicibleTimeTracker = 0;
+			}
+			else setTextureRect(sf::IntRect(259, 0, 26, 28));
+		}
+	}
+	else if (invicible && invicibleTimeTracker >= .2f)
+	{
+		setTextureRect(sf::IntRect(0, 0, 0, 0));
+		if (invicibleTimeTracker >= .4f)
+		{
+			invicibleTimeTracker = 0;
+			++invicibleFrameCount;
+		}
+	}
+	else if (isMoving && isOnGround && !isShooting)
 	{
 		if (isFacingRight)
 			walk.setFlipped(true);
@@ -679,14 +750,14 @@ void Player::animations(float dt)
 			//If the player doesnt move after a random amount of time between 2 and 5 seconds, we change the texture rect to make megaman blink
 			if (timePassedTracker > rng)
 			{
-				if (walk.getFlipped())
+				if (isFacingRight)
 					setTextureRect(sf::IntRect(48, 8, -24, 24));
 				else
 					setTextureRect(sf::IntRect(24, 8, 24, 24));
 				//and .2 seconds later reset to normal sprite
 				if (timePassedTracker > rng + .2f)
 				{
-					if (walk.getFlipped())
+					if (isFacingRight)
 						setTextureRect(sf::IntRect(24, 8, -24, 24));
 					else
 						setTextureRect(sf::IntRect(0, 8, 24, 24));
@@ -744,6 +815,13 @@ void Player::playerPhysics(float dt)
 			move(sf::Vector2f(0, 100.f) * dt);
 		else
 			move(sf::Vector2f(0, -100.f) * dt);
+	}
+	if (isKnockedBack)
+	{
+		if (isFacingRight)
+			move(sf::Vector2f(-100, 0) * dt);
+		else
+			move(sf::Vector2f(100, 0) * dt);
 	}
 	if (isOnGround)
 		allowJump = true;
@@ -868,6 +946,8 @@ void Player::resetSettings()
 {
 	//Reset the origin
 	setOrigin(0, 0);
+	//Reset the mode
+	changePlayerMode(0);
 	//Reset player trackers
 	isMoving = false;
 	isOnGround = true;				//Even though we have a spawn anim, he will be on ground when we gain controls
@@ -887,6 +967,11 @@ void Player::resetSettings()
 	//Reset weapon tracker
 	isShooting = false;
 	shootTimeTracker = 0;
+	//Reset taking damage trackers
+	invicible = false;
+	isKnockedBack = false;
+	invicibleFrameCount = 0;
+	invicibleTimeTracker = 0;
 	//Reset general trackers
 	timePassedTracker = 0;
 	jumpKeyPressTracker = 0;
@@ -898,4 +983,27 @@ void Player::resetSettings()
 	hasCollidedHorizontally = false;
 	hasCollidedWithLadder = false;
 	isTransitionning = false;
+}
+
+void Player::damage(short int amount)
+{
+	//Can only take damage if he is currently not in invinsibility state
+	if (!invicible)
+	{
+		//Update status
+		if (health - amount < 0) health = 0;
+		else health -= amount;
+		isKnockedBack = true;
+		invicible = true;
+
+		//Playe the damage sound
+		audio->playSoundbyName("playerDamage");
+
+		//Call a change of player mode, will not matter which one since we are knocking back
+		changePlayerMode(0);
+
+		//Reset some trackers
+		timePassedTracker = 0;
+		isOnLadder = false;
+	}
 }

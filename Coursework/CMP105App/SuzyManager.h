@@ -6,6 +6,7 @@
 #include "Framework/AudioManager.h"
 #include "Framework/GameState.h"
 #include "TileManager.h"
+#include "ItemManager.h"
 class SuzyManager
 {
 private:
@@ -14,6 +15,7 @@ private:
 
 	unsigned aliveSprites;
 	TileManager* tileManager;
+	ItemManager* itemManager;
 	AudioManager* audio;
 	GameState* gameState;
 
@@ -26,7 +28,7 @@ public:
 	void render(sf::RenderWindow* window);
 	void killAllSuzies();
 
-	void sendPointers(TileManager* tm, AudioManager* aud, GameState* gs);
+	void sendPointers(TileManager* tm, ItemManager* im, AudioManager* aud, GameState* gs);
 	void setDebugging(bool debug);
 };
 

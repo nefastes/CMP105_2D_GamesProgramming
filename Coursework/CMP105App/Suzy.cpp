@@ -25,10 +25,10 @@ void Suzy::update(float dt)
 			if (timePassedTracker >= .5f)
 			{
 				setTextureRect(sf::IntRect(34, 0, 16, 16));
-				if (timePassedTracker >= 4.5f)
+				if (timePassedTracker >= 2.5f)
 				{
 					setTextureRect(sf::IntRect(17, 0, 16, 16));
-					if (timePassedTracker >= 5.f)
+					if (timePassedTracker >= 3.f)
 					{
 						setTextureRect(sf::IntRect(0, 0, 16, 16));
 						isOnWall = false;
@@ -74,17 +74,18 @@ bool Suzy::isMovingVertically()
 	return moveVertically;
 }
 
-void Suzy::damage(short int amount, GameState* gs)
+void Suzy::damage(short int amount)
 {
 	health -= amount;
 	if (health <= 0)
 	{
+		//Now dead
 		setAlive(false);
+
 		//We still want to display the dead frame for a couple ms
 		setTextureRect(sf::IntRect(51, 0, 16, 16));
 		isDying = true;
 		timePassedTracker = 0;
-		gs->addGlobalScore(500);
 	}
 }
 

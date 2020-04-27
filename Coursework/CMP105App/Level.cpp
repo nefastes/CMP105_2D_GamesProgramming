@@ -244,8 +244,11 @@ void Level::updateLevel(float dt)
 				}
 				else
 				{
-					//TODO: reset all lives, score, etc. GAME OVER, CONTINUE menu ?
+					//Reset all lives, score, etc.
+					//TODO: GAME OVER, CONTINUE menu ?
 					resetLevel();
+					gameState->setGlobalLives(2);
+					gameState->setGlobalScore(0);
 					gameState->setCurrentState(State::MENU);
 				}
 			}
@@ -491,6 +494,9 @@ void Level::resetLevel()
 
 	//Kill all remaining alive bullets
 	player.killAllBullets();
+
+	//Respawn items
+	spawnItemsInRoom(sf::Vector2f(0, 0));
 }
 
 void Level::handleLevelPause(float dt)

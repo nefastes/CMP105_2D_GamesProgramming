@@ -20,12 +20,16 @@ public:
 	// Returns the previous state.
 	State getPreviousState();
 
+	// Set a score
+	void setGlobalScore(unsigned s);
 	// Add a number to the global score
 	void addGlobalScore(unsigned s);
 	// Substract a number to the global score
 	void subGlobalScore(unsigned s);
 	// Returns the global score
 	unsigned getGlobalScore();
+	// Set a number of lives
+	void setGlobalLives(unsigned l);
 	// Add a number of lives
 	void addGlobalLives(unsigned l);
 	// Substract a number of lives

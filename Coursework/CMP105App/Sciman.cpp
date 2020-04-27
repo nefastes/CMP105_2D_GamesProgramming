@@ -8,7 +8,7 @@ Sciman::Sciman(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameState* 
 	initLevel(hwnd, in, aud, gs, dui);
 
 	//Init enemies
-	suzyManager.sendPointers(&tileManager, audio, gameState);
+	suzyManager.sendPointers(&tileManager, &itemManager, audio, gameState);
 	suzyManager.spawnSuzy(sf::Vector2f(39 * 50, 5 * 50), false);
 	suzyManager.spawnSuzy(sf::Vector2f(39 * 50, 9 * 50), true);
 

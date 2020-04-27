@@ -4,6 +4,7 @@ SuzyManager::SuzyManager()
 	aliveSprites = 0;
 	suzyTex.loadFromFile("custom_sprites/Suzy.PNG");
 	tileManager = nullptr;
+	itemManager = nullptr;
 	audio = nullptr;
 	gameState = nullptr;
 }
@@ -50,7 +51,7 @@ void SuzyManager::update(float dt, Player& p)
 		//Check for a player collision
 		if (suzies[i].isAlive() && Collision::checkBoundingBox(&suzies[i], &p))
 		{
-			//TODO: Damage the player
+			p.damage(25);
 		}
 
 		//Check for a bullet collision
@@ -58,9 +59,27 @@ void SuzyManager::update(float dt, Player& p)
 		{
 			if (suzies[i].isAlive() && bullets[j]->isAlive() && Collision::checkBoundingBox(&suzies[i], bullets[j]))
 			{
-				suzies[i].damage(1, gameState);			//Pass in gameState so we can add points if the suzy died
+				suzies[i].damage(1);
 				bullets[j]->setAlive(false);
 				audio->playSoundbyName("enemyDamage");
+
+				//Check if we killed the suzy
+				if (!suzies[i].isAlive())
+				{
+					//Add score
+					gameState->addGlobalScore(500);
+
+					//Drop a random item
+					unsigned random = rand() % 100 + 1;
+					if (random <= 5)
+						itemManager->spawnItem(suzies[i].getPosition() + suzies[i].getSize() / 2.f, 3);
+					else if (random <= 15)
+						itemManager->spawnItem(suzies[i].getPosition() + suzies[i].getSize() / 2.f, 2);
+					else if (random <= 30)
+						itemManager->spawnItem(suzies[i].getPosition() + suzies[i].getSize() / 2.f, 1);
+					else if (random <= 50)
+						itemManager->spawnItem(suzies[i].getPosition() + suzies[i].getSize() / 2.f, 0);
+				}
 			}
 		}
 
@@ -101,9 +120,10 @@ void SuzyManager::killAllSuzies()
 			suzies[i].setAlive(false);
 }
 
-void SuzyManager::sendPointers(TileManager* tm, AudioManager* aud, GameState* gs)
+void SuzyManager::sendPointers(TileManager* tm, ItemManager* im, AudioManager* aud, GameState* gs)
 {
 	tileManager = tm;
+	itemManager = im;
 	audio = aud;
 	gameState = gs;
 }
