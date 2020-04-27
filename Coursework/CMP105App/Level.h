@@ -31,7 +31,10 @@ protected:
 	void startLevel(float dt);
 	void resetLevel();
 	void handleLevelPause(float dt);
+
+	//Virtuals to be replaced in each different level
 	virtual void spawnItemsInRoom(sf::Vector2f position);
+	virtual void renderEnemies(sf::RenderWindow* window);
 
 	//Spawn position
 	sf::Vector2f spawnPoint;

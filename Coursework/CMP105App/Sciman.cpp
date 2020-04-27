@@ -55,15 +55,10 @@ void Sciman::update(float dt)
 
 void Sciman::render()
 {
-	beginDraw();
+	//DO NOT ADD anything else than this, use virtuals so you can get the order of display right
 
 	//Render the level
 	renderLevel();
-
-	//Add any level specific renders here
-	suzyManager.render(window);
-
-	endDraw();
 }
 
 void Sciman::handlePause(float dt)
@@ -87,10 +82,23 @@ void Sciman::spawnItemsInRoom(sf::Vector2f position)
 		suzyManager.spawnSuzy(position + sf::Vector2f(39 * 50, 9 * 50), true);
 		break;
 	case 1:
-		itemManager.spawnItem(position + sf::Vector2f(9 * 50, 8 * 50), 1);
+		itemManager.spawnItem(position + sf::Vector2f(10 * 50, 7 * 50), 1);
+		suzyManager.spawnSuzy(position + sf::Vector2f(4 * 50, 10 * 50), true);
+		suzyManager.spawnSuzy(position + sf::Vector2f(8 * 50, 11 * 50), true);
+		suzyManager.spawnSuzy(position + sf::Vector2f(16 * 50, 8 * 50), false);
+		suzyManager.spawnSuzy(position + sf::Vector2f(16 * 50, 9 * 50), false);
+		suzyManager.spawnSuzy(position + sf::Vector2f(2 * 50, 4 * 50), false);
+		suzyManager.spawnSuzy(position + sf::Vector2f(10 * 50, 1 * 50), true);
 		break;
 	case 2:
 		itemManager.spawnItem(position + sf::Vector2f(23 * 50, 5 * 50), 3);
+		suzyManager.spawnSuzy(position + sf::Vector2f(12 * 50, 9 * 50), false);
+		suzyManager.spawnSuzy(position + sf::Vector2f(17 * 50, 6 * 50), true);
+		suzyManager.spawnSuzy(position + sf::Vector2f(22 * 50, 4 * 50), true);
+		suzyManager.spawnSuzy(position + sf::Vector2f(15 * 50, 1 * 50), true);
+		suzyManager.spawnSuzy(position + sf::Vector2f(12 * 50, 2 * 50), false);
+		suzyManager.spawnSuzy(position + sf::Vector2f(4 * 50, 7 * 50), false);
+		suzyManager.spawnSuzy(position + sf::Vector2f(8 * 50, 8 * 50), false);
 		break;
 	case 3:
 		itemManager.spawnItem(position + sf::Vector2f(52 * 50, 1 * 50), 0);
@@ -101,6 +109,11 @@ void Sciman::spawnItemsInRoom(sf::Vector2f position)
 		break;
 	case 5:
 		itemManager.spawnItem(position + sf::Vector2f(22 * 50, 6 * 50), 1);
+		suzyManager.spawnSuzy(position + sf::Vector2f(3 * 50, 7 * 50), false);
+		suzyManager.spawnSuzy(position + sf::Vector2f(7 * 50, 10 * 50), true);
+		suzyManager.spawnSuzy(position + sf::Vector2f(10 * 50, 10 * 50), false);
+		suzyManager.spawnSuzy(position + sf::Vector2f(10 * 50, 1 * 50), true);
+		suzyManager.spawnSuzy(position + sf::Vector2f(21 * 50, 3 * 50), true);
 		break;
 	case 6:
 		break;
@@ -108,6 +121,10 @@ void Sciman::spawnItemsInRoom(sf::Vector2f position)
 		itemManager.spawnItem(position + sf::Vector2f(63 * 50, 8 * 50), 2);
 		break;
 	case 8:
+		suzyManager.spawnSuzy(position + sf::Vector2f(3 * 50, 4 * 50), true);
+		suzyManager.spawnSuzy(position + sf::Vector2f(6 * 50, 11 * 50), false);
+		suzyManager.spawnSuzy(position + sf::Vector2f(11 * 50, 3 * 50), true);
+		suzyManager.spawnSuzy(position + sf::Vector2f(17 * 50, 7 * 50), false);
 		break;
 	case 9:
 		break;
@@ -117,4 +134,9 @@ void Sciman::spawnItemsInRoom(sf::Vector2f position)
 		itemManager.spawnItem(position + sf::Vector2f(12.5f * 50, 2 * 50), 4);
 		break;
 	}
+}
+
+void Sciman::renderEnemies(sf::RenderWindow* window)
+{
+	suzyManager.render(window);
 }

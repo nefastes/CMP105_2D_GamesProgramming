@@ -123,9 +123,26 @@ void TileManager::checkItemCollision(Item& item)
 		{
 			if (Collision::checkBoundingBox(&item, &(*world)[i]))
 			{
-				item.setPosition(item.getPosition().x, (*world)[i].getPosition().y - item.getCollisionBox().height);
-				item.setGrounded(true);
-				break;
+				float dx = (item.getPosition().x + item.getSize().x / 2.f) - ((*world)[i].getPosition().x + (*world)[i].getSize().x / 2.f);
+				float dy = (item.getPosition().y + item.getSize().y / 2.f) - ((*world)[i].getPosition().y + (*world)[i].getSize().y / 2.f);
+
+				//Check if it is a vertical collision
+				if (std::abs(dx) <= std::abs(dy))
+				{
+					item.setPosition(item.getPosition().x, (*world)[i].getPosition().y - item.getCollisionBox().height);
+					item.setGrounded(true);
+					break;
+				}
+				//Else, horizontal collision
+				else
+				{
+					//Left side wall hit
+					if (dx < 0)
+						item.setPosition((*world)[i].getPosition().x - item.getSize().x, item.getPosition().y);
+					//Right side wall hit
+					else
+						item.setPosition((*world)[i].getPosition().x + (*world)[i].getSize().x, item.getPosition().y);
+				}
 			}
 		}
 	}
@@ -197,7 +214,9 @@ void TileManager::update(float dt, Player& p)
 	{
 		//Determine the tiles around the center of the sprite so we can base our physics on that
 		//Will help a lot with stuff like ladders
-		if (Collision::checkBoundingBox(&(*world)[i], sf::Vector2i(p.getPosition() + p.getSize() / 2.f)))
+		sf::Vector2i playerCenter = sf::Vector2i(p.getCollisionBox().left + p.getCollisionBox().width / 2.f,
+			p.getCollisionBox().top + p.getCollisionBox().height / 2.f);
+		if (Collision::checkBoundingBox(&(*world)[i], playerCenter))
 		{
 			//The center has collided with a tile, he is inside the map
 			isInsideMap = true;

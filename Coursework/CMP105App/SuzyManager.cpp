@@ -51,7 +51,13 @@ void SuzyManager::update(float dt, Player& p)
 		//Check for a player collision
 		if (suzies[i].isAlive() && Collision::checkBoundingBox(&suzies[i], &p))
 		{
-			p.damage(25);
+			//First check if the collision does NOT happen on the very edge of both collision boxes,
+			//we do not want a collision in this case
+			if( p.getCollisionBox().left + p.getCollisionBox().width != suzies[i].getCollisionBox().left &&
+				p.getCollisionBox().left != suzies[i].getCollisionBox().left + suzies[i].getCollisionBox().width &&
+				p.getCollisionBox().top + p.getCollisionBox().height != suzies[i].getCollisionBox().top &&
+				p.getCollisionBox().top != suzies[i].getCollisionBox().top + suzies[i].getCollisionBox().height)
+				p.damage(25);
 		}
 
 		//Check for a bullet collision
@@ -72,13 +78,13 @@ void SuzyManager::update(float dt, Player& p)
 					//Drop a random item
 					unsigned random = rand() % 100 + 1;
 					if (random <= 5)
-						itemManager->spawnItem(suzies[i].getPosition() + suzies[i].getSize() / 2.f, 3);
+						itemManager->spawnItem(suzies[i].getPosition(), 3);
 					else if (random <= 15)
-						itemManager->spawnItem(suzies[i].getPosition() + suzies[i].getSize() / 2.f, 2);
+						itemManager->spawnItem(suzies[i].getPosition(), 2);
 					else if (random <= 30)
-						itemManager->spawnItem(suzies[i].getPosition() + suzies[i].getSize() / 2.f, 1);
+						itemManager->spawnItem(suzies[i].getPosition(), 1);
 					else if (random <= 50)
-						itemManager->spawnItem(suzies[i].getPosition() + suzies[i].getSize() / 2.f, 0);
+						itemManager->spawnItem(suzies[i].getPosition(), 0);
 				}
 			}
 		}

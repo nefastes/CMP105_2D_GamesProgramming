@@ -302,8 +302,9 @@ void Level::updateLevel(float dt)
 			}
 			else if (timePassedTracker >= 3.f && counter == gameState->getGlobalScore())
 			{
-				resetLevel();
+				spawnPoint = sf::Vector2f(2, 12);
 				spawnMap = 0;		//Reset the spawn location or it will remain the same
+				resetLevel();
 				gameState->setLevelFinished(false);
 				gameState->setCurrentState(State::STAGESELECT);
 			}
@@ -339,11 +340,16 @@ void Level::updateLevel(float dt)
 // Render level
 void Level::renderLevel()
 {
+	beginDraw();
+
 	//Draw tiles to the screen
 	tileManager.render();
 
 	//Draw any item
 	itemManager.renderItems(window);
+
+	//Render any alive enemy
+	renderEnemies(window);
 
 	//Draw any potential bullet
 	player.renderBullets(window);
@@ -379,6 +385,8 @@ void Level::renderLevel()
 			if (temp[i]->isAlive())
 				window->draw(*temp[i]->getDebugCollisionBox());
 	}
+
+	endDraw();
 }
 
 // Begins rendering to the back buffer. Background colour set to black.
@@ -509,6 +517,11 @@ void Level::handleLevelPause(float dt)
 }
 
 void Level::spawnItemsInRoom(sf::Vector2f position)
+{
+
+}
+
+void Level::renderEnemies(sf::RenderWindow* window)
 {
 
 }

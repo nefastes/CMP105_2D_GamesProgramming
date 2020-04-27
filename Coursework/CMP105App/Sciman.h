@@ -16,6 +16,7 @@ public:
 	void render();
 
 	void spawnItemsInRoom(sf::Vector2f position) override;
+	void renderEnemies(sf::RenderWindow* window) override;
 	void handlePause(float dt);
 };
 

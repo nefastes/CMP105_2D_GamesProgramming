@@ -42,7 +42,7 @@ void ItemManager::spawnItem(sf::Vector2f spawnPoint, short unsigned Id)
 		items[items.size() - 1].setId(Id);
 		break;
 	case 2:
-		items[items.size() - 1].setSize(sf::Vector2f(56, 64));
+		items[items.size() - 1].setSize(sf::Vector2f(50, 50));
 		items[items.size() - 1].setTextureRect(sf::IntRect(53, 0, 14, 16));
 		items[items.size() - 1].setId(Id);
 		break;
