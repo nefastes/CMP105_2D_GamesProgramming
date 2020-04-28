@@ -13,9 +13,9 @@ Sciman::Sciman(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameState* 
 	suzyManager.spawnSuzy(sf::Vector2f(39 * 50, 9 * 50), true);
 
 	//Spawn items of section 0
-	itemManager.spawnItem(sf::Vector2f(0 * 50, 4 * 50), 0);
-	itemManager.spawnItem(sf::Vector2f(1 * 50, 4 * 50), 0);
-	itemManager.spawnItem(sf::Vector2f(37 * 50, 1 * 50), 0);
+	itemManager.spawnItem(sf::Vector2f(0.25f * 50, 4.25f * 50), 0);
+	itemManager.spawnItem(sf::Vector2f(1.25f * 50, 4.25f * 50), 0);
+	itemManager.spawnItem(sf::Vector2f(37.25f * 50, 1.25f * 50), 0);
 }
 
 Sciman::~Sciman()
@@ -72,17 +72,19 @@ void Sciman::spawnItemsInRoom(sf::Vector2f position)
 	//Spawn at level specific items locations
 	itemManager.killAllItems();
 	suzyManager.killAllSuzies();
+	//All small items are to be spawned at 1/4th positions (so that they are in the middle)
+	//normal tile size items can be spawned normally
 	switch (currentMap)
 	{
 	case 0:
-		itemManager.spawnItem(position + sf::Vector2f(0 * 50, 4 * 50), 0);
-		itemManager.spawnItem(position + sf::Vector2f(1 * 50, 4 * 50), 0);
-		itemManager.spawnItem(position + sf::Vector2f(37 * 50, 1 * 50), 0);
+		itemManager.spawnItem(position + sf::Vector2f(0.25f * 50, 4.25f * 50), 0);
+		itemManager.spawnItem(position + sf::Vector2f(1.25f * 50, 4.25f * 50), 0);
+		itemManager.spawnItem(position + sf::Vector2f(37.25f * 50, 1.25f * 50), 0);
 		suzyManager.spawnSuzy(position + sf::Vector2f(39 * 50, 5 * 50), false);
 		suzyManager.spawnSuzy(position + sf::Vector2f(39 * 50, 9 * 50), true);
 		break;
 	case 1:
-		itemManager.spawnItem(position + sf::Vector2f(10 * 50, 7 * 50), 1);
+		itemManager.spawnItem(position + sf::Vector2f(9.25f * 50, 7.25f * 50), 1);
 		suzyManager.spawnSuzy(position + sf::Vector2f(4 * 50, 10 * 50), true);
 		suzyManager.spawnSuzy(position + sf::Vector2f(8 * 50, 11 * 50), true);
 		suzyManager.spawnSuzy(position + sf::Vector2f(16 * 50, 8 * 50), false);
@@ -101,14 +103,14 @@ void Sciman::spawnItemsInRoom(sf::Vector2f position)
 		suzyManager.spawnSuzy(position + sf::Vector2f(8 * 50, 8 * 50), false);
 		break;
 	case 3:
-		itemManager.spawnItem(position + sf::Vector2f(52 * 50, 1 * 50), 0);
+		itemManager.spawnItem(position + sf::Vector2f(52.25f * 50, 1.25f * 50), 0);
 		itemManager.spawnItem(position + sf::Vector2f(53 * 50, 1 * 50), 2);
-		itemManager.spawnItem(position + sf::Vector2f(70 * 50, 9 * 50), 0);
+		itemManager.spawnItem(position + sf::Vector2f(70.25f * 50, 8.25f * 50), 0);
 		break;
 	case 4:
 		break;
 	case 5:
-		itemManager.spawnItem(position + sf::Vector2f(22 * 50, 6 * 50), 1);
+		itemManager.spawnItem(position + sf::Vector2f(22.25f * 50, 6.25f * 50), 1);
 		suzyManager.spawnSuzy(position + sf::Vector2f(3 * 50, 7 * 50), false);
 		suzyManager.spawnSuzy(position + sf::Vector2f(7 * 50, 10 * 50), true);
 		suzyManager.spawnSuzy(position + sf::Vector2f(10 * 50, 10 * 50), false);
@@ -118,7 +120,7 @@ void Sciman::spawnItemsInRoom(sf::Vector2f position)
 	case 6:
 		break;
 	case 7:
-		itemManager.spawnItem(position + sf::Vector2f(63 * 50, 8 * 50), 2);
+		itemManager.spawnItem(position + sf::Vector2f(63 * 50, 7 * 50), 2);
 		break;
 	case 8:
 		suzyManager.spawnSuzy(position + sf::Vector2f(3 * 50, 4 * 50), true);

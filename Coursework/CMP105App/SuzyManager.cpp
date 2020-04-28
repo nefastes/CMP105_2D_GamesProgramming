@@ -78,13 +78,13 @@ void SuzyManager::update(float dt, Player& p)
 					//Drop a random item
 					unsigned random = rand() % 100 + 1;
 					if (random <= 5)
-						itemManager->spawnItem(suzies[i].getPosition(), 3);
+						itemManager->spawnItem(suzies[i].getPosition(), 3);	//Tile sized items
 					else if (random <= 15)
 						itemManager->spawnItem(suzies[i].getPosition(), 2);
 					else if (random <= 30)
-						itemManager->spawnItem(suzies[i].getPosition(), 1);
+						itemManager->spawnItem(suzies[i].getPosition() + suzies[i].getSize() / 4.f, 1);	//Smaller items
 					else if (random <= 50)
-						itemManager->spawnItem(suzies[i].getPosition(), 0);
+						itemManager->spawnItem(suzies[i].getPosition() + suzies[i].getSize() / 4.f, 0);
 				}
 			}
 		}

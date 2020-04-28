@@ -23,6 +23,7 @@ void ItemManager::spawnItem(sf::Vector2f spawnPoint, short unsigned Id)
 		if (!items[i].isAlive() && items[i].getId() == Id)
 		{
 			items[i].setPosition(spawnPoint);
+			items[i].setGrounded(false);
 			items[i].setAlive(true);
 			aliveSprites += 1;
 			return;

@@ -287,13 +287,13 @@ void Level::updateLevel(float dt)
 					scoreText.setPosition(window->getView().getCenter());
 					audio->playSoundbyName("points");
 				}
-				else counter += 50;
+				else counter += 100;
 				gameState->addGlobalScore(counter);
 				timePassedTracker = 0;
 			}
 			else if (timePassedTracker >= .05f && counter > 2500 && counter < gameState->getGlobalScore())
 			{
-				counter += 50;
+				counter += 100;
 				scoreText.setString("CLEAR POINTS: 2500\n\nTOTAL SCORE: " + std::to_string(counter));
 				scoreText.setOrigin(sf::Vector2f(scoreText.getGlobalBounds().width / 2.f, scoreText.getGlobalBounds().height / 2.f));
 				scoreText.setPosition(window->getView().getCenter());

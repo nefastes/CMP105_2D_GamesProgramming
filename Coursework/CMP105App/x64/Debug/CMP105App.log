@@ -1,20 +1,2 @@
-﻿  TileManager.cpp
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\TileManager.cpp(218,28): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\TileManager.cpp(218,28): warning C4244:         with
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\TileManager.cpp(218,28): warning C4244:         [
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\TileManager.cpp(218,28): warning C4244:             T=float
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\TileManager.cpp(218,28): warning C4244:         ]
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\TileManager.cpp(218,28): warning C4244:         and
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\TileManager.cpp(218,28): warning C4244:         [
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\TileManager.cpp(218,28): warning C4244:             T=int
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\TileManager.cpp(218,28): warning C4244:         ]
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\TileManager.cpp(217,69): warning C4244: 'argument': conversion from 'T' to 'T', possible loss of data
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\TileManager.cpp(217,69): warning C4244:         with
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\TileManager.cpp(217,69): warning C4244:         [
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\TileManager.cpp(217,69): warning C4244:             T=float
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\TileManager.cpp(217,69): warning C4244:         ]
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\TileManager.cpp(217,69): warning C4244:         and
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\TileManager.cpp(217,69): warning C4244:         [
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\TileManager.cpp(217,69): warning C4244:             T=int
-C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\CMP105App\TileManager.cpp(217,69): warning C4244:         ]
+﻿  Sciman.cpp
   CMP105App.vcxproj -> C:\Users\_G4rG4m3l_\Documents\GitHub\CMP105\cmp105-coursework-nefastes\Coursework\x64\Debug\CMP105App.exe

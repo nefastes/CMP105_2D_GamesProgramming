@@ -129,9 +129,13 @@ void TileManager::checkItemCollision(Item& item)
 				//Check if it is a vertical collision
 				if (std::abs(dx) <= std::abs(dy))
 				{
-					item.setPosition(item.getPosition().x, (*world)[i].getPosition().y - item.getCollisionBox().height);
-					item.setGrounded(true);
-					break;
+					//Only set grounded if it was a top of the tile collision
+					if (dy < 0)
+					{
+						item.setPosition(item.getPosition().x, (*world)[i].getPosition().y - item.getCollisionBox().height);
+						item.setGrounded(true);
+						break;
+					}
 				}
 				//Else, horizontal collision
 				else
