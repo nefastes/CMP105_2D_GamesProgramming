@@ -24,6 +24,9 @@ private:
 	Animation scimanIdle;
 	bool bossLanded;
 
+	//Escape text
+	sf::Text escape;
+
 public:
 	StageMenu(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameState* gs, DebugUi* dui);
 	~StageMenu();

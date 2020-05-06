@@ -91,7 +91,7 @@ public:
 	bool isTeleportAnimFinished(float dt) { teleportation.animate(dt); setTextureRect(teleportation.getCurrentFrame());  return !teleportation.getPlaying(); };
 	void resetTeleportAnim() { teleportation.setPlaying(true); };
 	void setHealth(short int h) { health = h; };
-	void addHealth(short int h);
+	bool addHealth(short int h);
 	void drawHealth(sf::RenderWindow* window);
 	void resetHealthPos(sf::Vector2f pos);
 	void renderBullets(sf::RenderWindow* window);
@@ -102,6 +102,8 @@ public:
 	void setMoving(bool mov) { isMoving = mov; };
 	std::vector<Bullet*> getBullets();
 	void damage(short int amount);
+	bool isMovingRight() { return isMoving && isFacingRight; };
+	bool isMovingLeft() { return isMoving && !isFacingRight; };
 
 private:
 	//Other functions for the player specifically

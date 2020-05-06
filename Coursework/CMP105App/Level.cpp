@@ -195,11 +195,39 @@ void Level::updateLevel(float dt)
 	//Set the camera relatively to the player's horizontal position (megaman games do not follow the player vertically)
 	//as an INTEGER (otherwise we will have dead pixels, lines). The 50 is because of the tile size which is 50
 	//We also do not want the view to change in a transition, so check for that as well
-	if ((player.getCollisionBox().left + player.getCollisionBox().width / 2 >=
-		tileManager.getMapPosition().x + camera.getSize().x / 2 &&
-		player.getCollisionBox().left + player.getCollisionBox().width / 2 <=
-		tileManager.getMapPosition().x + tileManager.getMapSize().x * 50 - camera.getSize().x / 2) && !tileManager.isTransitionning())
-		camera.setCenter(sf::Vector2f((int)(player.getCollisionBox().left + player.getCollisionBox().width / 2), camera.getCenter().y));
+	int rightSideView = (int)camera.getCenter().x + (int)camera.getSize().x / 2.f;
+	int leftSideView = (int)camera.getCenter().x - (int)camera.getSize().x / 2.f;
+	int playerCenter = (int)player.getCollisionBox().left + (int)player.getCollisionBox().width / 2.f;
+
+	//Only allow camera movement when we are not tranisitonning
+	if (!tileManager.isTransitionning())
+	{
+		//Move right
+		if ((playerCenter >= camera.getCenter().x && player.isMovingRight()) &&
+			rightSideView < tileManager.getMapPosition().x + tileManager.getMapSize().x * 50)
+		{
+			//Move the camera right
+			camera.move(sf::Vector2f((player.getVelocity().x * dt), 0));
+		}
+		//Move left
+		else if ((playerCenter <= camera.getCenter().x && player.isMovingLeft()) &&
+			leftSideView > tileManager.getMapPosition().x)
+		{
+			//Move the camera left
+			camera.move(sf::Vector2f((-player.getVelocity().x * dt), 0));
+		}
+		//If we moved too much to the right, set it to the edge
+		else if (rightSideView > tileManager.getMapPosition().x + tileManager.getMapSize().x * 50)
+		{
+			camera.setCenter(sf::Vector2f(tileManager.getMapPosition().x + tileManager.getMapSize().x * 50 - (int)camera.getSize().x / 2.f,
+				camera.getCenter().y));
+		}
+		//If we moved too much to the left, set it to the edge
+		else if (leftSideView < tileManager.getMapPosition().x)
+		{
+			camera.setCenter(sf::Vector2f(tileManager.getMapPosition().x + (int)camera.getSize().x / 2.f, camera.getCenter().y));
+		}
+	}
 	//Set the window view
 	window->setView(camera);
 
@@ -271,41 +299,40 @@ void Level::updateLevel(float dt)
 			//Count clear points
 			if (timePassedTracker >= .05f && counter < 2500)
 			{
+				//Count 50 points
 				counter += 50;
+
+				//Display current count
 				scoreText.setString("CLEAR POINTS: " + std::to_string(counter));
 				scoreText.setOrigin(sf::Vector2f(scoreText.getGlobalBounds().width / 2.f, scoreText.getGlobalBounds().height / 2.f));
 				scoreText.setPosition(window->getView().getCenter());
 				audio->playSoundbyName("points");
+
+				//Reset the time tracker for the next count
 				timePassedTracker = 0;
 			}
-			else if (timePassedTracker >= 1.f && counter == 2500 && gameState->getGlobalScore() != 2500)
+			else if (timePassedTracker >= 1.f && counter == 2500)
 			{
-				if (gameState->getGlobalScore() == 0)
-				{
-					scoreText.setString("CLEAR POINTS: 2500\n\nTOTAL SCORE: 2500");
-					scoreText.setOrigin(sf::Vector2f(scoreText.getGlobalBounds().width / 2.f, scoreText.getGlobalBounds().height / 2.f));
-					scoreText.setPosition(window->getView().getCenter());
-					audio->playSoundbyName("points");
-				}
-				else counter += 100;
+				//Add in the counted clear points to the global score
 				gameState->addGlobalScore(counter);
-				timePassedTracker = 0;
-			}
-			else if (timePassedTracker >= .05f && counter > 2500 && counter < gameState->getGlobalScore())
-			{
-				counter += 100;
-				scoreText.setString("CLEAR POINTS: 2500\n\nTOTAL SCORE: " + std::to_string(counter));
+
+				//Display the total points
+				scoreText.setString("CLEAR POINTS: "+std::to_string(counter)+"\n\nTOTAL SCORE: "+std::to_string(gameState->getGlobalScore()));
 				scoreText.setOrigin(sf::Vector2f(scoreText.getGlobalBounds().width / 2.f, scoreText.getGlobalBounds().height / 2.f));
 				scoreText.setPosition(window->getView().getCenter());
 				audio->playSoundbyName("points");
+
+				//Reset the time tracker
 				timePassedTracker = 0;
+				//Set the counter to a higher values, so that the next else will trigger
+				counter += 999;
 			}
-			else if (timePassedTracker >= 3.f && counter == gameState->getGlobalScore())
+			else if (timePassedTracker >= 3.f && counter > 2500)
 			{
 				spawnPoint = sf::Vector2f(2, 12);
 				spawnMap = 0;		//Reset the spawn location or it will remain the same
 				resetLevel();
-				gameState->setLevelFinished(false);
+				gameState->setLevelFinished(false);		//Reset this tracker, as we are now entering the selection of another level
 				gameState->setCurrentState(State::STAGESELECT);
 			}
 		}

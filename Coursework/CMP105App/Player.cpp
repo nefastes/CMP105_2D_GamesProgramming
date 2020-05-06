@@ -565,6 +565,7 @@ void Player::playerJump(float dt)
 			isOnLadder = false;
 			isClimbing = false;
 			isClimbingDownwards = false;
+			isFinishingClimb = false;
 			isOnGround = false;
 			velocity.y = 0;
 			changePlayerMode(1);
@@ -894,7 +895,7 @@ void Player::resetHealthPos(sf::Vector2f pos)
 		healthBlocks[i].setPosition(pos);
 }
 
-void Player::addHealth(short int h)
+bool Player::addHealth(short int h)
 {
 	//Change the health and store old one so we can animate gaining health inside updateHealth()
 	//Only allow to change the health if it is not already full
@@ -903,7 +904,9 @@ void Player::addHealth(short int h)
 		if (health > 100 - h) tempHealth = 100;
 		else tempHealth = health + h;
 		isGainingHealth = true;
+		return true;
 	}
+	return false;
 }
 
 void Player::playerShoot()

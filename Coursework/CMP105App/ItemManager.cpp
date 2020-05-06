@@ -84,10 +84,32 @@ void ItemManager::update(float dt, Player& p)
 		{
 			switch (items[i].getId())
 			{
-			case 0:		gameState->addGlobalScore(200);		items[i].setAlive(false);		audio->playSoundbyName("points2");		break;
-			case 1:		p.addHealth(25);					items[i].setAlive(false);												break;
-			case 2:		p.addHealth(50);					items[i].setAlive(false);												break;
-			case 3:		gameState->addGlobalLives(1);		items[i].setAlive(false);		audio->playSoundbyName("life");			break;
+			case 0:
+				gameState->addGlobalScore(200);
+				items[i].setAlive(false);
+				audio->playSoundbyName("points2");
+				break;
+			case 1:
+				if (!p.addHealth(25))
+				{
+					gameState->addGlobalScore(50);
+					audio->playSoundbyName("points2");
+				}
+				items[i].setAlive(false);
+				break;
+			case 2:
+				if (!p.addHealth(50))
+				{
+					gameState->addGlobalScore(100);
+					audio->playSoundbyName("points2");
+				}
+				items[i].setAlive(false);
+				break;
+			case 3:
+				gameState->addGlobalLives(1);
+				items[i].setAlive(false);
+				audio->playSoundbyName("life");
+				break;
 			case 4:	
 				gameState->setLevelFinished(true);
 				items[i].setAlive(false);
@@ -95,7 +117,7 @@ void ItemManager::update(float dt, Player& p)
 				audio->playMusicbyName("stageClear");
 				audio->getMusic()->setLoop(false);
 				break;
-			default:	std::cout << "Error: Collided with an item that doesnt exist !" << std::endl;								break;
+			default:	std::cout << "Error: Collided with an item that doesn't exist !" << std::endl;								break;
 			}
 		}
 	}

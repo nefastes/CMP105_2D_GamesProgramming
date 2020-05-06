@@ -88,6 +88,12 @@ StageMenu::StageMenu(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameS
 	scimanIdle.setLooping(true);
 	scimanIdle.setFrameSpeed(1.f / 6.f);
 
+	//Init escape text
+	escape.setString("BACK (ESC)");
+	initText(escape, font);
+	escape.setPosition(window->getView().getCenter().x - 3 * window->getView().getSize().x / 10.f,
+		window->getView().getCenter().y - 4 * window->getView().getSize().y / 10.f);
+
 	//Init trackers
 	selectionTracker = 0;
 	prevSelection = selectionTracker;
@@ -111,6 +117,7 @@ void StageMenu::handleInput(float dt)
 
 	//Make a selection
 	if (timePassedTracker > .2f && !selected && selectionTracker == 1)
+	{
 		if (input->isKeyDown(sf::Keyboard::Enter) || input->isKeyDown(sf::Keyboard::F) || input->isMouseLDown())
 		{
 			//Set the selected tracker and play the selection sound
@@ -125,6 +132,12 @@ void StageMenu::handleInput(float dt)
 				audio->getMusic()->setLoop(false);
 			}
 		}
+	}
+	else if (input->isKeyDown(sf::Keyboard::Escape) && selectionTracker != 6 && !selected)
+	{
+		selectionTracker = 6;
+		audio->playSoundbyName("select");
+	}
 }
 
 void StageMenu::update(float dt)
@@ -137,12 +150,27 @@ void StageMenu::update(float dt)
 	}
 
 	//If a selection has not been yet made, allow the change of selection
-	if (!selected)
+	if(selectionTracker == 6)			//Can only be 6 if we pressed escape
+	{
+		//We go back to the menu
+		//Make the text blink first
+		blinkText(escape, dt);
+
+		//When finished, go back to menu
+		if (hasFinishedBlinking)
+		{
+			selectionTracker = 0;
+			timePassedTracker = 0;
+			hasFinishedBlinking = false;
+			escape.setFillColor(sf::Color::White);
+			gameState->setCurrentState(State::MENU);
+			audio->stopAllMusic();
+		}
+	}
+	else if (!selected)
 		changeBoxHighlight();
 	else
-	{
 		selectStage(dt);
-	}
 
 	//Debug infos update
 	if (debugUi->isDebugging())
@@ -160,6 +188,7 @@ void StageMenu::render()
 		window->draw(bossImages[i]);
 		window->draw(selectionBoxes[i]);
 		window->draw(bossNames[i]);
+		window->draw(escape);
 	}
 	if (selected)
 	{
@@ -214,7 +243,7 @@ void StageMenu::changeBoxSelection()
 				selectionTracker = i;
 		
 		//Check if a selection has been changed, play the change sound and reset the prevSelection tracker
-		if (prevSelection != selectionTracker)
+		if (prevSelection != selectionTracker && selectionTracker <= 5)
 		{
 			audio->playSoundbyName("changeSelection");
 			prevSelection = selectionTracker;
