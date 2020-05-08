@@ -5,6 +5,7 @@ class StageMenu : public MainMenu
 private:
 	//Textures
 	sf::Texture backgroundTex;
+	sf::Image boxesMask;
 	sf::Texture boxesTex;
 
 	//Objects
@@ -27,6 +28,9 @@ private:
 	//Escape text
 	sf::Text escape;
 
+	//Trackers
+	bool updatedClearedLevels;		//Is used to update cleared stages only once in update
+
 public:
 	StageMenu(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameState* gs, DebugUi* dui);
 	~StageMenu();
@@ -40,5 +44,6 @@ private:
 	void selectStage(float dt);
 	void selectBoss(float dt, GameObject* boss);
 	void setButtonsToWhite() override;
+	void replaceImagePixels(sf::Image& image, sf::IntRect location, sf::Color maskColor,sf::Color resultColor);
 };
 

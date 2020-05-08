@@ -156,9 +156,9 @@ void Player::update(float dt)
 		bulletManager.update(dt);
 
 		//Simple ladder check that prevents impossible scenarios
-		if (!isLadderAvailable && !isOnGround)
+		if (!isOnGround)
 		{
-			isOnLadder = false;
+			if(!isLadderAvailable) isOnLadder = false;
 			changePlayerMode(1);
 		}
 
@@ -356,7 +356,7 @@ void Player::ladderCollisions(GameObject* collider)
 				//The player stands on top of the ladder tile (only on the last one, which means that
 				//The bottom tagetname MUST be a ladder and the middle targetname MUST be world otherwise it
 				//means that he is anywhere else but on top of it
-				else if (bottomTargetname == "ladder" && (middleTargetname == "world" || middleTargetname == "sky"))
+				else if (bottomTargetname == "ladder" && (middleTargetname == "world" || middleTargetname == "sky") && (!isJumping && velocity.y >= 0))
 				{
 					hasCollidedVertically = true;		//We have collided vertically, note that we only set it to true for top collisions
 					if (!isOnGround)
@@ -547,8 +547,9 @@ void Player::moveH(float dt)
 void Player::playerJump(float dt)
 {
 	//Jump
-	if (input->isKeyDown(sf::Keyboard::Space) && allowJump)
+	if (input->isKeyDownOnce(sf::Keyboard::Space) && allowJump)
 	{
+		//Start the jump
 		if (!isOnLadder)
 		{
 			//set the jump tracker, change the player mode to the jump mode (1) and update the jumpTimeTracker for every frame space is pressed
@@ -571,6 +572,10 @@ void Player::playerJump(float dt)
 			changePlayerMode(1);
 		}
 	}
+	else if (input->isKeyDown(sf::Keyboard::Space) && allowJump)
+	{
+		jumpKeyPressTracker += dt;
+	}
 	else
 	{
 		isJumping = false;
@@ -581,36 +586,28 @@ void Player::playerJump(float dt)
 void Player::checkLadderInputs()
 {
 	//Ladder
-	if (isLadderAvailable && input->isKeyDown(sf::Keyboard::W))
+	if (isLadderAvailable && input->isKeyDown(sf::Keyboard::W) && !isShooting &&
+		((!isOnGround && !isJumping || isFinishingClimb) && topTargetname != "ladder" || topTargetname == "ladder"))
 	{
-		if ((!isOnGround && !isJumping || isFinishingClimb) && topTargetname != "ladder" || topTargetname == "ladder")
-		{
-			//Set up the trackers to climb the ladder
-			isClimbing = true;
-			isClimbingDownwards = false;
-			isOnLadder = true;
-			//The player will be on the ladder, therefore must NOT be jumping (makes you fly otherwise)
-			isJumping = false;
-			//We are now climbing, prevent or cancel any shooting
-			isShooting = false;
-		}
+		//Set up the trackers to climb the ladder
+		isClimbing = true;
+		isClimbingDownwards = false;
+		isOnLadder = true;
+		//The player will be on the ladder, therefore must NOT be jumping (makes you fly otherwise)
+		isJumping = false;
 	}
 	//After OR: allows the user to climb down a ladder from the top of it
-	else if (isLadderAvailable && input->isKeyDown(sf::Keyboard::S))
+	else if (isLadderAvailable && input->isKeyDown(sf::Keyboard::S) && !isShooting &&
+		((isOnGround || isFinishingClimb) || !isOnGround && middleTargetname == "ladder" && !isFinishingClimb))
 	{
-		if ((isOnGround || isFinishingClimb) || !isOnGround && middleTargetname == "ladder" && !isFinishingClimb)
-		{
-			//Set up the trackers to climb the ladder
-			isClimbing = true;
-			isClimbingDownwards = true;
-			//Only activate the ladder flag if he was not on ground before, so we can adjust his position proprely
-			if(!isOnGround)
-				isOnLadder = true;
-			//The player will be on the ladder, therefore must NOT be jumping (makes you fly otherwise)
-			isJumping = false;
-			//We are now climbing, prevent or cancel any shooting
-			isShooting = false;
-		}
+		//Set up the trackers to climb the ladder
+		isClimbing = true;
+		isClimbingDownwards = true;
+		//Only activate the ladder flag if he was not on ground before, so we can adjust his position proprely
+		if(!isOnGround)
+			isOnLadder = true;
+		//The player will be on the ladder, therefore must NOT be jumping (makes you fly otherwise)
+		isJumping = false;
 	}
 	else
 	{
@@ -621,14 +618,25 @@ void Player::checkLadderInputs()
 
 void Player::shoot()
 {
-	if (input->isKeyDown(sf::Keyboard::Enter) ||input->isMouseLDown())
+	//Prevent shooting when he is finishing a climb so that it looks nicer
+	if (!isFinishingClimb)
 	{
-		isShooting = true;
-		shootTimeTracker = 0;
-		if (timePassedTracker > .2f)
+		if (input->isKeyDownOnce(sf::Keyboard::Enter))
 		{
+			isShooting = true;
+			shootTimeTracker = 0;
 			playerShoot();
-			timePassedTracker = 0;
+		}
+		//Need to take care of LMB separately, otherwise it would shoot everyframe
+		else if (input->isMouseLDown())
+		{
+			isShooting = true;
+			shootTimeTracker = 0;
+			if (timePassedTracker > .2f)
+			{
+				playerShoot();
+				timePassedTracker = 0;
+			}
 		}
 	}
 }
@@ -640,10 +648,7 @@ void Player::animations(float dt)
 	//Update the invicible time tracker
 	if(invicible) invicibleTimeTracker += dt;
 	//If the player has not clicked after 1 second, reset the shooting tracker
-	if (shootTimeTracker >= 1.f)
-	{
-		isShooting = false;
-	}
+	if (shootTimeTracker >= .5f) isShooting = false;
 
 	//Animation
 	if (isKnockedBack)

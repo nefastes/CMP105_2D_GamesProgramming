@@ -11,7 +11,8 @@ StageMenu::StageMenu(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameS
 	//Init textures
 	backgroundTex.loadFromFile("custom_sprites/megaman_stage_select.PNG");
 	backgroundTex.setRepeated(true);
-	boxesTex.loadFromFile("custom_sprites/NES_Mega_Man_Stage_Select.PNG");
+	boxesMask.loadFromFile("custom_sprites/NES_Mega_Man_Stage_Select.PNG");
+	boxesTex.loadFromImage(boxesMask);
 
 	//Init Backgrounds
 	background.setTexture(&backgroundTex);
@@ -99,6 +100,7 @@ StageMenu::StageMenu(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameS
 	prevSelection = selectionTracker;
 	timePassedTracker = 0;
 	selected = false;
+	updatedClearedLevels = false;
 }
 
 StageMenu::~StageMenu()
@@ -142,6 +144,18 @@ void StageMenu::handleInput(float dt)
 
 void StageMenu::update(float dt)
 {
+	//Change the background colors of cleared stages
+	if (!updatedClearedLevels)
+	{
+		if (gameState->isLevelCleared(1))	//Sciman
+			replaceImagePixels(boxesMask, sf::IntRect(137, 17, 32, 32), sf::Color(240, 188, 60, 255), sf::Color(0, 0, 0, 255));
+
+		//Apply changes
+		boxesTex.loadFromImage(boxesMask);
+		for (unsigned i = 0; i < 6; ++i) selectionBoxes[i].setTexture(&boxesTex);
+		updatedClearedLevels = true;
+	}
+
 	//Play the stage selection theme
 	if (audio->getMusic()->getStatus() == sf::SoundSource::Stopped && !selected)
 	{
@@ -285,6 +299,7 @@ void StageMenu::selectStage(float dt)
 				selected = false;
 				clearPoints = 0;
 				bossLanded = false;
+				updatedClearedLevels = false;
 				bossName.setString("");
 				clearPointsText.setString("CLEAR POINTS:\n0");
 				sciman.setPosition(selectionBoxes[1].getPosition());
@@ -327,4 +342,12 @@ void StageMenu::setButtonsToWhite()
 		selectionBoxes[i].setTextureRect(sf::IntRect(49, 1, 45, 45));
 		bossNames[i].setFillColor(sf::Color::White);
 	}
+}
+
+void StageMenu::replaceImagePixels(sf::Image& image, sf::IntRect location, sf::Color maskColor, sf::Color resultColor)
+{
+	for (unsigned i = location.left; i < location.left + location.width; ++i)
+		for (unsigned j = location.top; j < location.top + location.height; ++j)
+			if (image.getPixel(i, j) == maskColor)
+				image.setPixel(i, j, resultColor);
 }

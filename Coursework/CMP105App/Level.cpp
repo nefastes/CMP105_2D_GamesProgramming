@@ -207,14 +207,14 @@ void Level::updateLevel(float dt)
 			rightSideView < tileManager.getMapPosition().x + tileManager.getMapSize().x * 50)
 		{
 			//Move the camera right
-			camera.move(sf::Vector2f((player.getVelocity().x * dt), 0));
+			camera.move(sf::Vector2f(player.getVelocity().x * dt, 0));
 		}
 		//Move left
 		else if ((playerCenter <= camera.getCenter().x && player.isMovingLeft()) &&
 			leftSideView > tileManager.getMapPosition().x)
 		{
 			//Move the camera left
-			camera.move(sf::Vector2f((-player.getVelocity().x * dt), 0));
+			camera.move(sf::Vector2f(-player.getVelocity().x * dt, 0));
 		}
 		//If we moved too much to the right, set it to the edge
 		else if (rightSideView > tileManager.getMapPosition().x + tileManager.getMapSize().x * 50)
@@ -334,6 +334,13 @@ void Level::updateLevel(float dt)
 				resetLevel();
 				gameState->setLevelFinished(false);		//Reset this tracker, as we are now entering the selection of another level
 				gameState->setCurrentState(State::STAGESELECT);
+				//Make sure the level has been registered to be cleared
+				//For now, we only have SCIMAN, but later add the others here as well
+				switch (currentLevel)
+				{
+				case Maps::SCIMAN:		gameState->setLevelClear(1);			break;
+				default:														break;
+				}
 			}
 		}
 	}

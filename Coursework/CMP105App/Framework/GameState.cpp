@@ -4,6 +4,8 @@ GameState::GameState()
 	globalLives = 2;		//Start with 3 lives
 	globalScore = 0;		//Start with a score of 0
 	levelFinished = false;
+	for (unsigned i = 0; i < 6; ++i)
+		clearedLevels[i] = false;
 }
 
 GameState::~GameState()
@@ -78,4 +80,24 @@ void GameState::setLevelFinished(bool finished)
 bool GameState::isLevelFinished()
 {
 	return levelFinished;
+}
+
+void GameState::setLevelClear(unsigned position)
+{
+	//Set a level to be cleared
+	clearedLevels[position] = true;
+}
+
+bool GameState::isLevelCleared(unsigned position)
+{
+	return clearedLevels[position];
+}
+
+bool GameState::allLevelCleared()
+{
+	//Returns true if all levels are cleared
+	for (unsigned i = 0; i < 6; ++i)
+		if (clearedLevels[i] == false)
+			return false;
+	return true;
 }

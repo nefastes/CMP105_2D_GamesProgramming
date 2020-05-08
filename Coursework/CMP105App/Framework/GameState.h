@@ -36,10 +36,16 @@ public:
 	void subGlobalLives(unsigned l);
 	// Return the number of lives
 	unsigned getGlobalLives();
-	// Set the status of the level
+	// Set the status of the current level
 	void setLevelFinished(bool finish);
-	// Get the status of the level
+	// Get the status of the current level
 	bool isLevelFinished();
+	// Set a level as cleared
+	void setLevelClear(unsigned position);
+	// Check if a particular level has been cleared
+	bool isLevelCleared(unsigned position);
+	// Check if all levels have been cleared
+	bool allLevelCleared();
 
 protected:
 	//States
@@ -52,4 +58,7 @@ protected:
 
 	//Tracker to see if we finished a level, will be set to true by the win item
 	bool levelFinished;
+
+	//Store which level has been completed
+	bool clearedLevels[6];
 };
