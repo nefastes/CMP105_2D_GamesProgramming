@@ -157,6 +157,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Blaster.cpp" />
+    <ClCompile Include="BlasterBullet.cpp" />
+    <ClCompile Include="BlasterBulletManager.cpp" />
+    <ClCompile Include="BlasterManager.cpp" />
     <ClCompile Include="Boss.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="BulletManager.cpp" />
@@ -164,6 +168,7 @@
     <ClCompile Include="DeathParticleManager.cpp" />
     <ClCompile Include="DebugUi.cpp" />
     <ClCompile Include="DialogBox.cpp" />
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyManager.cpp" />
     <ClCompile Include="Framework\Animation.cpp" />
     <ClCompile Include="Framework\AudioManager.cpp" />
@@ -196,6 +201,10 @@
     <Text Include="README.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Blaster.h" />
+    <ClInclude Include="BlasterBullet.h" />
+    <ClInclude Include="BlasterBulletManager.h" />
+    <ClInclude Include="BlasterManager.h" />
     <ClInclude Include="Boss.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="BulletManager.h" />
@@ -203,6 +212,7 @@
     <ClInclude Include="DeathParticleManager.h" />
     <ClInclude Include="DebugUi.h" />
     <ClInclude Include="DialogBox.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyManager.h" />
     <ClInclude Include="Framework\Animation.h" />
     <ClInclude Include="Framework\AudioManager.h" />

@@ -79,6 +79,8 @@ MainMenu::MainMenu(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameSta
 	audio->addSound("sfx/Megaman_1_Pause.ogg", "pause");
 	audio->addSound("sfx/Megaman_1_Player_Damage.ogg", "playerDamage");
 	audio->addSound("sfx/Megaman_1_Damage.ogg", "enemyDamage");
+	audio->addSound("sfx/Megaman_1_No_Damage.ogg", "enemyInvincible");
+	audio->addSound("sfx/Megaman_1_Blaster_Shoot.ogg", "blasterShoot");
 	audio->addSound("sfx/Megaman_1_Shoot.ogg", "shoot");
 	audio->addSound("sfx/Megaman_1_Door.ogg", "door");
 	audio->addSound("sfx/Megaman_1_Points.ogg", "points");

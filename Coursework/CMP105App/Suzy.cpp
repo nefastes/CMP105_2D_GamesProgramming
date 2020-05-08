@@ -3,9 +3,8 @@ Suzy::Suzy()
 {
 	isOnWall = false;
 	moveVertically = false;
-	isDying = false;
-	timePassedTracker = 0;
-	health = 10;				//Will need 10 shots to kill it
+	maxHealth = 15;
+	resetHealth();
 	setVelocity(200, 200);
 }
 
@@ -50,7 +49,10 @@ void Suzy::update(float dt)
 	{
 		timePassedTracker += dt;
 		if (timePassedTracker >= .2f)
+		{
 			isDying = false;
+			timePassedTracker = 0;
+		}
 	}
 }
 
@@ -72,29 +74,4 @@ bool Suzy::getWallState()
 bool Suzy::isMovingVertically()
 {
 	return moveVertically;
-}
-
-void Suzy::damage(short int amount)
-{
-	health -= amount;
-	if (health <= 0)
-	{
-		//Now dead
-		setAlive(false);
-
-		//We still want to display the dead frame for a couple ms
-		setTextureRect(sf::IntRect(51, 0, 16, 16));
-		isDying = true;
-		timePassedTracker = 0;
-	}
-}
-
-void Suzy::resetHealth()
-{
-	health = 10;
-}
-
-bool Suzy::getDying()
-{
-	return isDying;
 }

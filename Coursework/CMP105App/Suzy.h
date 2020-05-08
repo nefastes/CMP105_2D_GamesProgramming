@@ -1,27 +1,20 @@
 #pragma once
-#include "Framework/GameObject.h"
-class Suzy : public GameObject
+#include "Enemy.h"
+class Suzy : public Enemy
 {
 private:
 	bool isOnWall;
 	bool moveVertically;
-	float timePassedTracker;
-	short int health;
-	bool isDying;
 
 public:
 	Suzy();
 	~Suzy();
 
 	void update(float dt) override;
+
 	void setAxis(bool vertical);
 	void setWallState(bool wall);
 	bool getWallState();
 	bool isMovingVertically();
-	void damage(short int amount);
-	void resetHealth();
-
-	//Need this function so we can display a death frame for a couple ms
-	bool getDying();
 };
 

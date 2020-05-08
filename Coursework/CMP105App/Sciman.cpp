@@ -7,10 +7,17 @@ Sciman::Sciman(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameState* 
 	//Initialise the pointers into the level
 	initLevel(hwnd, in, aud, gs, dui);
 
-	//Init enemies
+	//Init enemies pointers
 	suzyManager.sendPointers(&tileManager, &itemManager, audio, gameState);
+	blasterManager.sendPointers(&tileManager, &itemManager, audio, gameState);
+
+	//Init suzies of the first section
 	suzyManager.spawnSuzy(sf::Vector2f(39 * 50, 5 * 50), false);
 	suzyManager.spawnSuzy(sf::Vector2f(39 * 50, 9 * 50), true);
+	//Init blaster of the first section
+	blasterManager.spawnBlaster(sf::Vector2f(20 * 50, 9 * 50), BlasterAimDirection::RIGHT);
+	blasterManager.spawnBlaster(sf::Vector2f(26 * 50, 1 * 50), BlasterAimDirection::LEFT);
+	
 
 	//Spawn items of section 0
 	itemManager.spawnItem(sf::Vector2f(0.25f * 50, 4.25f * 50), 0);
@@ -39,6 +46,8 @@ void Sciman::update(float dt)
 
 	//Add any level specific updates here
 	suzyManager.update(dt, player);
+	blasterManager.update(dt, player);
+
 	//Update the spawnpoint if progress has been made
 	if (currentMap == 4)
 	{
@@ -72,6 +81,7 @@ void Sciman::spawnItemsInRoom(sf::Vector2f position)
 	//Spawn at level specific items locations
 	itemManager.killAllItems();
 	suzyManager.killAllSuzies();
+	blasterManager.killAllBlasters();
 	//All small items are to be spawned at 1/4th positions (so that they are in the middle)
 	//normal tile size items can be spawned normally
 	switch (currentMap)
@@ -82,6 +92,8 @@ void Sciman::spawnItemsInRoom(sf::Vector2f position)
 		itemManager.spawnItem(position + sf::Vector2f(37.25f * 50, 1.25f * 50), 0);
 		suzyManager.spawnSuzy(position + sf::Vector2f(39 * 50, 5 * 50), false);
 		suzyManager.spawnSuzy(position + sf::Vector2f(39 * 50, 9 * 50), true);
+		blasterManager.spawnBlaster(position + sf::Vector2f(20 * 50, 9 * 50), BlasterAimDirection::RIGHT);
+		blasterManager.spawnBlaster(position + sf::Vector2f(26 * 50, 1 * 50), BlasterAimDirection::LEFT);
 		break;
 	case 1:
 		itemManager.spawnItem(position + sf::Vector2f(9.25f * 50, 7.25f * 50), 1);
@@ -141,4 +153,5 @@ void Sciman::spawnItemsInRoom(sf::Vector2f position)
 void Sciman::renderEnemies(sf::RenderWindow* window)
 {
 	suzyManager.render(window);
+	blasterManager.render(window);
 }

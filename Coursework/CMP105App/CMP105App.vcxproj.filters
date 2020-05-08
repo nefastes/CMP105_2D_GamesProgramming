@@ -156,7 +156,22 @@
     <ClCompile Include="SuzyManager.cpp">
       <Filter>Source Files\Enemies</Filter>
     </ClCompile>
+    <ClCompile Include="Blaster.cpp">
+      <Filter>Source Files\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="BlasterManager.cpp">
+      <Filter>Source Files\Enemies</Filter>
+    </ClCompile>
     <ClCompile Include="EnemyManager.cpp">
+      <Filter>Source Files\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>Source Files\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="BlasterBullet.cpp">
+      <Filter>Source Files\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="BlasterBulletManager.cpp">
       <Filter>Source Files\Enemies</Filter>
     </ClCompile>
   </ItemGroup>
@@ -262,7 +277,22 @@
     <ClInclude Include="SuzyManager.h">
       <Filter>Header Files\Enemies</Filter>
     </ClInclude>
+    <ClInclude Include="Blaster.h">
+      <Filter>Header Files\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="BlasterManager.h">
+      <Filter>Header Files\Enemies</Filter>
+    </ClInclude>
     <ClInclude Include="EnemyManager.h">
+      <Filter>Header Files\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>Header Files\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="BlasterBullet.h">
+      <Filter>Header Files\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="BlasterBulletManager.h">
       <Filter>Header Files\Enemies</Filter>
     </ClInclude>
   </ItemGroup>
