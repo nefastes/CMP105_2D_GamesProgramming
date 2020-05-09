@@ -52,17 +52,21 @@ void BlasterManager::update(float dt, Player& p)
 {
 	for (unsigned i = 0; i < blasters.size(); ++i)
 	{
-		//Check collisions, etc.
-		updateEnemy(blasters[i], p, 10, 200);
+		if (blasters[i].isAlive())
+		{
+			//Check player collisions, etc.
+			updateEnemy(blasters[i], p, 10, 200);
+		}
 
-		//Check collision with the blaster bullets
+		//Check collision with the blaster bullets (outside of isAlive cause he might die after having fired bullets
 		std::vector<BlasterBullet*> aliveBlasterBullets = blasters[i].getAilveBullets();
 		for (unsigned j = 0; j < aliveBlasterBullets.size(); ++j)
 			if (Collision::checkBoundingBox(aliveBlasterBullets[j], &p))
 				p.damage(10);
 
-		//Update no matter what, we check if it is alive inside (for the death frame)
-		blasters[i].update(dt, audio);
+		//Update no matter what (in the level), we check if it is alive inside (for the death frame)
+		if(!tileManager->isTransitionning())
+			blasters[i].update(dt, audio);
 	}
 }
 

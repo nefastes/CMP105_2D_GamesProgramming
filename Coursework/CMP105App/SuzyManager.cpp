@@ -43,14 +43,15 @@ void SuzyManager::update(float dt, Player& p)
 {
 	for (unsigned i = 0; i < suzies.size(); ++i)
 	{
-		//Check collisions, bullet hits, etc.
-		updateEnemy(suzies[i], p, 25, 500);
-
-		//Update no matter what, we check if she is alive inside (for the death frame)
-		suzies[i].update(dt);
+		//Update no matter what (when in the level), we check if she is alive inside (for the death frame)
+		if(!tileManager->isTransitionning())
+			suzies[i].update(dt);
 		//Update states
 		if (suzies[i].isAlive())
 		{
+			//Check collisions, bullet hits, etc.
+			updateEnemy(suzies[i], p, 25, 500);
+
 			if (!suzies[i].getWallState())
 				tileManager->checkSuzyCollision(suzies[i]);
 

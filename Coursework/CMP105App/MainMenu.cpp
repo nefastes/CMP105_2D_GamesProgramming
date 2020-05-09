@@ -87,6 +87,7 @@ MainMenu::MainMenu(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameSta
 	audio->addSound("sfx/Megaman_1_Points2.ogg", "points2");
 	audio->addSound("sfx/Megaman_1_Life.ogg", "life");
 	audio->addSound("sfx/Megaman_1_Health.ogg", "health");
+	audio->addSound("sfx/Megaman_1_BigEye_Land.ogg", "bigEyeLand");
 
 	//Init trackers
 	selectionTracker = 0;

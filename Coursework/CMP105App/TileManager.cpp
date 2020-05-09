@@ -157,7 +157,7 @@ void TileManager::checkSuzyCollision(Suzy& suzy)
 	std::vector<GameObject>* world = tileMap.getLevel();
 	for (unsigned i = 0; i < (*world).size(); ++i)
 	{
-		if ((*world)[i].isCollider() && (*world)[i].getTargetname() != "ladder")
+		if ((*world)[i].isCollider() && (*world)[i].getTargetname() == "worldSolid")
 		{
 			if (Collision::checkBoundingBox(&suzy, &(*world)[i]))
 			{
@@ -205,7 +205,7 @@ void TileManager::identifySuzyStartDirection(Suzy& suzy, bool vertical)
 	std::vector<GameObject>* world = tileMap.getLevel();
 	for (unsigned i = 0; i < (*world).size(); ++i)
 	{
-		if ((*world)[i].isCollider() && (*world)[i].getTargetname() != "ladder")
+		if ((*world)[i].isCollider() && (*world)[i].getTargetname() == "worldSolid")
 		{
 			if (Collision::checkBoundingBox(&suzy, &(*world)[i]))
 			{
@@ -241,6 +241,57 @@ void TileManager::identifySuzyStartDirection(Suzy& suzy, bool vertical)
 				}
 				suzy.setWallState(true);
 				return;
+			}
+		}
+	}
+}
+
+void TileManager::checkKamadomaCollision(KamadomaBigEye& kamadoma)
+{
+	std::vector<GameObject>* world = tileMap.getLevel();
+	for (unsigned i = 0; i < (*world).size(); ++i)
+	{
+		if ((*world)[i].isCollider() && ((*world)[i].getTargetname() == "worldSolid") || (*world)[i].getTargetname() == "spike")
+		{
+			if (Collision::checkBoundingBox(&kamadoma, &(*world)[i]))
+			{
+				float dx = (kamadoma.getCollisionBox().left + kamadoma.getCollisionBox().width / 2.f) -
+					((*world)[i].getPosition().x + (*world)[i].getSize().x / 2.f);
+				float dy = (kamadoma.getCollisionBox().top + kamadoma.getCollisionBox().height / 2.f) -
+					((*world)[i].getPosition().y + (*world)[i].getSize().y / 2.f);
+
+				//Vertical collision
+				//We want to make sure they are on the same tile position, otherwise it might collide with thiles on the left or right
+				if (std::abs(dx) <= std::abs(dy) && std::abs(dx) != kamadoma.getCollisionBox().width / 2.f + (*world)[i].getSize().x / 2.f)
+				{
+					//Top collision
+					if (dy < 0)
+					{
+						kamadoma.setPosition(kamadoma.getPosition().x, (*world)[i].getPosition().y -
+							(kamadoma.getPosition().y - kamadoma.getCollisionBox().top) - kamadoma.getCollisionBox().height);
+						//Collision has been made
+						if (kamadoma.getSize().x != 50)
+							audio->playSoundbyName("bigEyeLand");
+						kamadoma.setGroundState(true);
+					}
+					//Bottom Collision
+					else
+						kamadoma.setPosition(kamadoma.getPosition().x, (*world)[i].getPosition().y + (*world)[i].getSize().y -
+							(kamadoma.getPosition().y - kamadoma.getCollisionBox().top));
+
+				}
+				//We want to make sure they are on the same tile position, otherwise it might collide with thiles upper or below
+				else
+				{
+					//Left side wall hit
+					if (dx < 0)
+						kamadoma.setPosition((*world)[i].getPosition().x - kamadoma.getCollisionBox().width -
+						(kamadoma.getPosition().x - kamadoma.getCollisionBox().left), kamadoma.getPosition().y);
+					//Right side wall hit
+					else
+						kamadoma.setPosition((*world)[i].getPosition().x + (*world)[i].getSize().x - 
+						(kamadoma.getPosition().x - kamadoma.getCollisionBox().left), kamadoma.getPosition().y);
+				}
 			}
 		}
 	}

@@ -10,6 +10,7 @@ Sciman::Sciman(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameState* 
 	//Init enemies pointers
 	suzyManager.sendPointers(&tileManager, &itemManager, audio, gameState);
 	blasterManager.sendPointers(&tileManager, &itemManager, audio, gameState);
+	kamadomaManager.sendPointers(&tileManager, &itemManager, audio, gameState);
 
 	//Init spawnables of the first section
 	spawnItemsInRoom(tileManager.getMapPosition());
@@ -43,6 +44,7 @@ void Sciman::update(float dt)
 	//Add any level specific updates here
 	suzyManager.update(dt, player);
 	blasterManager.update(dt, player);
+	kamadomaManager.update(dt, player, window->getView());
 
 	//Update the spawnpoint if progress has been made
 	if (currentMap == 4)
@@ -56,6 +58,7 @@ void Sciman::update(float dt)
 	{
 		suzyManager.setDebugging(true);
 		blasterManager.setDebugging(true);
+		kamadomaManager.setDebugging(true);
 	}
 }
 
@@ -79,6 +82,7 @@ void Sciman::spawnItemsInRoom(sf::Vector2f position)
 	itemManager.killAllItems();
 	suzyManager.killAllSuzies();
 	blasterManager.killAllBlasters();
+	kamadomaManager.killAllKamadomas();
 	//All small items are to be spawned at 1/4th positions (so that they are in the middle)
 	//normal tile size items can be spawned normally
 	switch (currentMap)
@@ -119,6 +123,10 @@ void Sciman::spawnItemsInRoom(sf::Vector2f position)
 		blasterManager.spawnBlaster(position + sf::Vector2f(27 * 50, 6 * 50), BlasterAimDirection::LEFT);
 		blasterManager.spawnBlaster(position + sf::Vector2f(50 * 50, 2 * 50), BlasterAimDirection::LEFT);
 		blasterManager.spawnBlaster(position + sf::Vector2f(70 * 50, 5 * 50), BlasterAimDirection::LEFT);
+		kamadomaManager.spawnKamadoma(position + sf::Vector2f(18 * 50, 10 * 50), true);
+		kamadomaManager.spawnKamadoma(position + sf::Vector2f(41 * 50, 9 * 50), true);
+		kamadomaManager.spawnKamadoma(position + sf::Vector2f(45 * 50, 7 * 50), true);
+		kamadomaManager.spawnKamadoma(position + sf::Vector2f(45 * 50, 1 * 50), true);
 		break;
 	case 4:
 		break;
@@ -135,6 +143,10 @@ void Sciman::spawnItemsInRoom(sf::Vector2f position)
 	case 7:
 		itemManager.spawnItem(position + sf::Vector2f(63 * 50, 7 * 50), 2);
 		blasterManager.spawnBlaster(position + sf::Vector2f(57 * 50, 1 * 50), BlasterAimDirection::LEFT);
+		kamadomaManager.spawnKamadoma(position + sf::Vector2f(22 * 50, 7 * 50), true);
+		kamadomaManager.spawnKamadoma(position + sf::Vector2f(24 * 50, 2 * 50), true);
+		kamadomaManager.spawnKamadoma(position + sf::Vector2f(65 * 50, 4 * 50), true);
+		kamadomaManager.spawnKamadoma(position + sf::Vector2f(71 * 50, 9 * 50), true);
 		break;
 	case 8:
 		suzyManager.spawnSuzy(position + sf::Vector2f(3 * 50, 4 * 50), true);
@@ -143,8 +155,11 @@ void Sciman::spawnItemsInRoom(sf::Vector2f position)
 		suzyManager.spawnSuzy(position + sf::Vector2f(17 * 50, 7 * 50), false);
 		break;
 	case 9:
+		kamadomaManager.spawnKamadoma(position + sf::Vector2f(17 * 50, 7 * 50), false);
 		break;
 	case 10:
+		kamadomaManager.spawnKamadoma(position + sf::Vector2f(9 * 50, 5 * 50), true);
+		kamadomaManager.spawnKamadoma(position + sf::Vector2f(17 * 50, 5 * 50), true);
 		break;
 	case 11:
 		itemManager.spawnItem(position + sf::Vector2f(12.5f * 50, 2 * 50), 4);
@@ -156,4 +171,5 @@ void Sciman::renderEnemies(sf::RenderWindow* window)
 {
 	suzyManager.render(window);
 	blasterManager.render(window);
+	kamadomaManager.render(window);
 }

@@ -79,9 +79,9 @@ void BlasterBulletManager::renderBlasterBullets(sf::RenderWindow* window, TileMa
 		if (blasterBullets[i].isAlive())
 		{
 			//Kill a bullet if it goes outside of the current map
-			if (blasterBullets[i].getPosition().x - blasterBullets[i].getSize().x <= tm->getMapPosition().x ||
+			if (blasterBullets[i].getPosition().x + blasterBullets[i].getSize().x <= tm->getMapPosition().x ||
 				blasterBullets[i].getPosition().x >= tm->getMapPosition().x + tm->getMapSize().x * 50 ||
-				blasterBullets[i].getPosition().y - blasterBullets[i].getSize().y <= tm->getMapPosition().y ||
+				blasterBullets[i].getPosition().y + blasterBullets[i].getSize().y <= tm->getMapPosition().y ||
 				blasterBullets[i].getPosition().y >= tm->getMapPosition().y + tm->getMapSize().y * 50)
 				blasterBullets[i].setAlive(false);
 		}

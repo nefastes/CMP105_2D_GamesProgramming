@@ -183,6 +183,8 @@
     <ClCompile Include="IntroCinematic.cpp" />
     <ClCompile Include="Item.cpp" />
     <ClCompile Include="ItemManager.cpp" />
+    <ClCompile Include="KamadomaBigEye.cpp" />
+    <ClCompile Include="KamadomaBigEyeManager.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MainMenu.cpp" />
@@ -227,6 +229,8 @@
     <ClInclude Include="IntroCinematic.h" />
     <ClInclude Include="Item.h" />
     <ClInclude Include="ItemManager.h" />
+    <ClInclude Include="KamadomaBigEye.h" />
+    <ClInclude Include="KamadomaBigEyeManager.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="OptionMenu.h" />

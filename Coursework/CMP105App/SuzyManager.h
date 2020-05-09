@@ -16,6 +16,7 @@ public:
 	void update(float dt, Player& p);
 
 	void render(sf::RenderWindow* window);
+
 	void killAllSuzies();
 
 	void setDebugging(bool debug);

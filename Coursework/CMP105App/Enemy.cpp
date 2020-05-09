@@ -26,6 +26,11 @@ void Enemy::damage(short int amount)
 
 		//We still want to display the dead frame for a couple ms
 		setTexture(&deathParticleTex);
+		if (getSize() != sf::Vector2f(50, 50))
+		{
+			setPosition(getPosition() + getSize() / 2.f - sf::Vector2f(50, 50) / 2.f);
+			setSize(sf::Vector2f(50, 50));
+		}
 		setTextureRect(sf::IntRect(0, 0, 16, 16));
 
 		//Adjust trackers
