@@ -71,7 +71,7 @@ void GameObject::setCollisionBoxColor(sf::Color color)
 void GameObject::updateDebugBoxes()
 {
 	debugSize.setSize(sf::Vector2f(getSize()));
-	debugSize.setPosition(getPosition());
+	debugSize.setPosition(getPosition() - getOrigin());
 	debugCollisionBox.setSize(sf::Vector2f(getCollisionBox().width, getCollisionBox().height));
 	debugCollisionBox.setPosition(getCollisionBox().left, getCollisionBox().top);
 }

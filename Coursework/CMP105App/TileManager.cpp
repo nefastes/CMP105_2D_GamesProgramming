@@ -200,6 +200,52 @@ void TileManager::checkSuzyCollision(Suzy& suzy)
 	}
 }
 
+void TileManager::identifySuzyStartDirection(Suzy& suzy, bool vertical)
+{
+	std::vector<GameObject>* world = tileMap.getLevel();
+	for (unsigned i = 0; i < (*world).size(); ++i)
+	{
+		if ((*world)[i].isCollider() && (*world)[i].getTargetname() != "ladder")
+		{
+			if (Collision::checkBoundingBox(&suzy, &(*world)[i]))
+			{
+				if (vertical)
+				{
+					//Collide with top side of the wall, thus we must ensure his speed will make him go up
+					if ((suzy.getPosition().y + suzy.getSize().y / 2.f) - ((*world)[i].getPosition().y + (*world)[i].getSize().y / 2.f) < 0)
+					{
+						if (suzy.getVelocity().y > 0)
+							suzy.setVelocity(suzy.getVelocity() * -1.f);
+					}
+					//Collides with bottom side of the wall, thus we must ensure his speed will make him go down
+					else
+					{
+						if (suzy.getVelocity().y < 0)
+							suzy.setVelocity(suzy.getVelocity() * -1.f);
+					}
+				}
+				else
+				{
+					//Collides with left side of the wall, thus we must ensure his speed will make him go left
+					if ((suzy.getPosition().x + suzy.getSize().x / 2.f) - ((*world)[i].getPosition().x + (*world)[i].getSize().x / 2.f) < 0)
+					{
+						if (suzy.getVelocity().x > 0)
+							suzy.setVelocity(suzy.getVelocity() * -1.f);
+					}
+					//Collides with right side of the wall, thus we must ensure his speed will make him go right
+					else
+					{
+						if (suzy.getVelocity().x < 0)
+							suzy.setVelocity(suzy.getVelocity() * -1.f);
+					}
+				}
+				suzy.setWallState(true);
+				return;
+			}
+		}
+	}
+}
+
 void TileManager::update(float dt, Player& p)
 {
 	//Init a tracker that will determinate if the player is outside of the map
@@ -800,6 +846,7 @@ void TileManager::openDoor(unsigned topTile, bool inside)
 			transitionning = true;
 			transitionType = 3;
 			timeTracker = 0;
+			doorTracker = 0;
 		}
 		break;
 	}
@@ -813,14 +860,14 @@ bool TileManager::closeDoor(unsigned topTile)
 	//Close the doore
 	switch (doorTracker)
 	{
-	case 1:
+	case 3:
 		if (audio->getSound("door")->getStatus() == sf::SoundSource::Stopped)
 		{
 			(*world)[topTile + 72].setTextureRect(sf::IntRect(360, 172, 16, 16));
 			(*world)[topTile + 72].setCollider(true);
 			(*world)[topTile + 72].setTargetName("worldSolid");
 			audio->playSoundbyName("door");
-			--doorTracker;
+			++doorTracker;
 		}
 		break;
 	case 2:
@@ -830,34 +877,35 @@ bool TileManager::closeDoor(unsigned topTile)
 			(*world)[topTile + 48].setCollider(true);
 			(*world)[topTile + 48].setTargetName("worldSolid");
 			audio->playSoundbyName("door");
-			--doorTracker;
+			++doorTracker;
 		}
 		break;
-	case 3:
+	case 1:
 		if (audio->getSound("door")->getStatus() == sf::SoundSource::Stopped)
 		{
 			(*world)[topTile + 24].setTextureRect(sf::IntRect(360, 172, 16, 16));
 			(*world)[topTile + 24].setCollider(true);
 			(*world)[topTile + 24].setTargetName("worldSolid");
 			audio->playSoundbyName("door");
-			--doorTracker;
+			++doorTracker;
 		}
 		break;
-	case 4:
+	case 0:
 		if (audio->getSound("door")->getStatus() == sf::SoundSource::Stopped)
 		{
 			(*world)[topTile].setTextureRect(sf::IntRect(360, 172, 16, 16));
 			(*world)[topTile].setCollider(true);
 			(*world)[topTile].setTargetName("worldSolid");
 			audio->playSoundbyName("door");
-			--doorTracker;
+			++doorTracker;
 		}
 		break;
-	case 0:
+	default:
 		if (audio->getSound("door")->getStatus() == sf::SoundSource::Stopped)
 		{
 			transitionning = false;
 			doorClosing = false;
+			doorTracker = 0;
 			return true;
 		}
 		break;

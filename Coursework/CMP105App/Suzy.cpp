@@ -75,3 +75,9 @@ bool Suzy::isMovingVertically()
 {
 	return moveVertically;
 }
+
+void Suzy::generateRandomSpawnTime()
+{
+	//Generate a float time between .5f and 2.5f found on stackoverflow
+	timePassedTracker = 0.5f + static_cast<float> (std::rand() / static_cast<float> (RAND_MAX / (2.5f - 0.5f)));
+}

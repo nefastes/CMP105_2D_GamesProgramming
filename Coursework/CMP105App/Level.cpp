@@ -228,6 +228,9 @@ void Level::updateLevel(float dt)
 			camera.setCenter(sf::Vector2f(tileManager.getMapPosition().x + (int)camera.getSize().x / 2.f, camera.getCenter().y));
 		}
 	}
+	//Fix weird bug that makes black lines appears on every getCenter.x +- 0.01f of a unit
+	if ((int)std::roundf(camera.getCenter().x * 10) % 5 == 0)
+		camera.setCenter(sf::Vector2f(camera.getCenter().x + 0.1f, camera.getCenter().y));
 	//Set the window view
 	window->setView(camera);
 
@@ -274,6 +277,8 @@ void Level::updateLevel(float dt)
 				{
 					//Reset all lives, score, etc.
 					//TODO: GAME OVER, CONTINUE menu ?
+					spawnPoint = sf::Vector2f(2, 12);
+					spawnMap = 0;		//Reset the spawn location or it will remain the same
 					resetLevel();
 					gameState->setGlobalLives(2);
 					gameState->setGlobalScore(0);
@@ -512,6 +517,8 @@ void Level::resetLevel()
 	tileManager.setCurrentMap(spawnMap);
 	tileManager.createMap(currentLevel, currentMap);
 	tileManager.buildCreatedMap(sf::Vector2f(0, 0));
+	tileManager.setTransitionning(false);
+	tileManager.setCloseDoor(false);
 
 	//Reset origin to default and the player position
 	player.resetSettings();
@@ -547,7 +554,12 @@ void Level::handleLevelPause(float dt)
 	pauseUi.handleInput(dt);
 
 	//If the game state change to MENU, we need to reset the level
-	if (gameState->getCurrentState() == State::MENU) resetLevel();
+	if (gameState->getCurrentState() == State::MENU)
+	{
+		spawnPoint = sf::Vector2f(2, 12);
+		spawnMap = 0;		//Reset the spawn location or it will remain the same
+		resetLevel();
+	}
 }
 
 void Level::spawnItemsInRoom(sf::Vector2f position)

@@ -156,11 +156,9 @@ void Player::update(float dt)
 		bulletManager.update(dt);
 
 		//Simple ladder check that prevents impossible scenarios
-		if (!isOnGround)
-		{
-			if(!isLadderAvailable) isOnLadder = false;
+		//If the player is not onGround and not onLadder it means he is in air
+		if (!isOnGround && !isOnLadder)
 			changePlayerMode(1);
-		}
 
 		//Re-enable physics according to the collision trackers
 		if (!hasCollidedVertically && !hasCollidedHorizontally)
@@ -855,8 +853,8 @@ void Player::updateHealth()
 	}
 
 	//Set the position of the health bar relatively to the view
-	sf::Vector2i topLeft = sf::Vector2i(window->getView().getCenter() - window->getView().getSize() / 2.f);
-	for(int i = 0; i < 5; ++i)
+	sf::Vector2f topLeft = sf::Vector2f(window->getView().getCenter() - window->getView().getSize() / 2.f);
+	for(unsigned i = 0; i < 5; ++i)
 		healthBlocks[i].setPosition(topLeft.x + 2 * healthBlocks[i].getSize().x, topLeft.y + (5 - i) * healthBlocks[i].getSize().y);		//Set the healthbar vertically
 
 	//Determine the last block to display full health and which amount of health it should display

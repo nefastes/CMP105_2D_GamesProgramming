@@ -7,6 +7,8 @@ private:
 	sf::Texture blasterTex;
 	std::vector<Blaster> blasters;
 
+	void setSpriteDirection(BlasterAimDirection bad, unsigned location);
+
 public:
 	BlasterManager();
 	~BlasterManager();

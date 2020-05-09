@@ -116,12 +116,17 @@ BlasterAimDirection Blaster::getBlasterDirection()
 	return blasterDirection;
 }
 
-void Blaster::renderAliveBullets(sf::RenderWindow* window)
+void Blaster::renderAliveBullets(sf::RenderWindow* window, TileManager* tm)
 {
-	bulletManager.renderBlasterBullets(window);
+	bulletManager.renderBlasterBullets(window, tm);
 }
 
 std::vector<BlasterBullet*> Blaster::getAilveBullets()
 {
 	return bulletManager.getAliveBullets();
+}
+
+BlasterBulletManager* Blaster::getBulletManager()
+{
+	return &bulletManager;
 }

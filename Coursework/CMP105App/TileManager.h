@@ -55,6 +55,7 @@ public:
 	~TileManager();
 	void checkItemCollision(Item& item);
 	void checkSuzyCollision(Suzy& suzy);
+	void identifySuzyStartDirection(Suzy& suzy, bool vertical);
 	void update(float dt, Player& p);
 	void render();
 	void createMap(Maps level, unsigned section);

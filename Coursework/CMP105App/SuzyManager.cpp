@@ -21,6 +21,8 @@ void SuzyManager::spawnSuzy(sf::Vector2f spawnPoint, bool vertical)
 			suzies[i].setTexture(&suzyTex);
 			suzies[i].setTextureRect(sf::IntRect(34, 0, 16, 16));
 			suzies[i].resetHealth();
+			suzies[i].generateRandomSpawnTime();
+			tileManager->identifySuzyStartDirection(suzies[i], vertical);
 			return;
 		}
 	}
@@ -33,6 +35,8 @@ void SuzyManager::spawnSuzy(sf::Vector2f spawnPoint, bool vertical)
 	suzies[suzies.size() - 1].setPosition(spawnPoint);
 	suzies[suzies.size() - 1].setAxis(vertical);
 	suzies[suzies.size() - 1].resetHealth();
+	suzies[suzies.size() - 1].generateRandomSpawnTime();
+	tileManager->identifySuzyStartDirection(suzies[suzies.size() - 1], vertical);
 }
 
 void SuzyManager::update(float dt, Player& p)
@@ -65,8 +69,8 @@ void SuzyManager::render(sf::RenderWindow* window)
 			window->draw(suzies[i]);
 			if (suzies[i].isDebugging())
 			{
-				window->draw(*suzies[i].getDebugCollisionBox());
 				window->draw(*suzies[i].getDebugObjectSize());
+				window->draw(*suzies[i].getDebugCollisionBox());
 			}
 		}
 	}

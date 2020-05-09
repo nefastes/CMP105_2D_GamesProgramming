@@ -16,5 +16,6 @@ public:
 	void setWallState(bool wall);
 	bool getWallState();
 	bool isMovingVertically();
+	void generateRandomSpawnTime();
 };
 

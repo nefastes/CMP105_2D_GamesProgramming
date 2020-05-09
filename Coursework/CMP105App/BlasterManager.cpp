@@ -9,6 +9,22 @@ BlasterManager::~BlasterManager()
 
 }
 
+void BlasterManager::setSpriteDirection(BlasterAimDirection bad, unsigned location)
+{
+	blasters[location].setBlasterDirection(bad);
+	switch (bad)
+	{
+	case BlasterAimDirection::LEFT:
+		blasters[location].setTextureRect(sf::IntRect(51, 0, 16, 16));
+		blasters[location].setCollisionBox(sf::FloatRect(22, 0, 28, 50));
+		break;
+	case BlasterAimDirection::RIGHT:
+		blasters[location].setTextureRect(sf::IntRect(67, 0, -16, 16));
+		blasters[location].setCollisionBox(sf::FloatRect(0, 0, 28, 50));
+		break;
+	}
+}
+
 void BlasterManager::spawnBlaster(sf::Vector2f spawnPoint, BlasterAimDirection bad)
 {
 	for (unsigned i = 0; i < blasters.size(); ++i)
@@ -19,12 +35,7 @@ void BlasterManager::spawnBlaster(sf::Vector2f spawnPoint, BlasterAimDirection b
 			blasters[i].setAlive(true);
 			blasters[i].setTexture(&blasterTex);
 			blasters[i].resetHealth();
-			blasters[i].setBlasterDirection(bad);
-			switch (bad)
-			{
-			case BlasterAimDirection::LEFT:			blasters[i].setTextureRect(sf::IntRect(51, 0, 16, 16));			break;
-			case BlasterAimDirection::RIGHT:		blasters[i].setTextureRect(sf::IntRect(67, 0, -16, 16));		break;
-			}
+			setSpriteDirection(bad, i);
 			return;
 		}
 	}
@@ -32,15 +43,9 @@ void BlasterManager::spawnBlaster(sf::Vector2f spawnPoint, BlasterAimDirection b
 	blasters[blasters.size() - 1].setAlive(true);
 	blasters[blasters.size() - 1].setTexture(&blasterTex);
 	blasters[blasters.size() - 1].setSize(sf::Vector2f(50, 50));
-	blasters[blasters.size() - 1].setCollisionBox(sf::FloatRect(22, 0, 28, 50));
 	blasters[blasters.size() - 1].setPosition(spawnPoint);
 	blasters[blasters.size() - 1].resetHealth();
-	blasters[blasters.size() - 1].setBlasterDirection(bad);
-	switch (bad)
-	{
-	case BlasterAimDirection::LEFT:			blasters[blasters.size() - 1].setTextureRect(sf::IntRect(51, 0, 16, 16));		break;
-	case BlasterAimDirection::RIGHT:		blasters[blasters.size() - 1].setTextureRect(sf::IntRect(67, 0, -16, 16));		break;
-	}
+	setSpriteDirection(bad, blasters.size() - 1);
 }
 
 void BlasterManager::update(float dt, Player& p)
@@ -48,13 +53,13 @@ void BlasterManager::update(float dt, Player& p)
 	for (unsigned i = 0; i < blasters.size(); ++i)
 	{
 		//Check collisions, etc.
-		updateEnemy(blasters[i], p, 5, 200);
+		updateEnemy(blasters[i], p, 10, 200);
 
 		//Check collision with the blaster bullets
 		std::vector<BlasterBullet*> aliveBlasterBullets = blasters[i].getAilveBullets();
 		for (unsigned j = 0; j < aliveBlasterBullets.size(); ++j)
 			if (Collision::checkBoundingBox(aliveBlasterBullets[j], &p))
-				p.damage(5);
+				p.damage(10);
 
 		//Update no matter what, we check if it is alive inside (for the death frame)
 		blasters[i].update(dt, audio);
@@ -65,14 +70,17 @@ void BlasterManager::render(sf::RenderWindow* window)
 {
 	for (unsigned i = 0; i < blasters.size(); ++i)
 	{
+		//Render bullets separately cause the blaster might dies whille bullets are still alive
+		if(blasters[i].getAilveBullets().size() > 0)
+			blasters[i].renderAliveBullets(window, tileManager);
+
 		if (blasters[i].isAlive() || blasters[i].getDying())
 		{
 			window->draw(blasters[i]);
-			blasters[i].renderAliveBullets(window);
 			if (blasters[i].isDebugging())
 			{
-				window->draw(*blasters[i].getDebugCollisionBox());
 				window->draw(*blasters[i].getDebugObjectSize());
+				window->draw(*blasters[i].getDebugCollisionBox());
 			}
 		}
 	}
@@ -89,5 +97,9 @@ void BlasterManager::setDebugging(bool debug)
 {
 	for (unsigned i = 0; i < blasters.size(); ++i)
 		if (blasters[i].isAlive())
+		{
 			blasters[i].setDebugging(debug);
+			blasters[i].updateDebugBoxes();
+			blasters[i].getBulletManager()->setDebugging(debug);
+		}
 }

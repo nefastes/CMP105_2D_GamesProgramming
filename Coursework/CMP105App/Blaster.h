@@ -2,6 +2,7 @@
 #include "Enemy.h"
 #include "BlasterBulletManager.h"
 #include "Framework/AudioManager.h"
+#include "TileManager.h"
 class Blaster : public Enemy
 {
 private:
@@ -21,7 +22,8 @@ public:
 	void update(float dt, AudioManager* audio);
 	void setBlasterDirection(BlasterAimDirection d);
 	BlasterAimDirection getBlasterDirection();
-	void renderAliveBullets(sf::RenderWindow* window);
+	void renderAliveBullets(sf::RenderWindow* window, TileManager* tm);
 	std::vector<BlasterBullet*> getAilveBullets();
+	BlasterBulletManager* getBulletManager();
 };
 

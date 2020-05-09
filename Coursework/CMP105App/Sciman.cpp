@@ -11,12 +11,8 @@ Sciman::Sciman(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameState* 
 	suzyManager.sendPointers(&tileManager, &itemManager, audio, gameState);
 	blasterManager.sendPointers(&tileManager, &itemManager, audio, gameState);
 
-	//Init suzies of the first section
-	suzyManager.spawnSuzy(sf::Vector2f(39 * 50, 5 * 50), false);
-	suzyManager.spawnSuzy(sf::Vector2f(39 * 50, 9 * 50), true);
-	//Init blaster of the first section
-	blasterManager.spawnBlaster(sf::Vector2f(20 * 50, 9 * 50), BlasterAimDirection::RIGHT);
-	blasterManager.spawnBlaster(sf::Vector2f(26 * 50, 1 * 50), BlasterAimDirection::LEFT);
+	//Init spawnables of the first section
+	spawnItemsInRoom(tileManager.getMapPosition());
 	
 
 	//Spawn items of section 0
@@ -59,6 +55,7 @@ void Sciman::update(float dt)
 	if (debugUi->isDebugging())
 	{
 		suzyManager.setDebugging(true);
+		blasterManager.setDebugging(true);
 	}
 }
 
@@ -94,6 +91,7 @@ void Sciman::spawnItemsInRoom(sf::Vector2f position)
 		suzyManager.spawnSuzy(position + sf::Vector2f(39 * 50, 9 * 50), true);
 		blasterManager.spawnBlaster(position + sf::Vector2f(20 * 50, 9 * 50), BlasterAimDirection::RIGHT);
 		blasterManager.spawnBlaster(position + sf::Vector2f(26 * 50, 1 * 50), BlasterAimDirection::LEFT);
+		blasterManager.spawnBlaster(position + sf::Vector2f(31 * 50, 1 * 50), BlasterAimDirection::RIGHT);
 		break;
 	case 1:
 		itemManager.spawnItem(position + sf::Vector2f(9.25f * 50, 7.25f * 50), 1);
@@ -118,6 +116,9 @@ void Sciman::spawnItemsInRoom(sf::Vector2f position)
 		itemManager.spawnItem(position + sf::Vector2f(52.25f * 50, 1.25f * 50), 0);
 		itemManager.spawnItem(position + sf::Vector2f(53 * 50, 1 * 50), 2);
 		itemManager.spawnItem(position + sf::Vector2f(70.25f * 50, 8.25f * 50), 0);
+		blasterManager.spawnBlaster(position + sf::Vector2f(27 * 50, 6 * 50), BlasterAimDirection::LEFT);
+		blasterManager.spawnBlaster(position + sf::Vector2f(50 * 50, 2 * 50), BlasterAimDirection::LEFT);
+		blasterManager.spawnBlaster(position + sf::Vector2f(70 * 50, 5 * 50), BlasterAimDirection::LEFT);
 		break;
 	case 4:
 		break;
@@ -133,6 +134,7 @@ void Sciman::spawnItemsInRoom(sf::Vector2f position)
 		break;
 	case 7:
 		itemManager.spawnItem(position + sf::Vector2f(63 * 50, 7 * 50), 2);
+		blasterManager.spawnBlaster(position + sf::Vector2f(57 * 50, 1 * 50), BlasterAimDirection::LEFT);
 		break;
 	case 8:
 		suzyManager.spawnSuzy(position + sf::Vector2f(3 * 50, 4 * 50), true);

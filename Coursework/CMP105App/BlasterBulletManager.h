@@ -1,5 +1,6 @@
 #pragma once
 #include "BlasterBullet.h"
+#include "TileManager.h"
 
 enum class BlasterAimDirection { LEFT, RIGHT };
 
@@ -20,8 +21,9 @@ public:
 
 	void spawn3Bullets(sf::Vector2f spawnPoint);	//fires 3 bullets at a time
 	void update(float dt);
-	void renderBlasterBullets(sf::RenderWindow* window);
+	void renderBlasterBullets(sf::RenderWindow* window, TileManager* tm);
 	void setBlasterDirection(BlasterAimDirection d);
 	std::vector<BlasterBullet*> getAliveBullets();
+	void setDebugging(bool debug);
 };
 

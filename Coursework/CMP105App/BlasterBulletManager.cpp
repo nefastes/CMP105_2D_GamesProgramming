@@ -11,8 +11,8 @@ BlasterBulletManager::BlasterBulletManager()
 		blasterBullets[i] = BlasterBullet();
 		//Strangely, textures have to be initialised somewhere else or the pointer will be corrupted
 		blasterBullets[i].setSize(sf::Vector2f(25, 25));
-		blasterBullets[i].setCollisionBox(sf::FloatRect(0, 0, 25, 25));
 		blasterBullets[i].setOrigin(12.5f, 12.5f);
+		blasterBullets[i].setCollisionBox(sf::FloatRect(-12.5f, -12.5f, 25, 25));
 		blasterBullets[i].setAlive(false);
 	}
 }
@@ -58,25 +58,31 @@ void BlasterBulletManager::update(float dt)
 		//Need to initialise textures here, apparently there is a weird error with objects inheritance that will corrupt the pointer
 		//of the texture, and it happens in this case. I have deeply looked to fix this but could not find anything, so
 		//I'm just going to init it here
-		if (blasterBullets[i].getTexture() == NULL)
+		if (blasterBullets[i].getTexture() != &blasterBulletTex)
 			blasterBullets[i].setTexture(&blasterBulletTex);
 
 		if (blasterBullets[i].isAlive())
+		{
 			blasterBullets[i].update(dt);
+
+			if (blasterBullets[i].isDebugging())
+				blasterBullets[i].updateDebugBoxes();
+		}
 	}
 }
 
-void BlasterBulletManager::renderBlasterBullets(sf::RenderWindow* window)
+void BlasterBulletManager::renderBlasterBullets(sf::RenderWindow* window, TileManager* tm)
 {
 	//Death check
 	for (unsigned i = 0; i < 9; ++i)
 	{
 		if (blasterBullets[i].isAlive())
 		{
-			if (blasterBullets[i].getPosition().x - blasterBullets[i].getSize().x <= window->getView().getCenter().x - window->getView().getSize().x / 2.f ||
-				blasterBullets[i].getPosition().x >= window->getView().getCenter().x + window->getView().getSize().x / 2.f ||
-				blasterBullets[i].getPosition().y - blasterBullets[i].getSize().y <= window->getView().getCenter().y - window->getView().getSize().y / 2.f ||
-				blasterBullets[i].getPosition().y >= window->getView().getCenter().y + window->getView().getSize().y / 2.f)
+			//Kill a bullet if it goes outside of the current map
+			if (blasterBullets[i].getPosition().x - blasterBullets[i].getSize().x <= tm->getMapPosition().x ||
+				blasterBullets[i].getPosition().x >= tm->getMapPosition().x + tm->getMapSize().x * 50 ||
+				blasterBullets[i].getPosition().y - blasterBullets[i].getSize().y <= tm->getMapPosition().y ||
+				blasterBullets[i].getPosition().y >= tm->getMapPosition().y + tm->getMapSize().y * 50)
 				blasterBullets[i].setAlive(false);
 		}
 	}
@@ -84,7 +90,15 @@ void BlasterBulletManager::renderBlasterBullets(sf::RenderWindow* window)
 	//Render alive bullets
 	for (unsigned i = 0; i < 9; ++i)
 		if (blasterBullets[i].isAlive())
+		{
 			window->draw(blasterBullets[i]);
+
+			if (blasterBullets[i].isDebugging())
+			{
+				window->draw(*blasterBullets[i].getDebugObjectSize());
+				window->draw(*blasterBullets[i].getDebugCollisionBox());
+			}
+		}
 }
 
 void BlasterBulletManager::setBlasterDirection(BlasterAimDirection d)
@@ -101,4 +115,11 @@ std::vector<BlasterBullet*> BlasterBulletManager::getAliveBullets()
 			temp.push_back(&blasterBullets[i]);
 
 	return temp;
+}
+
+void BlasterBulletManager::setDebugging(bool debug)
+{
+	for (unsigned i = 0; i < 9; ++i)
+		if (blasterBullets[i].isAlive())
+			blasterBullets[i].setDebugging(debug);
 }
