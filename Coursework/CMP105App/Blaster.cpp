@@ -9,6 +9,7 @@ Blaster::Blaster()
 	previousMode = currentMode;
 	//generates a number between 3.0f and 6.0f found on stackoverflow
 	rngWaitTime = 3 + static_cast<float> (std::rand() / static_cast<float> (RAND_MAX / (6 - 3)));
+	invincibility = true;
 }
 
 Blaster::~Blaster()
@@ -126,7 +127,19 @@ std::vector<BlasterBullet*> Blaster::getAilveBullets()
 	return bulletManager.getAliveBullets();
 }
 
+void Blaster::killAllBullets()
+{
+	bulletManager.killAllBullets();
+}
+
 BlasterBulletManager* Blaster::getBulletManager()
 {
 	return &bulletManager;
+}
+
+void Blaster::resetMode()
+{
+	currentMode = 0;
+	timePassedTracker = 0;
+	invincibility = true;
 }

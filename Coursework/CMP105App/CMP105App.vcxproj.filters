@@ -186,6 +186,9 @@
     <ClCompile Include="SuperCutterManager.cpp">
       <Filter>Source Files\Enemies</Filter>
     </ClCompile>
+    <ClCompile Include="CreditCinematic.cpp">
+      <Filter>Source Files\Menus</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="README.txt">
@@ -318,6 +321,9 @@
     </ClInclude>
     <ClInclude Include="SuperCutterManager.h">
       <Filter>Header Files\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="CreditCinematic.h">
+      <Filter>Header Files\Menus</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

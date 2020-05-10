@@ -2,7 +2,7 @@
 #include "EnemyManager.h"
 #include "SuperCutter.h"
 #include "Player.h"
-#define CUTTER_VERTICAL_VEL -900.f
+#define CUTTER_VERTICAL_VEL -1000.f
 class SuperCutterManager : public EnemyManager
 {
 private:

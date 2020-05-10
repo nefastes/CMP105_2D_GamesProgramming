@@ -24,6 +24,7 @@ public:
 	void renderBlasterBullets(sf::RenderWindow* window, TileManager* tm);
 	void setBlasterDirection(BlasterAimDirection d);
 	std::vector<BlasterBullet*> getAliveBullets();
+	void killAllBullets();
 	void setDebugging(bool debug);
 };
 

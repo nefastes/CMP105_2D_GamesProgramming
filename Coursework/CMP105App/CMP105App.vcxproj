@@ -164,6 +164,7 @@
     <ClCompile Include="Boss.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="BulletManager.cpp" />
+    <ClCompile Include="CreditCinematic.cpp" />
     <ClCompile Include="DeathParticle.cpp" />
     <ClCompile Include="DeathParticleManager.cpp" />
     <ClCompile Include="DebugUi.cpp" />
@@ -212,6 +213,7 @@
     <ClInclude Include="Boss.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="BulletManager.h" />
+    <ClInclude Include="CreditCinematic.h" />
     <ClInclude Include="DeathParticle.h" />
     <ClInclude Include="DeathParticleManager.h" />
     <ClInclude Include="DebugUi.h" />

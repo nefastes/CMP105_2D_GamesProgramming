@@ -43,9 +43,9 @@ void KamadomaBigEye::update(float dt, Player& p)
 
 				//If the player is above the enemy, make him jump higher
 				if (direction.y < 0)
-					setVelocity(direction.x, -800.f + direction.y);
+					setVelocity(direction.x, -900.f + direction.y);
 				else
-					setVelocity(direction.x, -800.f);
+					setVelocity(direction.x, -900.f);
 
 				//Update trackers
 				isOnground = false;

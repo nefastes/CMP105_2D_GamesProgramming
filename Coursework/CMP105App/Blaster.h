@@ -24,6 +24,8 @@ public:
 	BlasterAimDirection getBlasterDirection();
 	void renderAliveBullets(sf::RenderWindow* window, TileManager* tm);
 	std::vector<BlasterBullet*> getAilveBullets();
+	void killAllBullets();
 	BlasterBulletManager* getBulletManager();
+	void resetMode();
 };
 

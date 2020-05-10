@@ -40,6 +40,7 @@ void KamadomaBigEyeManager::spawnKamadoma(sf::Vector2f spawnPoint, bool kamadoma
 		{
 			kamadomas[i].setAlive(true);
 			kamadomas[i].resetHealth();
+			kamadomas[i].setGroundState(true);	//They might have been killed in air
 			initKamaOrBigEye(spawnPoint, i, kamadoma);
 			return;
 		}

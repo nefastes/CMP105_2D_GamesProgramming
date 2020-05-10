@@ -117,6 +117,12 @@ std::vector<BlasterBullet*> BlasterBulletManager::getAliveBullets()
 	return temp;
 }
 
+void BlasterBulletManager::killAllBullets()
+{
+	for (unsigned i = 0; i < 9; ++i)
+		blasterBullets[i].setAlive(false);
+}
+
 void BlasterBulletManager::setDebugging(bool debug)
 {
 	for (unsigned i = 0; i < 9; ++i)

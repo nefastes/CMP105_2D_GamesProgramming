@@ -35,6 +35,7 @@ void BlasterManager::spawnBlaster(sf::Vector2f spawnPoint, BlasterAimDirection b
 			blasters[i].setAlive(true);
 			blasters[i].setTexture(&blasterTex);
 			blasters[i].resetHealth();
+			blasters[i].resetMode();
 			setSpriteDirection(bad, i);
 			return;
 		}
@@ -93,7 +94,10 @@ void BlasterManager::killAllBlasters()
 {
 	for (unsigned i = 0; i < blasters.size(); ++i)
 		if (blasters[i].isAlive())
+		{
 			blasters[i].setAlive(false);
+			blasters[i].killAllBullets();
+		}
 }
 
 void BlasterManager::setDebugging(bool debug)
