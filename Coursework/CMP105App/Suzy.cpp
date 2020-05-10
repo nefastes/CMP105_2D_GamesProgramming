@@ -3,7 +3,7 @@ Suzy::Suzy()
 {
 	isOnWall = false;
 	moveVertically = false;
-	maxHealth = 15;
+	maxHealth = 10;
 	resetHealth();
 	setVelocity(200, 200);
 }

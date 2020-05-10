@@ -11,6 +11,7 @@ Sciman::Sciman(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameState* 
 	suzyManager.sendPointers(&tileManager, &itemManager, audio, gameState);
 	blasterManager.sendPointers(&tileManager, &itemManager, audio, gameState);
 	kamadomaManager.sendPointers(&tileManager, &itemManager, audio, gameState);
+	superCutterManager.sendPointers(&tileManager, &itemManager, audio, gameState);
 
 	//Init spawnables of the first section
 	spawnItemsInRoom(tileManager.getMapPosition());
@@ -42,9 +43,7 @@ void Sciman::update(float dt)
 	updateLevel(dt);
 
 	//Add any level specific updates here
-	suzyManager.update(dt, player);
-	blasterManager.update(dt, player);
-	kamadomaManager.update(dt, player, window->getView());
+
 
 	//Update the spawnpoint if progress has been made
 	if (currentMap == 4)
@@ -59,6 +58,7 @@ void Sciman::update(float dt)
 		suzyManager.setDebugging(true);
 		blasterManager.setDebugging(true);
 		kamadomaManager.setDebugging(true);
+		superCutterManager.setDebugging(true);
 	}
 }
 
@@ -83,6 +83,7 @@ void Sciman::spawnItemsInRoom(sf::Vector2f position)
 	suzyManager.killAllSuzies();
 	blasterManager.killAllBlasters();
 	kamadomaManager.killAllKamadomas();
+	superCutterManager.killAllCutters();
 	//All small items are to be spawned at 1/4th positions (so that they are in the middle)
 	//normal tile size items can be spawned normally
 	switch (currentMap)
@@ -167,9 +168,25 @@ void Sciman::spawnItemsInRoom(sf::Vector2f position)
 	}
 }
 
+void Sciman::updateEnemies(float dt)
+{
+	cutterTimeTracker += dt;
+	if (tileManager.checkCutterTrigger() && cutterTimeTracker >= .5f)
+	{
+		superCutterManager.spawnCutter(tileManager.getSuperCutterSpawnPoint(), tileManager.getSuperCutterDirection(player));
+		cutterTimeTracker = 0;
+	}
+
+	suzyManager.update(dt, player);
+	blasterManager.update(dt, player);
+	kamadomaManager.update(dt, player, window->getView());
+	superCutterManager.updateCutters(dt, player);
+}
+
 void Sciman::renderEnemies(sf::RenderWindow* window)
 {
 	suzyManager.render(window);
 	blasterManager.render(window);
 	kamadomaManager.render(window);
+	superCutterManager.render(window);
 }

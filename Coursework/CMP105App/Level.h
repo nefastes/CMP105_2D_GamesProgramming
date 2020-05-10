@@ -34,6 +34,7 @@ protected:
 
 	//Virtuals to be replaced in each different level
 	virtual void spawnItemsInRoom(sf::Vector2f position);
+	virtual void updateEnemies(float dt);
 	virtual void renderEnemies(sf::RenderWindow* window);
 
 	//Spawn position

@@ -180,6 +180,12 @@
     <ClCompile Include="KamadomaBigEye.cpp">
       <Filter>Source Files\Enemies</Filter>
     </ClCompile>
+    <ClCompile Include="SuperCutter.cpp">
+      <Filter>Source Files\Enemies</Filter>
+    </ClCompile>
+    <ClCompile Include="SuperCutterManager.cpp">
+      <Filter>Source Files\Enemies</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Text Include="README.txt">
@@ -305,6 +311,12 @@
       <Filter>Header Files\Enemies</Filter>
     </ClInclude>
     <ClInclude Include="KamadomaBigEyeManager.h">
+      <Filter>Header Files\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="SuperCutter.h">
+      <Filter>Header Files\Enemies</Filter>
+    </ClInclude>
+    <ClInclude Include="SuperCutterManager.h">
       <Filter>Header Files\Enemies</Filter>
     </ClInclude>
   </ItemGroup>

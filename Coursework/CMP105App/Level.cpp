@@ -242,6 +242,12 @@ void Level::updateLevel(float dt)
 		//Update objects
 		player.update(dt);
 		tileManager.update(dt, player);
+		//Can't update the following when the player is frozen (transition, health regen)
+		if (!player.isFrozen())
+		{
+			//Update level enemies
+			updateEnemies(dt);
+		}
 
 		//Reset the time tracker to 0 if the level is not finished, as we do not use it otherwise
 		//If we dont do this the death animation will trigger to soon, as the tracker will be in the range of seconds
@@ -563,6 +569,11 @@ void Level::handleLevelPause(float dt)
 }
 
 void Level::spawnItemsInRoom(sf::Vector2f position)
+{
+
+}
+
+void Level::updateEnemies(float dt)
 {
 
 }

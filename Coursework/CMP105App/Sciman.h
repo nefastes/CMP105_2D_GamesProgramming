@@ -3,6 +3,7 @@
 #include "SuzyManager.h"
 #include "BlasterManager.h"
 #include "KamadomaBigEyeManager.h"
+#include "SuperCutterManager.h"
 class Sciman : public Level
 {
 private:
@@ -10,6 +11,10 @@ private:
 	SuzyManager suzyManager;
 	BlasterManager blasterManager;
 	KamadomaBigEyeManager kamadomaManager;
+	SuperCutterManager superCutterManager;
+
+	//Time tracker to spawn cutters every .5s
+	float cutterTimeTracker;
 	
 public:
 	Sciman(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameState* gs, DebugUi* dui);
@@ -20,6 +25,7 @@ public:
 	void render();
 
 	void spawnItemsInRoom(sf::Vector2f position) override;
+	void updateEnemies(float dt) override;	
 	void renderEnemies(sf::RenderWindow* window) override;
 	void handlePause(float dt);
 };

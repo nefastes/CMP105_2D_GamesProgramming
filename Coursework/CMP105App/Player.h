@@ -87,6 +87,7 @@ public:
 	void setAudio(AudioManager* aud) { audio = aud; bulletManager.setAudio(aud); };
 	void collisionResponse(GameObject* collider);
 	void freezeControls(bool freeze) { allowControls = !freeze; };
+	bool isFrozen() { return !allowControls; };
 	void setNeighborsTilesTargetNames(std::string left, std::string top, std::string right, std::string bottom, std::string middle);
 	bool isTeleportAnimFinished(float dt) { teleportation.animate(dt); setTextureRect(teleportation.getCurrentFrame());  return !teleportation.getPlaying(); };
 	void resetTeleportAnim() { teleportation.setPlaying(true); };

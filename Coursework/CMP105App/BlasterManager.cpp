@@ -65,8 +65,7 @@ void BlasterManager::update(float dt, Player& p)
 				p.damage(10);
 
 		//Update no matter what (in the level), we check if it is alive inside (for the death frame)
-		if(!tileManager->isTransitionning())
-			blasters[i].update(dt, audio);
+		blasters[i].update(dt, audio);
 	}
 }
 

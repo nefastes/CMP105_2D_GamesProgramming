@@ -51,6 +51,10 @@ private:
 	//Audio pointer
 	AudioManager* audio;
 
+	//Init a tracker that will spawn enemies when colliding with a certain tile
+	bool spawnSuperCutter;
+	sf::Vector2f triggeredSpawnerPosition;
+
 public:
 	TileManager();
 	~TileManager();
@@ -73,6 +77,10 @@ public:
 	unsigned getTransitionType() { return transitionType; };
 	void setAudio(AudioManager* aud) { audio = aud; };
 	void setCloseDoor(bool c) { doorClosing = c; };
+
+	bool checkCutterTrigger();
+	sf::Vector2f getSuperCutterSpawnPoint();
+	float getSuperCutterDirection(Player& p);
 
 private:
 	//Transition

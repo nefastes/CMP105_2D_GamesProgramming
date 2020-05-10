@@ -44,8 +44,7 @@ void SuzyManager::update(float dt, Player& p)
 	for (unsigned i = 0; i < suzies.size(); ++i)
 	{
 		//Update no matter what (when in the level), we check if she is alive inside (for the death frame)
-		if(!tileManager->isTransitionning())
-			suzies[i].update(dt);
+		suzies[i].update(dt);
 		//Update states
 		if (suzies[i].isAlive())
 		{

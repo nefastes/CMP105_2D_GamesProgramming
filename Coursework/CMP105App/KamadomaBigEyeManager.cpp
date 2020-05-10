@@ -15,7 +15,7 @@ void KamadomaBigEyeManager::initKamaOrBigEye(sf::Vector2f spawnPoint, unsigned p
 	if (kamadoma)
 	{
 		kamadomas[place].setTexture(&kamadomaTex);
-		kamadomas[place].setTextureRect(sf::IntRect(34, 0, 16, 16));
+		kamadomas[place].setTextureRect(sf::IntRect(0, 0, 14, 19));
 		kamadomas[place].setSize(sf::Vector2f(50, 50));
 		kamadomas[place].setCollisionBox(sf::FloatRect(0, 25, 50, 25));
 		kamadomas[place].setPosition(spawnPoint);
@@ -24,9 +24,9 @@ void KamadomaBigEyeManager::initKamaOrBigEye(sf::Vector2f spawnPoint, unsigned p
 	else
 	{
 		kamadomas[place].setTexture(&bigEyeTex);
-		kamadomas[place].setTextureRect(sf::IntRect(34, 0, 16, 16));
+		kamadomas[place].setTextureRect(sf::IntRect(0, 0, 33, 48));
 		kamadomas[place].setSize(sf::Vector2f(150, 250));
-		kamadomas[place].setCollisionBox(sf::FloatRect(0, 0, 150, 250));
+		kamadomas[place].setCollisionBox(sf::FloatRect(0, 40, 150, 210));
 		kamadomas[place].setPosition(spawnPoint.x, spawnPoint.y - 200);
 		kamadomas[place].setMaxHealth(25);
 	}
@@ -58,8 +58,7 @@ void KamadomaBigEyeManager::update(float dt, Player& p, sf::View view)
 		if (kamadomas[i].getPosition().x + kamadomas[i].getSize().x > view.getCenter().x - view.getSize().x / 2.f &&
 			kamadomas[i].getPosition().x < view.getCenter().x + view.getSize().x / 2.f &&
 			kamadomas[i].getPosition().y + kamadomas[i].getSize().y > view.getCenter().y - view.getSize().y / 2.f &&
-			kamadomas[i].getPosition().y < view.getCenter().y + view.getSize().y / 2.f &&
-			!tileManager->isTransitionning())
+			kamadomas[i].getPosition().y < view.getCenter().y + view.getSize().y / 2.f)
 		{
 			//Always call the update, an alive check is made inside (so we can display the death frame)
 			kamadomas[i].update(dt, p);

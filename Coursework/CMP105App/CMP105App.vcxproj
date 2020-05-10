@@ -193,6 +193,8 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Sciman.cpp" />
     <ClCompile Include="StageMenu.cpp" />
+    <ClCompile Include="SuperCutter.cpp" />
+    <ClCompile Include="SuperCutterManager.cpp" />
     <ClCompile Include="Suzy.cpp" />
     <ClCompile Include="SuzyManager.cpp" />
     <ClCompile Include="TileManager.cpp" />
@@ -238,6 +240,8 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Sciman.h" />
     <ClInclude Include="StageMenu.h" />
+    <ClInclude Include="SuperCutter.h" />
+    <ClInclude Include="SuperCutterManager.h" />
     <ClInclude Include="Suzy.h" />
     <ClInclude Include="SuzyManager.h" />
     <ClInclude Include="TileManager.h" />
