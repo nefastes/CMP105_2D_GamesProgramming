@@ -83,7 +83,7 @@ OptionMenu::OptionMenu(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, Gam
 	//Init option infos
 	frameLimit = 60;
 	musicVolume = 50;
-	verticalSync = false;
+	verticalSync = true;
 	debugMode = false;
 
 	//Init trackers
@@ -154,36 +154,33 @@ void OptionMenu::handleInput(float dt)
 	//Like always, we allow this to happen every .2 seconds to avoid requiring ninja hands to click in this game
 	//We also check if if the current selection highlight is not on the first or second option, since those
 	//Are to be changed with arrows instead of [use]
-	if (timePassedTracker > .2f)
+	if (selectionTracker > 1)
 	{
-		if (selectionTracker > 1)
+		if (input->isKeyDownOnce(sf::Keyboard::Enter) || input->isMouseLDown() && timePassedTracker >= .2f)
 		{
-			if (input->isKeyDown(sf::Keyboard::Enter) || input->isKeyDown(sf::Keyboard::F) || input->isMouseLDown())
-			{
-				//For the "back" button play a different sound that others
-				if (selectionTracker != 6)
-					audio->playSoundbyName("press");
-				else
-					audio->playSoundbyName("select");
-				selected = true;
-			}
+			//For the "back" button play a different sound that others
+			if (selectionTracker != 6)
+				audio->playSoundbyName("press");
+			else
+				audio->playSoundbyName("select");
+			selected = true;
 		}
-		else
+	}
+	else
+	{
+		//It can sound bizarre to have the bool leftArrow inside the check and setting it as well afterwards,
+		//However it is ANDed with the mouse input, and leftArrow is being set accordingly to the mousePos in trackButtonSelection()
+		if (input->isKeyDownOnce(sf::Keyboard::Left) || input->isMouseLDown() && timePassedTracker >= .2f && leftArrow)
 		{
-			//It can sound bizarre to have the bool leftArrow inside the check and setting it as well afterwards,
-			//However it is ANDed with the mouse input, and leftArrow is being set accordingly to the mousePos in trackButtonSelection()
-			if (input->isKeyDown(sf::Keyboard::Left) || input->isMouseLDown() && leftArrow)
-			{
-				leftArrow = true;
-				selected = true;
-				audio->playSoundbyName("press");
-			}
-			if (input->isKeyDown(sf::Keyboard::Right) || input->isMouseLDown() && !leftArrow)
-			{
-				leftArrow = false;
-				selected = true;
-				audio->playSoundbyName("press");
-			}
+			leftArrow = true;
+			selected = true;
+			audio->playSoundbyName("press");
+		}
+		if (input->isKeyDownOnce(sf::Keyboard::Right) || input->isMouseLDown() && timePassedTracker >= .2f && !leftArrow)
+		{
+			leftArrow = false;
+			selected = true;
+			audio->playSoundbyName("press");
 		}
 	}
 }
@@ -426,65 +423,61 @@ void OptionMenu::changeSettings()
 
 void OptionMenu::trackButtonSelection()
 {
+	//Keyboard selection highlight
+	if (input->isKeyDownOnce(sf::Keyboard::Up))
+	{
+		//Check bounds, adjust to stay in bounds
+		if (selectionTracker == 0) selectionTracker = 6;
+		else --selectionTracker;
+		timePassedTracker = 0;
+	}
+	if (input->isKeyDownOnce(sf::Keyboard::Down))
+	{
+		if (selectionTracker == 6) selectionTracker = 0;
+		else ++selectionTracker;
+		timePassedTracker = 0;
+	}
+
 	//Get mouse position
 	sf::Vector2i mousePos = sf::Vector2i(input->getMouseX(), input->getMouseY());
 
-	//Allow a change of selection every .2 seconds, so that we do not need to be a ninja to select
-	if (timePassedTracker > .2f)
+	//Mouse selection highlight
+	if (Collision::checkBoundingBox(&arrows[0][0].getGlobalBounds(), mousePos))
 	{
-		//Keyboard selection highlight
-		if (input->isKeyDown(sf::Keyboard::Up))
-		{
-			//Check bounds, adjust to stay in bounds
-			if (selectionTracker == 0) selectionTracker = 6;
-			else --selectionTracker;
-			timePassedTracker = 0;
-		}
-		if (input->isKeyDown(sf::Keyboard::Down))
-		{
-			if (selectionTracker == 6) selectionTracker = 0;
-			else ++selectionTracker;
-			timePassedTracker = 0;
-		}
+		//We need to use this extra bool in order to know which of the left or right arrow has been pressed
+		leftArrow = true;
+		selectionTracker = 0;
+	}
+	if (Collision::checkBoundingBox(&arrows[0][1].getGlobalBounds(), mousePos))
+	{
+		leftArrow = false;
+		selectionTracker = 0;
+	}
+	if (Collision::checkBoundingBox(&arrows[1][0].getGlobalBounds(), mousePos))
+	{
+		leftArrow = true;
+		selectionTracker = 1;
+	}
+	if (Collision::checkBoundingBox(&arrows[1][1].getGlobalBounds(), mousePos))
+	{
+		leftArrow = false;
+		selectionTracker = 1;
+	}
+	if (Collision::checkBoundingBox(&checkboxes[0].getGlobalBounds(), mousePos))
+		selectionTracker = 2;
+	if (Collision::checkBoundingBox(&checkboxes[1].getGlobalBounds(), mousePos))
+		selectionTracker = 3;
+	if (Collision::checkBoundingBox(&howToPlayButton.getGlobalBounds(), mousePos))
+		selectionTracker = 4;
+	if (Collision::checkBoundingBox(&applyButton.getGlobalBounds(), mousePos))
+		selectionTracker = 5;
+	if (Collision::checkBoundingBox(&backButton.getGlobalBounds(), mousePos))
+		selectionTracker = 6;
 
-		//Mouse selection highlight
-		if (Collision::checkBoundingBox(&arrows[0][0].getGlobalBounds(), mousePos))
-		{
-			//We need to use this extra bool in order to know which of the left or right arrow has been pressed
-			leftArrow = true;
-			selectionTracker = 0;
-		}
-		if (Collision::checkBoundingBox(&arrows[0][1].getGlobalBounds(), mousePos))
-		{
-			leftArrow = false;
-			selectionTracker = 0;
-		}
-		if (Collision::checkBoundingBox(&arrows[1][0].getGlobalBounds(), mousePos))
-		{
-			leftArrow = true;
-			selectionTracker = 1;
-		}
-		if (Collision::checkBoundingBox(&arrows[1][1].getGlobalBounds(), mousePos))
-		{
-			leftArrow = false;
-			selectionTracker = 1;
-		}
-		if (Collision::checkBoundingBox(&checkboxes[0].getGlobalBounds(), mousePos))
-			selectionTracker = 2;
-		if (Collision::checkBoundingBox(&checkboxes[1].getGlobalBounds(), mousePos))
-			selectionTracker = 3;
-		if (Collision::checkBoundingBox(&howToPlayButton.getGlobalBounds(), mousePos))
-			selectionTracker = 4;
-		if (Collision::checkBoundingBox(&applyButton.getGlobalBounds(), mousePos))
-			selectionTracker = 5;
-		if (Collision::checkBoundingBox(&backButton.getGlobalBounds(), mousePos))
-			selectionTracker = 6;
-
-		//If change of selection has been made, play an audio sound
-		if (prevSelection != selectionTracker)
-		{
-			audio->playSoundbyName("changeSelection");
-			prevSelection = selectionTracker;
-		}
+	//If change of selection has been made, play an audio sound
+	if (prevSelection != selectionTracker)
+	{
+		audio->playSoundbyName("changeSelection");
+		prevSelection = selectionTracker;
 	}
 }

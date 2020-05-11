@@ -24,9 +24,11 @@ public:
 	void update(float dt);
 	void render();
 
+	void handlePause(float dt);
+
+private:
 	void spawnItemsInRoom(sf::Vector2f position) override;
 	void updateEnemies(float dt) override;	
 	void renderEnemies(sf::RenderWindow* window) override;
-	void handlePause(float dt);
 };
 

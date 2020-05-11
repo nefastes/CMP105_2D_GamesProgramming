@@ -11,9 +11,6 @@ CreditCinematic::CreditCinematic(sf::RenderWindow* hwnd, Input* in, AudioManager
 	//Tracker
 	timePassedTracker = 0;
 
-	//Music
-	audio->addMusic("sfx/JDG_Chanson_Infogrames.ogg", "chansonInfogrames");
-
 	//Font & textures
 	font.loadFromFile("font/PressStart2P-vaV7.ttf");
 	cakeTex.loadFromFile("custom_sprites/Cake.PNG");
@@ -61,6 +58,7 @@ void CreditCinematic::handleInput(float dt)
 		gameState->setCurrentState(State::MENU);
 		audio->stopAllMusic();
 		resetPositions();
+		timePassedTracker = 0;
 	}
 }
 

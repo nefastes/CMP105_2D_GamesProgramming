@@ -58,7 +58,6 @@ void KamadomaBigEyeManager::update(float dt, Player& p, sf::View view)
 		//Only update if it is in the view
 		if (kamadomas[i].getPosition().x + kamadomas[i].getSize().x > view.getCenter().x - view.getSize().x / 2.f &&
 			kamadomas[i].getPosition().x < view.getCenter().x + view.getSize().x / 2.f &&
-			kamadomas[i].getPosition().y + kamadomas[i].getSize().y > view.getCenter().y - view.getSize().y / 2.f &&
 			kamadomas[i].getPosition().y < view.getCenter().y + view.getSize().y / 2.f)
 		{
 			//Always call the update, an alive check is made inside (so we can display the death frame)

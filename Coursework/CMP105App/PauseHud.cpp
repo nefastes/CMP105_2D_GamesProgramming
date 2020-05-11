@@ -55,18 +55,16 @@ void PauseHud::handleInput(float dt)
 {
 	timePassedTracker += dt;
 
-	if (input->isKeyDown(sf::Keyboard::Up) && timePassedTracker >= .2f)
+	if (input->isKeyDownOnce(sf::Keyboard::Up))
 	{
 		if (selectionTracker < 1) ++selectionTracker;
 		else selectionTracker = 0;
-		timePassedTracker = 0;
 		audio->playSoundbyName("changeSelection");
 	}
-	if (input->isKeyDown(sf::Keyboard::Down) && timePassedTracker >= .2f)
+	if (input->isKeyDownOnce(sf::Keyboard::Down))
 	{
 		if (selectionTracker > 0) --selectionTracker;
 		else selectionTracker = 1;
-		timePassedTracker = 0;
 		audio->playSoundbyName("changeSelection");
 	}
 	if (Collision::checkBoundingBox(&resume.getGlobalBounds(), sf::Vector2i(input->getMouseX(), input->getMouseY())))
@@ -79,7 +77,15 @@ void PauseHud::handleInput(float dt)
 		selectionTracker = 1;
 		audio->playSoundbyName("changeSelection");
 	}
-	if ((input->isKeyDown(sf::Keyboard::Enter) || input->isMouseLDown()) && timePassedTracker >= .2f)
+	if (input->isKeyDownOnce(sf::Keyboard::Escape) || input->isKeyDownOnce(sf::Keyboard::Tab))
+	{
+		audio->resumeAllMusic();
+		audio->resumeAllSounds();
+		audio->playSoundbyName("pause");
+		gameState->setCurrentState(gameState->getPreviousState());
+		timePassedTracker = 0;
+	}
+	if ((input->isKeyDownOnce(sf::Keyboard::Enter) || input->isMouseLDown()) && timePassedTracker >= .2f)
 	{
 		if (selectionTracker == 0)
 		{

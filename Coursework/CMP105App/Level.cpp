@@ -101,7 +101,7 @@ void Level::handleLevelInput(float dt)
 	player.handleInput(dt);
 
 	//Pause control
-	if ((input->isKeyDown(sf::Keyboard::Tab) || input->isKeyDown(sf::Keyboard::Escape)) && player.isAlive() && !gameState->isLevelFinished())
+	if ((input->isKeyDownOnce(sf::Keyboard::Tab) || input->isKeyDownOnce(sf::Keyboard::Escape)) && player.isAlive() && !gameState->isLevelFinished())
 	{
 		gameState->setCurrentState(State::PAUSE);
 		audio->pauseAllMusic();

@@ -63,32 +63,6 @@ MainMenu::MainMenu(sf::RenderWindow* hwnd, Input* in, AudioManager* aud, GameSta
 	background[1].setSize(sf::Vector2f(window->getSize().x, window->getSize().y));
 	background[1].setPosition(sf::Vector2f(window->getSize().x, 0));
 
-	//Init ALL audio musics and ALL sound effects
-	audio->addMusic("sfx/Mega_Man_2_Menu.ogg", "menu");
-	audio->addMusic("sfx/Megaman_1_Stage_Select.ogg", "stageSelect");
-	audio->addMusic("sfx/Megaman_1_Stage_Start.ogg", "stageStart");
-	audio->addMusic("sfx/Megaman_1_Stage_Clear.ogg", "stageClear");
-	audio->addMusic("sfx/Megaman_1_Cut_Man_Stage.ogg", "cutMan");
-	audio->addMusic("sfx/Megaman_1_Elec_Man_Stage.ogg", "elecMan");
-	audio->addSound("sfx/Megaman_1_Select.ogg", "select");
-	audio->addSound("sfx/Megaman_1_Press.ogg", "press");
-	audio->addSound("sfx/Megaman_1_Change_Selection.ogg", "changeSelection");
-	audio->addSound("sfx/Megaman_1_Land.ogg", "land");
-	audio->addSound("sfx/Megaman_1_Teleport_Land.ogg", "tpLand");
-	audio->addSound("sfx/Megaman_1_Death.ogg", "death");
-	audio->addSound("sfx/Megaman_1_Pause.ogg", "pause");
-	audio->addSound("sfx/Megaman_1_Player_Damage.ogg", "playerDamage");
-	audio->addSound("sfx/Megaman_1_Damage.ogg", "enemyDamage");
-	audio->addSound("sfx/Megaman_1_No_Damage.ogg", "enemyInvincible");
-	audio->addSound("sfx/Megaman_1_Blaster_Shoot.ogg", "blasterShoot");
-	audio->addSound("sfx/Megaman_1_Shoot.ogg", "shoot");
-	audio->addSound("sfx/Megaman_1_Door.ogg", "door");
-	audio->addSound("sfx/Megaman_1_Points.ogg", "points");
-	audio->addSound("sfx/Megaman_1_Points2.ogg", "points2");
-	audio->addSound("sfx/Megaman_1_Life.ogg", "life");
-	audio->addSound("sfx/Megaman_1_Health.ogg", "health");
-	audio->addSound("sfx/Megaman_1_BigEye_Land.ogg", "bigEyeLand");
-
 	//Init trackers
 	selectionTracker = 0;
 	isBlinking = false;
@@ -152,15 +126,14 @@ void MainMenu::handleInput(float dt)
 		changeSelectionTracker();
 
 	//Make a selection
-	if (timePassedTracker > .2f)
-		if (input->isKeyDown(sf::Keyboard::Enter) || input->isKeyDown(sf::Keyboard::F) || input->isMouseLDown())
-		{
-			//Selection made, play the selection sound only once
-			if(!selected)
-				audio->playSoundbyName("select");
+	if (input->isKeyDownOnce(sf::Keyboard::Enter) || input->isMouseLDown() && timePassedTracker >= .2f)
+	{
+		//Selection made, play the selection sound only once
+		if (!selected)
+			audio->playSoundbyName("select");
 
-			selected = true;
-		}
+		selected = true;
+	}
 }
 
 // Render level
@@ -295,33 +268,28 @@ void MainMenu::makeSelection(float dt)
 
 void MainMenu::changeSelectionTracker()
 {
-	if (timePassedTracker > .2f)		//Allow a change of selection every .2 seconds, so that we do not need to be a ninja to select
+	//Keyboard selection highlight
+	if (input->isKeyDownOnce(sf::Keyboard::Up))
 	{
-		//Keyboard selection highlight
-		if (input->isKeyDown(sf::Keyboard::Up))
-		{
-			if (selectionTracker == 0) selectionTracker = 3;
-			else --selectionTracker;
-			timePassedTracker = 0;
-		}
-		if (input->isKeyDown(sf::Keyboard::Down))
-		{
-			if (selectionTracker == 3) selectionTracker = 0;
-			else ++selectionTracker;
-			timePassedTracker = 0;
-		}
-
-		//Mouse selection highlight
-		sf::Vector2i mousePos = sf::Vector2i(input->getMouseX(), input->getMouseY());
-		if (Collision::checkBoundingBox(&startButton.getGlobalBounds(), mousePos))
-			selectionTracker = 0;
-		if (Collision::checkBoundingBox(&optionButton.getGlobalBounds(), mousePos))
-			selectionTracker = 1;
-		if (Collision::checkBoundingBox(&creditButton.getGlobalBounds(), mousePos))
-			selectionTracker = 2;
-		if (Collision::checkBoundingBox(&quitButton.getGlobalBounds(), mousePos))
-			selectionTracker = 3;
+		if (selectionTracker == 0) selectionTracker = 3;
+		else --selectionTracker;
 	}
+	if (input->isKeyDownOnce(sf::Keyboard::Down))
+	{
+		if (selectionTracker == 3) selectionTracker = 0;
+		else ++selectionTracker;
+	}
+
+	//Mouse selection highlight
+	sf::Vector2i mousePos = sf::Vector2i(input->getMouseX(), input->getMouseY());
+	if (Collision::checkBoundingBox(&startButton.getGlobalBounds(), mousePos))
+		selectionTracker = 0;
+	if (Collision::checkBoundingBox(&optionButton.getGlobalBounds(), mousePos))
+		selectionTracker = 1;
+	if (Collision::checkBoundingBox(&creditButton.getGlobalBounds(), mousePos))
+		selectionTracker = 2;
+	if (Collision::checkBoundingBox(&quitButton.getGlobalBounds(), mousePos))
+		selectionTracker = 3;
 }
 
 void MainMenu::checkAfkTime()

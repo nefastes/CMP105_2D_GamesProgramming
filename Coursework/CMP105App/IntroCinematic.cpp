@@ -63,7 +63,7 @@ IntroCinematic::IntroCinematic(sf::RenderWindow* hwnd, Input* in, AudioManager* 
 	megamanTex.loadFromFile("custom_sprites/NES _Mega_Man.PNG");
 	laserTex.loadFromFile("custom_sprites/NES_Mega_Man_Laser.PNG");
 	finalMegaman.setTexture(&megamanTex);
-	finalMegaman.setTextureRect(sf::IntRect(1, 8, 21, 24));
+	finalMegaman.setTextureRect(sf::IntRect(0, 8, 24, 24));
 	finalMegaman.setSize(sf::Vector2f(105, 120));
 	//Change the origin of the sprite to it's center (it's the only one with this change !!)
 	finalMegaman.setOrigin(finalMegaman.getSize().x / 2, finalMegaman.getSize().y / 2);
@@ -79,10 +79,6 @@ IntroCinematic::IntroCinematic(sf::RenderWindow* hwnd, Input* in, AudioManager* 
 	message.setLineSpacing(1.5f);
 	message.setString(sentence[0]);
 	message.setPosition(window->getSize().x / 20, 3 * window->getSize().y / 4);
-
-	//Init audio
-	audio->addMusic("sfx/Infogrames_Catchphrase.ogg", "infogrames");
-	audio->addMusic("sfx/Mega_Man_2_Intro.ogg", "intro");
 
 	//Init cinematic trackers
 	logo = false;
@@ -111,7 +107,7 @@ IntroCinematic::~IntroCinematic()
 
 void IntroCinematic::handleInput(float dt)
 {
-	if (input->isKeyDown(sf::Keyboard::F) || input->isKeyDown(sf::Keyboard::Enter) || input->isMouseLDown())
+	if (input->isKeyDownOnce(sf::Keyboard::Enter) || input->isMouseLDown())
 		changeGameStateToMenu();
 }
 
@@ -123,12 +119,11 @@ void IntroCinematic::update(float dt)
 	//Update screens and make transitions when necessary
 	if (!logo)
 	{
-
 		//Wait 2 seconds to make it more confortable
 		if (timePassedTracker >= 2.f)
 		{
 			//Play the Infogrames sound
-			if (audio->getMusic()->getStatus() == sf::SoundSource::Stopped)
+			if (audio->getMusic()->getStatus() == sf::SoundSource::Stopped && audio->getMusic()->getDuration() != sf::seconds(10.29f))
 			{
 				audio->playMusicbyName("infogrames");
 				audio->getMusic()->setLoop(false);
@@ -138,7 +133,7 @@ void IntroCinematic::update(float dt)
 			if (!isFadingIn)
 				fadeToBlackTransition(255 / 60 / 2, dt, false);		//fade out for 2 seconds
 			//Since the fade out took 2 seconds, wait 8 seconds so the logo is fully shown for 6 seconds
-			if (audio->getMusic()->getPlayingOffset() >= sf::seconds(8.f))
+			if (audio->getMusic()->getPlayingOffset() >= sf::seconds(8.f) || audio->getMusic()->getStatus() == sf::SoundSource::Stopped)
 			{
 				fadeToBlackTransition(255 / 60 / 2, dt, true);		//fade in for 2 seconds
 				//When the fading in has been done, update these trackers to start displaying the next cinematic screen

@@ -118,9 +118,9 @@ void StageMenu::handleInput(float dt)
 		changeBoxSelection();
 
 	//Make a selection
-	if (timePassedTracker > .2f && !selected && selectionTracker == 1)
+	if (!selected && selectionTracker == 1)
 	{
-		if (input->isKeyDown(sf::Keyboard::Enter) || input->isKeyDown(sf::Keyboard::F) || input->isMouseLDown())
+		if (input->isKeyDownOnce(sf::Keyboard::Enter)|| input->isMouseLDown() && timePassedTracker >= .2f)
 		{
 			//Set the selected tracker and play the selection sound
 			selected = true;
@@ -135,7 +135,7 @@ void StageMenu::handleInput(float dt)
 			}
 		}
 	}
-	else if (input->isKeyDown(sf::Keyboard::Escape) && selectionTracker != 6 && !selected)
+	if (input->isKeyDownOnce(sf::Keyboard::Escape) && selectionTracker != 6 && !selected)
 	{
 		selectionTracker = 6;
 		audio->playSoundbyName("select");
@@ -236,33 +236,30 @@ void StageMenu::changeBoxHighlight()
 
 void StageMenu::changeBoxSelection()
 {
-	if (timePassedTracker > .2f)		//Allow a change of selection every .2 seconds, so that we do not need to be a ninja to select
+	//Keyboard selection highlight
+	if (input->isKeyDownOnce(sf::Keyboard::Left))
 	{
-		//Keyboard selection highlight
-		if (input->isKeyDown(sf::Keyboard::Left))
-		{
-			if (selectionTracker == 0) selectionTracker = 5;
-			else --selectionTracker;
-		}
-		if (input->isKeyDown(sf::Keyboard::Right))
-		{
-			if (selectionTracker == 5) selectionTracker = 0;
-			else ++selectionTracker;
-		}
+		if (selectionTracker == 0) selectionTracker = 5;
+		else --selectionTracker;
+	}
+	if (input->isKeyDownOnce(sf::Keyboard::Right))
+	{
+		if (selectionTracker == 5) selectionTracker = 0;
+		else ++selectionTracker;
+	}
 
-		//Mouse selection highlight
-		sf::Vector2i mousePos = sf::Vector2i(input->getMouseX(), input->getMouseY());
-		for (unsigned i = 0; i < 6; ++i)
-			if (Collision::checkBoundingBox(&selectionBoxes[i].getGlobalBounds(), mousePos))
-				selectionTracker = i;
-		
-		//Check if a selection has been changed, play the change sound and reset the prevSelection tracker
-		if (prevSelection != selectionTracker && selectionTracker <= 5)
-		{
-			audio->playSoundbyName("changeSelection");
-			prevSelection = selectionTracker;
-			timePassedTracker = 0;
-		}
+	//Mouse selection highlight
+	sf::Vector2i mousePos = sf::Vector2i(input->getMouseX(), input->getMouseY());
+	for (unsigned i = 0; i < 6; ++i)
+		if (Collision::checkBoundingBox(&selectionBoxes[i].getGlobalBounds(), mousePos))
+			selectionTracker = i;
+
+	//Check if a selection has been changed, play the change sound and reset the prevSelection tracker
+	if (prevSelection != selectionTracker && selectionTracker <= 5)
+	{
+		audio->playSoundbyName("changeSelection");
+		prevSelection = selectionTracker;
+		timePassedTracker = 0;
 	}
 }
 

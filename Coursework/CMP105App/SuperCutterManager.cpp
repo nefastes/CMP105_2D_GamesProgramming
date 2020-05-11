@@ -28,7 +28,7 @@ void SuperCutterManager::spawnCutter(sf::Vector2f spawnPoint, float direction)
 	cutters[cutters.size() - 1].setAlive(true);
 	cutters[cutters.size() - 1].setTexture(&cutterTex);
 	cutters[cutters.size() - 1].setSize(sf::Vector2f(50, 50));
-	cutters[cutters.size() - 1].setCollisionBox(sf::FloatRect(5, 0, 45, 50));
+	cutters[cutters.size() - 1].setCollisionBox(sf::FloatRect(5, 0, 40, 50));
 	cutters[cutters.size() - 1].setTextureRect(sf::IntRect(0, 0, 20, 20));
 	cutters[cutters.size() - 1].setPosition(spawnPoint);
 	cutters[cutters.size() - 1].resetHealth();
