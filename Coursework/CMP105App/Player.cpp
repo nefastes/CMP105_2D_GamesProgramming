@@ -352,9 +352,10 @@ void Player::ladderCollisions(GameObject* collider)
 				}
 
 				//The player stands on top of the ladder tile (only on the last one, which means that
-				//The bottom tagetname MUST be a ladder and the middle targetname MUST be world otherwise it
+				//The bottom tagetname MUST be a ladder and the middle targetname MUST NOT be ladder otherwise it
 				//means that he is anywhere else but on top of it
-				else if (bottomTargetname == "ladder" && (middleTargetname == "world" || middleTargetname == "sky") && (!isJumping && velocity.y >= 0))
+				else if (bottomTargetname == "ladder" && (middleTargetname != "ladder" && leftTargetname != "ladder" && rightTargetname != "ladder" &&
+					topTargetname != "ladder") && (!isJumping && velocity.y >= 0))
 				{
 					hasCollidedVertically = true;		//We have collided vertically, note that we only set it to true for top collisions
 					if (!isOnGround)
@@ -379,7 +380,7 @@ void Player::ladderCollisions(GameObject* collider)
 		//Determine if he is about to finish climbing, so we can change the sprite to the finish climb
 		//And activate checks to finish the climb once he reached a certain position
 		//If the middle targetname is world or sky, it means his feet are at the last tile of the ladder
-		if (middleTargetname == "world" || middleTargetname == "sky")
+		if (middleTargetname != "ladder")
 			isFinishingClimb = true;
 		else
 			isFinishingClimb = false;
